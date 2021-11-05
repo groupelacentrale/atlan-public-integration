@@ -8,6 +8,7 @@ echo "list of files in working dir"
 ls -l
 echo "list of files in the racine"
 ls -l /
+echo "list of files in /opt/app"
+ls -l /opt/app/
 
-
-python main.py
+python /opt/app/main.py
