@@ -13,9 +13,7 @@ if __name__ == '__main__':
                         level=logging.INFO,
                         format='%(asctime)s %(message)s')
 
-#    path="/github/workspace/docs/data-catalogue-index/test-cible-table.csv"
-
-    path="./source_files/test-cible-table.csv"
+    path="/github/workspace/docs/data-catalogue-index/test-cible-table.csv"
     table_name = utils.get_table_name(path)
     entity= "test"
     description = "created by github action"
