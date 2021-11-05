@@ -3,3 +3,4 @@ venv
 config/api_config.yaml
 logs/*
 __pycache__
+.DS_Store
