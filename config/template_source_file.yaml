@@ -1,0 +1,26 @@
+Headers:
+  - Table/Entity
+  - Column/Attribute
+  - Type
+  - Summary (Description)
+  - Readme
+  - Lineage Type (Source / Target)
+  - Lineage Integration Type
+  - Lineage Schema/Database
+  - Lineage Table/Entity
+  - Lineage Column/Attribute
+  - Term
+  - Glossary
+  - Classification
+
+DynamoDbDatatypes:
+  - Number
+  - Boolean
+  - String
+  - Binary
+  - Null
+  - Map
+  - List
+  - Set_String
+  - Set_Number
+  - Set_Binary
