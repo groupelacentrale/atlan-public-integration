@@ -13,7 +13,7 @@ from optparse import OptionParser
 
 def validate_atlan_source_file(path_table_doc, delimiter=","):
     #logging.info("Loading header template...")
-    template_conf = AtlanConfig(os.path.join("config/template_source_file.yaml"))
+    template_conf = AtlanConfig(os.path.join("/opt/app/config/template_source_file.yaml"))
     template_conf.load_yaml_configs()
 
     #logging.info("Load table definition...")
