@@ -1,0 +1,4 @@
+.idea
+venv
+config/api_config.yaml
+logs/*
