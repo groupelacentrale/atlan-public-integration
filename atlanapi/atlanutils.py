@@ -131,21 +131,22 @@ class SourceFileValidator:
             return None
 
 
-    def validate_data_type_values(self, atlansourcefile):
+    def validate_data_type_values(self, list_allowed_datatypes):
         """
-
+        Ensures that the source file contains valid data types based on the integration type (e.g., dynamodb, glue)
         """
-        pass
+        self.list_allowed_datatypes = list_allowed_datatypes
+        self.source_data_types = self.atlansourcefile["Type"].str.lower()
 
-    def validate_data_integration_values(self, atlansourcefile):
-        """
+        for i in range(len(self.list_allowed_datatypes)):
+            self.list_allowed_datatypes[i] = self.list_allowed_datatypes[i].lower()
 
-        """
-        pass
-
-        
-
-
-
-
-
+        for i, e in enumerate(self.source_data_types):
+            if len(self.source_data_types[i]) == 0:
+                continue
+            elif self.source_data_types[i] not in (self.list_allowed_datatypes):
+                raise ValueError(
+                    "The data type, '{}', in line {} is not a supported data type value. Supported data types are {}"
+                    .format(e, i + 1, self.list_allowed_datatypes))
+            else:
+                continue

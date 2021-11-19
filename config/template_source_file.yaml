@@ -13,14 +13,14 @@ Headers:
   - Glossary
   - Classification
 
-DynamoDbDatatypes:
-  - Number
-  - Boolean
-  - String
-  - Binary
-  - Null
-  - Map
-  - List
-  - Set_String
-  - Set_Number
-  - Set_Binary
+DynamoDbDataTypes:
+  - number
+  - boolean
+  - string
+  - binary
+  - map
+  - 'null'
+  - list
+  - set_string
+  - set_number
+  - set_binary
