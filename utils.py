@@ -11,6 +11,7 @@ def setup_logger(logger_name, level=logging.INFO):
     formatter = logging.Formatter('%(asctime)s : %(message)s')
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(formatter)
+    logger.handlers.pop()
     logger.setLevel(level)
     logger.addHandler(stream_handler)
 
