@@ -18,21 +18,15 @@ from optparse import OptionParser
 from ApiConfig import create_api_config
 import utils
 
-
-logging.basicConfig(stream=sys.stdout,
-                    level=logging.INFO,
-                    format='%(asctime)s %(message)s')
+logger = logging.getLogger('main_logger')
 
 def create_atlan_columns(path, delimiter=",", includes_entity=False):
 
-    logging.info("Load table definition...")
+    logger.info("Load table definition...")
     source_data = AtlanSourceFile(path, sep=delimiter)
     table_name = utils.get_table_name(path)
-    print("table name {}".format(table_name))
     source_data.load_csv()
-    source_data.assets_def
 
-    logging.info("Loading API configs...")
     api_conf = create_api_config()
 
     # Generate columns that are combinations of multiple variables
@@ -43,7 +37,7 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
     else:
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
 
-    logging.info("Generating API request to create columns for table: {}".format(table_name))
+    logger.info("Generating API request to create columns for table: {}".format(table_name))
     entity_items = []
     for index, row in source_data.assets_def.iterrows():
         col = AtlanColumn(integration_type="DynamoDb",
@@ -63,20 +57,13 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
         'APIKEY': api_conf.api_key
     }
 
-    logging.info("Posting API request")
+    logger.info("Posting API request")
     column_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity/bulk'.format(api_conf.instance)
     atlan_api_column_request_object = AtlanApiRequest("POST", column_post_url, headers, payload)
     atlan_api_column_request_object.send_atlan_request()
 
 
 if __name__ == '__main__':
-    import logging
-    if not os.path.isdir("logs"):
-        os.makedirs("logs")
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(message)s',
-                        filename=os.path.join('logs', 'create-atlan-columns.log'))
-
     parser = OptionParser(usage='usage: %prog [options] arguments')
     # TODO : replace argument for includes_entity to a test if the column exists in the source file. Too dangerous if the flag is set incorrectly!
     parser.set_defaults(includes_entity=False, delimiter=",")
