@@ -24,19 +24,15 @@ import  logging
 #TODO: add support for 'Redshift', 'Tableau' by determining their qualified name prefix.
 SUPPORTED_INTEGRATIONS = ["DynamoDb", "glue"]
 
-logging.basicConfig(stream=sys.stdout,
-                    level=logging.INFO,
-                    format='%(asctime)s %(message)s')
+logger = logging.getLogger('main_logger')
 
 def create_atlan_column_lineage(path, integration_type, delimiter=","):
 
-    logging.info("Load table definition...")
+    logger.info("Load table definition...")
     source_data = AtlanSourceFile(path, sep=delimiter)
     table_name = utils.get_table_name(path)
     source_data.load_csv()
-    source_data.assets_def
 
-    logging.info("Loading API configs...")
     api_conf = create_api_config()
 
     search_headers = {
@@ -52,7 +48,7 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     lineage_rows = source_data.assets_def[source_data.assets_def["Lineage Integration Type"].isin(SUPPORTED_INTEGRATIONS)]
 
     # Filter dataframe to include only lineage target columns that already exist in Atlan.
-    logging.info("Searching to make sure lineage columns exist")
+    logger.info("Searching to make sure lineage columns exist")
     k=[]
     full_qualified_name=[]
     integ_prefix=[]
@@ -80,10 +76,10 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     lineage_rows_verified = lineage_rows[lineage_rows.column_present_in_atlan.eq('true')]
     lineage_rows_not_verified = lineage_rows[lineage_rows.column_present_in_atlan.eq('false')]
 
-    logging.warning("Target columns must already exist in Atlan to create lineage. The following target columns were not found in Atlan: {}/{}/{}".format(lineage_rows_not_verified["Lineage Schema/Database"],
+    logger.warning("Target columns must already exist in Atlan to create lineage. The following target columns were not found in Atlan: {}/{}/{}".format(lineage_rows_not_verified["Lineage Schema/Database"],
                                                                                                                                                     lineage_rows_not_verified["Lineage Table/Entity"],
                                                                                                                                                     lineage_rows_not_verified["Lineage Column/Attribute"]))
-    logging.info("Generating API request to create lineage for verified columns in table: {}".format(table_name))
+    logger.info("Generating API request to create lineage for verified columns in table: {}".format(table_name))
     entity_items = []
     for index, row in lineage_rows_verified.iterrows():
         if row["Lineage Type (Source / Target)"] == "Source":
@@ -104,7 +100,7 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     col_payload = AtlanColumnLineageSerializer()
     payload = col_payload.serialize(entity_items)
 
-    logging.info("Posting API request")
+    logger.info("Posting API request")
     lineage_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity/bulk'.format(api_conf.instance)
     print(payload)
     atlan_api_lineage_request_object = AtlanApiRequest("POST", lineage_post_url, headers, payload)
@@ -135,14 +131,6 @@ def construct_qualified_name_prefix(integration_type):
 
 
 if __name__ == '__main__':
-    import logging
-    if not os.path.isdir("logs"):
-        os.makedirs("logs")
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s  == %(message)s',
-                        filename=os.path.join('logs', 'create-atlan-column-lineage.log'))
-
-
     parser = OptionParser(usage='usage: %prog [options] arguments')
     parser.set_defaults(delimiter=",")
     parser.add_option("-p", "--path", help="Name of the DynamoDB table -> Atlan Schema")
