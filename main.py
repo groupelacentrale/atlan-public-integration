@@ -26,7 +26,7 @@ if __name__ == '__main__':
         logger.info("Validating the csv file of the table {}".format(table))
         validate(path)
         logger.info("Creating table={}, entity={}, description={}".format(table, entity, description))
-        create_table(path, entity, description)
+        create_table(table, entity, description)
         logger.info("Creating columns for table={}".format(table))
         create_atlan_columns(path)
         create_atlan_column_lineage(path, "DynamoDb")

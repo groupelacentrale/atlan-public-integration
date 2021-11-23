@@ -10,7 +10,6 @@ Usage Options:
 -d --description : description of the entity
 """
 
-
 import logging
 from atlanapi.createtable import AtlanTable, AtlanTableSerializer
 from atlanapi.createschema import AtlanSchema, AtlanSchemaSerializer
@@ -19,6 +18,7 @@ from optparse import OptionParser
 from ApiConfig import create_api_config
 
 logger = logging.getLogger('main_logger')
+
 
 def create_atlan_dynamodb_entity(table, entity, description):
     api_conf = create_api_config()
@@ -42,9 +42,9 @@ def create_atlan_dynamodb_entity(table, entity, description):
 
     logger.info("Generating API request to create schema.table: {}.{}".format(table, entity))
     entity = AtlanTable(integration_type="DynamoDb",
-                       name=entity,
-                       qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(table,entity),
-                       description=description)
+                        name=entity,
+                        qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(table, entity),
+                        description=description)
     e_payload = AtlanTableSerializer()
     entity_payload = e_payload.serialize(entity)
 
@@ -64,7 +64,3 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     create_atlan_dynamodb_entity(options.table, options.entity, options.description)
-
-
-
-
