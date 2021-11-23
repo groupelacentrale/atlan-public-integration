@@ -18,6 +18,7 @@ if __name__ == '__main__':
     # load manifest
     source_data = AtlanSourceFile(utils.get_manifest_path(), sep=",")
     source_data.load_csv()
+
     for index, row in source_data.assets_def.iterrows():
         table = row['Table']
         path = utils.get_path(table)
@@ -27,7 +28,23 @@ if __name__ == '__main__':
         validate(path)
         logger.info("Creating table={}, entity={}, description={}".format(table, entity, description))
         create_table(table, entity, description)
-        logger.info("Creating columns for table={}".format(table))
-        create_atlan_columns(path)
-        create_atlan_column_lineage(path, "DynamoDb")
-        logger.info("the job finished with success")
+
+    tables_set = set()
+    for index, row in source_data.assets_def.iterrows():
+        table = row['Table']
+        path = utils.get_path(table)
+        if table not in tables_set:
+            logger.info("Creating columns for table={}".format(table))
+            create_atlan_columns(path)
+            tables_set.add(table)
+
+    tables_set_l = set()
+    for index, row in source_data.assets_def.iterrows():
+        table = row['Table']
+        path = utils.get_path(table)
+        if table not in tables_set_l:
+            logger.info("Creating lineage for table={}".format(table))
+            create_atlan_column_lineage(path, "DynamoDb")
+            tables_set_l.add(table)
+
+    logger.info("the job finished with success")
