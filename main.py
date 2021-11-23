@@ -29,5 +29,5 @@ if __name__ == '__main__':
         create_table(path, entity, description)
         logger.info("Creating columns for table={}".format(table))
         create_atlan_columns(path)
-        # create_atlan_column_lineage(path, "DynamoDb")
+        create_atlan_column_lineage(path, "DynamoDb")
         logger.info("the job finished with success")
