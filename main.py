@@ -34,7 +34,7 @@ if __name__ == '__main__':
     for table in tables_set:
         path = utils.get_path(table)
         logger.info("Validating the csv file of the table {}".format(table))
-        validate(path)
+        validate(path, 'DynamoDb')
 
     logger.info("******* Creating columns")
     for table in tables_set:
