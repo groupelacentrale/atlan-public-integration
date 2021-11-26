@@ -38,7 +38,7 @@ def validate_atlan_source_file(path_table_doc,integration_type, delimiter=","):
     # TODO: add validation step for other integration types as they become supported
     if integration_type == 'DynamoDb':
         validation_source_file.validate_data_type_values(template_conf.params["DynamoDbDataTypes"])
-        print("OK: source file datatypes are all valid values for {}".format(options.integration_type))
+        print("OK: source file datatypes are all valid values for {}".format(integration_type))
     else:
         pass
 
