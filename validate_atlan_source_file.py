@@ -13,9 +13,11 @@ import os
 import logging
 from atlanapi.atlanutils import AtlanConfig, AtlanSourceFile, SourceFileValidator
 from optparse import OptionParser
+
 logger = logging.getLogger('main_logger')
 
-def validate_atlan_source_file(path_table_doc, delimiter=","):
+
+def validate_atlan_source_file(path_table_doc,integration_type, delimiter=","):
     logger.info("Loading header template...")
     template_conf = AtlanConfig(os.path.join("/opt/app/config/template_source_file.yaml"))
     template_conf.load_yaml_configs()
@@ -33,8 +35,8 @@ def validate_atlan_source_file(path_table_doc, delimiter=","):
 
     # Add conditions for different integration types as they become supported (e.g., glue)
     logger.info("Validating data type values for source columns")
-    #TODO: add validation step for other integration types as they become supported
-    if options.integration_type == 'DynamoDb':
+    # TODO: add validation step for other integration types as they become supported
+    if integration_type == 'DynamoDb':
         validation_source_file.validate_data_type_values(template_conf.params["DynamoDbDataTypes"])
         print("OK: source file datatypes are all valid values for {}".format(options.integration_type))
     else:
@@ -46,7 +48,8 @@ if __name__ == '__main__':
     parser.set_defaults(integration_type="DynamoDb", delimiter=",")
     parser.add_option("-p", "--path", help="path of table definition of the DynamoDB table -> Atlan Schema")
     parser.add_option("-i", "--integration_type", choices=['DynamoDb', 'glue'],
-                      help="Atlan source integration type: ('DynamoDb', 'glue'). To come: 'Redshift', 'Tableau'). Default=DynamoDb")
+                      help="Atlan source integration type: ('DynamoDb', 'glue'). To come: 'Redshift', 'Tableau'). "
+                           "Default=DynamoDb")
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 
