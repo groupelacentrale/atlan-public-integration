@@ -50,4 +50,4 @@ if __name__ == '__main__':
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 
-    validate_atlan_source_file(options.path, options.delimiter)
+    validate_atlan_source_file(options.path, options.integration_type, options.delimiter)
