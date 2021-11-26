@@ -102,6 +102,6 @@ if __name__ == '__main__':
         os.makedirs("logs")
 
     logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(message)s',
+                        format='%(asctime)s      :: %(message)s',
                         filename=os.path.join('logs', 'delete-table-and-all-columns.log'))
     delete_atlan_table_and_all_columns(sys.argv[1:])
