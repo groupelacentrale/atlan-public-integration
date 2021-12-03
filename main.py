@@ -23,10 +23,10 @@ if __name__ == '__main__':
     tables_set = set()
     logger.info("******* Creating entities")
     for index, row in source_data.assets_def.iterrows():
-        table_name = row['Table']
+        table_name = row['Schema']
         integration_type = row['Integration Type']
-        entity = row['Entity']
-        description = row['Description']
+        entity = row['Table/Entity']
+        description = row['Summary (Description)']
         logger.info("Creating table={}, entity={}, description={}".format(table_name, entity, description))
         create_table(table_name, entity, description)
         tables_set.add(TableDefinition(table_name, integration_type))
