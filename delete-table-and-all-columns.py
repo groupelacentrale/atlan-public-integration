@@ -17,6 +17,7 @@ import sys
 from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
 from atlanapi.atlanutils import AtlanApiRequest, AtlanConfig
 from optparse import OptionParser
+from ApiConfig import create_api_config
 
 def delete_atlan_table_and_all_columns(args):
 
@@ -26,24 +27,23 @@ def delete_atlan_table_and_all_columns(args):
     (options, args) = parser.parse_args()
 
     logging.info("Loading API configs...")
-    api_conf = AtlanConfig(os.path.join("config/api_config.yaml"))
-    api_conf.load_yaml_configs()
+    api_conf = create_api_config()
 
     logging.info("Searching for table metadata for {}.{}".format(options.schema, options.table))
     qual_name = "{}/{}".format(options.schema, options.table)
     query = AtlanQuery(qual_name)
     query_payload = AtlanQuerySerializer()
-    query_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.params["instance"])
+    query_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
     payload = query_payload.serialize(query)
 
     headers = {
         'Content-Type': 'application/json;charset=utf-8',
-        'APIKEY': api_conf.params["api_key"]
+        'APIKEY': api_conf.api_key
     }
     atlan_api_query_request_object = AtlanApiRequest("POST", query_url, headers, payload)
     query_response = atlan_api_query_request_object.send_atlan_request()
 
-
+    print(query_response.text)
     t = json.loads(query_response.text)
 
     #TODO: add try to make sure there is at least one result and one result only

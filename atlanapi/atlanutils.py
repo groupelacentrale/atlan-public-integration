@@ -25,12 +25,16 @@ class AtlanApiRequest:
             print("{} successful: {}\n{}".format(self.request_type, api_response.status_code, api_response.text))
         except requests.exceptions.HTTPError as errh:
             print(errh)
+            raise errh
         except requests.exceptions.ConnectionError as errc:
             print(errc)
+            raise errc
         except requests.exceptions.Timeout as errt:
             print(errt)
+            raise errt
         except requests.exceptions.RequestException as err:
             print(err)
+            raise err
         return api_response
 
 
