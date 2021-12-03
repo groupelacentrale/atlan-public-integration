@@ -5,7 +5,7 @@ class TableDefinition(object):
     def __init__(self, name, integration_type):
         self.name = name
         self.integration_type = integration_type.lower()
-        self.path = utils.get_path(self.name, self.integration_type)
+        self.path = utils.get_path(self.integration_type, self.name)
 
     def __hash__(self):
         return hash((self.name, self.integration_type))
