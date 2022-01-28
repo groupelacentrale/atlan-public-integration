@@ -118,3 +118,18 @@ Example:
 ````python
 python delete-table-and-all-columns.py -s "default" -t "pn-da-all"
 ````
+
+
+### delete-schema.py
+A script to delete an Atlan Schema if no connected tables are present.  
+NOTE: Originally this was integrated into the script to delete-table-and-all-columns.py, but because 
+of the delay to delete the table, and the schema will not be deleted if there are connected tables 
+detected, at this point the two scripts remain separate.
+
+The script is run using the following arguments:
+-s --schema : name of the database schema
+
+Example: 
+````python
+python delete-schema.py -s "test-schema"
+````
