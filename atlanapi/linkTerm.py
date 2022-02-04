@@ -4,6 +4,7 @@ from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
+from utils import get_column_qualified_name
 
 api_conf = create_api_config()
 headers = {
@@ -14,8 +15,7 @@ headers = {
 
 def link_term(table_name, entity, asset_name, term, glossary):
     term_guid = get_glossary_term_guid_by_name(term, glossary)
-    asset_qualified_name = "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}".format(
-        table_name, entity, asset_name)
+    asset_qualified_name = get_column_qualified_name(table_name, entity, asset_name)
     asset_info = get_asset_guid_by_qualified_name(asset_qualified_name)
     asset_guid = asset_info['guid']
     payload = json.dumps([{"guid": asset_guid}])

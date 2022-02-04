@@ -22,6 +22,8 @@ import utils
 import  logging
 
 #TODO: add support for 'Redshift', 'Tableau' by determining their qualified name prefix.
+from utils import get_column_qualified_name, construct_qualified_name_prefix
+
 SUPPORTED_INTEGRATIONS = ["DynamoDb", "glue"]
 
 logger = logging.getLogger('main_logger')
@@ -56,7 +58,7 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     for index, row in lineage_rows.iterrows():
         if row["Lineage Type (Source / Target)"] != "":
             search_prefix = construct_qualified_name_prefix(row["Lineage Integration Type"])
-            query = AtlanQuery(qualified_name=search_prefix.format(row["Lineage Schema/Database"], row["Lineage Table/Entity"], row["Lineage Column/Attribute"]), asset_type="AtlanColumn")
+            query = AtlanQuery(qualified_name=get_column_qualified_name(row["Lineage Schema/Database"], row["Lineage Table/Entity"], row["Lineage Column/Attribute"], search_prefix), asset_type="AtlanColumn")
             q_payload = AtlanQuerySerializer()
             query_payload = q_payload.serialize(query)
             query_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
@@ -88,10 +90,10 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
                 col_lineage = AtlanColumnLineage(source_integration_type=row["Lineage Integration Type"],
                                                  source_qualified_name=row["lineage_full_qualified_name"],
                                                  target_integration_type=integration_type,
-                                                 target_qualified_name=row["integration_prefix"].format(table_name, row["Table/Entity"], row["Column/Attribute"]))
+                                                 target_qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row["Column/Attribute"], row["integration_prefix"]))
             elif row["Lineage Type (Source / Target)"] == "Target":
                 col_lineage = AtlanColumnLineage(source_integration_type=integration_type,
-                                                 source_qualified_name=row["integration_prefix"].format(table_name, row["Table/Entity"], row["Column/Attribute"]),
+                                                 source_qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row["Column/Attribute"], row["integration_prefix"]),
                                                  target_integration_type=row["Lineage Integration Type"],
                                                  target_qualified_name=row["lineage_full_qualified_name"])
 
@@ -124,14 +126,6 @@ def get_qualified_name(dict, key_present):
         return None
 
 
-def construct_qualified_name_prefix(integration_type):
-    if integration_type == "DynamoDb":
-        prefix = "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}"
-    elif integration_type == "glue":
-        prefix = "{}/default/{}/{}"
-    return prefix
-
-
 if __name__ == '__main__':
     parser = OptionParser(usage='usage: %prog [options] arguments')
     parser.set_defaults(delimiter=",")
@@ -140,4 +134,4 @@ if __name__ == '__main__':
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 
-    create_atlan_column_lineage(options.path, options.delimiter, options.integration_type)
+    create_atlan_column_lineage(options.path, options.integration_type, options.delimiter)

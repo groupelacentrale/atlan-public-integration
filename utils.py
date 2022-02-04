@@ -26,3 +26,23 @@ def get_path(integration_type, table_name):
 
 def get_manifest_path():
     return os.path.join(BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME)
+
+
+def get_column_qualified_name(table_name, entity_name, column_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):
+    return prefix + "{}/{}/{}".format(table_name, entity_name, column_name).lower()
+
+
+def get_entity_qualified_name(table_name, entity_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):
+    return prefix + "{}/{}".format(table_name, entity_name).lower()
+
+
+def get_schema_qualified_name(table_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):
+    return prefix + "{}".format(table_name).lower()
+
+
+def construct_qualified_name_prefix(integration_type):
+    if integration_type == "DynamoDb":
+        prefix = "dynamodb/dynamodb.atlan.com/dynamo_db/"
+    elif integration_type == "glue":
+        prefix = "{}/default/"
+    return prefix

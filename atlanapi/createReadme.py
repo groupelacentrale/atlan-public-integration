@@ -3,6 +3,7 @@ import json
 from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from utils import get_column_qualified_name
 
 api_conf = create_api_config()
 readme_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity'.format(api_conf.instance)
@@ -13,8 +14,7 @@ headers = {
 
 
 def create_readme(table_name, entity, asset_name, readme_content):
-    asset_qualified_name = "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}".format(
-        table_name, entity, asset_name)
+    asset_qualified_name = get_column_qualified_name(table_name, entity, asset_name)
     asset_info = get_asset_guid_by_qualified_name(asset_qualified_name)
     asset_guid = asset_info['guid']
     column_info = {

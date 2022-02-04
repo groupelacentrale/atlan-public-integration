@@ -22,11 +22,12 @@ from optparse import OptionParser
 from ApiConfig import create_api_config
 import utils
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from utils import get_column_qualified_name, get_entity_qualified_name
 
 logger = logging.getLogger('main_logger')
 
-def create_atlan_columns(path, delimiter=",", includes_entity=False):
 
+def create_atlan_columns(path, delimiter=",", includes_entity=False):
     logger.info("Load table definition...")
     source_data = AtlanSourceFile(path, sep=delimiter)
     table_name = utils.get_table_name(path)
@@ -37,7 +38,8 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
     # Generate columns that are combinations of multiple variables
 
     if includes_entity == True:
-        source_data.assets_def["Name"] = source_data.assets_def["Table/Entity"] + "." + source_data.assets_def["Column/Attribute"]
+        source_data.assets_def["Name"] = source_data.assets_def["Table/Entity"] + "." + source_data.assets_def[
+            "Column/Attribute"]
         source_data.assets_def = source_data.assets_def.drop(columns=["Table/Entity"])
     else:
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
@@ -51,7 +53,7 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
                           name=row['Name'],
                           data_type=row['Type'],
                           description=row['Summary (Description)'],
-                          qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}".format(table_name, row["Table/Entity"], row['Name']))
+                          qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row['Name']))
         generator = AtlanColumnEntityGenerator()
         e = generator.create_column_entity(col)
         entity_items.append(e)
@@ -59,7 +61,8 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
 
     # Deleting columns no longer mentioned in csv file
     for entity in entities:
-        asset_info = get_asset_guid_by_qualified_name("dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(table_name, entity))
+        asset_info = get_asset_guid_by_qualified_name(
+            get_entity_qualified_name(table_name, entity))
         existing_columns = get_entity_columns(asset_info['guid'])
         for existing_column in existing_columns:
             if existing_column not in entities[entity]:
@@ -87,7 +90,6 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
             create_readme(table_name, row["Table/Entity"], row['Name'], row['Readme'])
         if row['Term'] and row['Glossary']:
             link_term(table_name, row["Table/Entity"], row['Name'], row['Term'], row["Glossary"])
-
 
 
 if __name__ == '__main__':

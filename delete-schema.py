@@ -13,15 +13,18 @@ import sys
 
 from ApiConfig import create_api_config
 from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
-from atlanapi.atlanutils import AtlanApiRequest, AtlanConfig
+from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
+
+from utils import construct_qualified_name_prefix
+
 
 def delete_schema(args):
 
     parser = OptionParser(usage='usage: %prog [options] arguments')
-    parser.set_defaults(integration_type="dynamodb")
+    parser.set_defaults(integration_type="DynamoDb")
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
-    parser.add_option("-i", "--integration_type", choices=['dynamodb', 'glue'], help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
+    parser.add_option("-i", "--integration_type", choices=['DynamoDb', 'glue'], help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
     (options, args) = parser.parse_args()
 
     logging.info("Loading API configs...")
@@ -79,13 +82,6 @@ def delete_schema(args):
         print("There are still {} tables attached to the schema, so skipping the step to delete the schema: {}".format(response_count, options.schema))
         #TODO: print out list of attached tables.
 
-
-def construct_qualified_name_prefix(integration_type):
-    if integration_type == "dynamodb":
-        prefix = "dynamodb/dynamodb.atlan.com/dynamo_db/{}"
-    elif integration_type == "glue":
-        prefix = "{}/default/{}"
-    return prefix
 
 def validate_single_return_response(response_count):
     """

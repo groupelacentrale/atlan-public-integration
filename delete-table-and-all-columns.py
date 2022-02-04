@@ -11,11 +11,10 @@ Usage Options:
 
 import json
 import os
-import requests
 import sys
 
 from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
-from atlanapi.atlanutils import AtlanApiRequest, AtlanConfig
+from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 from ApiConfig import create_api_config
 
@@ -77,7 +76,6 @@ def delete_atlan_table_and_all_columns(args):
             atlan_api_column_delete_request_object = AtlanApiRequest("DELETE", d_url, d_headers, d_payload)
             column_delete_query_response = atlan_api_column_delete_request_object.send_atlan_request()
 
-           #  response = requests.request("DELETE", d_url, headers=d_headers, data=d_payload)
             logging.info("API response: {}".format(column_delete_query_response.text))
 
         logging.info("Deleting table: {}.{}".format(options.schema, options.table))

@@ -16,6 +16,7 @@ from atlanapi.createschema import AtlanSchema, AtlanSchemaSerializer
 from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 from ApiConfig import create_api_config
+from utils import get_schema_qualified_name, get_entity_qualified_name
 
 logger = logging.getLogger('main_logger')
 
@@ -31,7 +32,7 @@ def create_atlan_dynamodb_entity(table, entity, description):
     logger.info("Generating API request to create schema so it is searchable: {}".format(table))
     schema = AtlanSchema(integration_type="DynamoDb",
                          name=table,
-                         qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}".format(table))
+                         qualified_name=get_schema_qualified_name(table))
     s_payload = AtlanSchemaSerializer()
     schema_payload = s_payload.serialize(schema)
 
@@ -43,7 +44,7 @@ def create_atlan_dynamodb_entity(table, entity, description):
     logger.info("Generating API request to create schema.table: {}.{}".format(table, entity))
     entity = AtlanTable(integration_type="DynamoDb",
                         name=entity,
-                        qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(table, entity),
+                        qualified_name=get_entity_qualified_name(table, entity),
                         description=description)
     e_payload = AtlanTableSerializer()
     entity_payload = e_payload.serialize(entity)
