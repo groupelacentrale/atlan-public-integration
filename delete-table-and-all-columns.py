@@ -56,9 +56,9 @@ def delete_atlan_table_and_all_columns(args):
         #TODO: create getcolumns class and instantiate here
         c_payload = {}
         c_headers = {
-            'APIKEY': api_conf.params["api_key"]
+            'APIKEY': api_conf.api_key
         }
-        c_url = "https://{}/api/metadata/atlas/tenants/default/search/relationship?guid={}&limit=1000&offset=0&relation=columns&excludeDeletedEntities=true&attributes=integrationType&attributes=name&attributes=dataType&attributes=description&sortBy=name&sortOrder=ASCENDING".format(api_conf.params["instance"], table_info["guid"])
+        c_url = "https://{}/api/metadata/atlas/tenants/default/search/relationship?guid={}&limit=1000&offset=0&relation=columns&excludeDeletedEntities=true&attributes=integrationType&attributes=name&attributes=dataType&attributes=description&sortBy=name&sortOrder=ASCENDING".format(api_conf.instance, table_info["guid"])
 
         atlan_api_column_query_request_object = AtlanApiRequest("GET", c_url, c_headers, c_payload)
         column_query_response = atlan_api_column_query_request_object.send_atlan_request()
@@ -67,11 +67,11 @@ def delete_atlan_table_and_all_columns(args):
         c = json.loads(column_query_response.text)
         for i in c["entities"]:
             logging.info("Deleting column guid: {}".format(i["guid"]))
-            d_url = "https://{}/api/metadata/atlas/tenants/default/entity/guid/{}?deleteType=HARD".format(api_conf.params["instance"], i["guid"])
+            d_url = "https://{}/api/metadata/atlas/tenants/default/entity/guid/{}?deleteType=HARD".format(api_conf.instance, i["guid"])
             d_payload = {}
             d_headers = {
                 'accept': 'application/json, text/plain, */*',
-                'APIKEY': api_conf.params["api_key"]
+                'APIKEY': api_conf.api_key
             }
 
             atlan_api_column_delete_request_object = AtlanApiRequest("DELETE", d_url, d_headers, d_payload)
@@ -81,11 +81,11 @@ def delete_atlan_table_and_all_columns(args):
             logging.info("API response: {}".format(column_delete_query_response.text))
 
         logging.info("Deleting table: {}.{}".format(options.schema, options.table))
-        dt_url = "https://{}/api/metadata/atlas/tenants/default/entity/guid/{}?deleteType=HARD".format(api_conf.params["instance"], table_info["guid"])
+        dt_url = "https://{}/api/metadata/atlas/tenants/default/entity/guid/{}?deleteType=HARD".format(api_conf.instance, table_info["guid"])
         dt_payload = {}
         dt_headers = {
             'accept': 'application/json, text/plain, */*',
-            'APIKEY': api_conf.params["api_key"]
+            'APIKEY': api_conf.api_key
         }
 
         atlan_api_table_delete_request_object = AtlanApiRequest("DELETE", dt_url, dt_headers, dt_payload)
