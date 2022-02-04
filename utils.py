@@ -2,8 +2,8 @@ import logging
 import sys
 import os
 
-BASE_PATH_ATLAN_DOCS = "/github/workspace/docs"
-MANIFEST_FILE_NAME = "data-catalogue-manifest.csv"
+BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
+MANIFEST_FILE_NAME = "manifest.csv"
 
 
 def setup_logger(logger_name, level=logging.INFO):
