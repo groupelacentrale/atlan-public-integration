@@ -45,4 +45,6 @@ def construct_qualified_name_prefix(integration_type):
         prefix = "dynamodb/dynamodb.atlan.com/dynamo_db/"
     elif integration_type == "glue":
         prefix = "{}/default/"
+    elif integration_type == "redshift":
+        prefix = ""
     return prefix
