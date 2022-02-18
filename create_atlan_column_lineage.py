@@ -24,7 +24,7 @@ import  logging
 #TODO: add support for 'Redshift', 'Tableau' by determining their qualified name prefix.
 from utils import get_column_qualified_name, construct_qualified_name_prefix
 
-SUPPORTED_INTEGRATIONS = ["DynamoDb", "glue"]
+SUPPORTED_INTEGRATIONS = ["DynamoDb", "glue", "redshift"]
 
 logger = logging.getLogger('main_logger')
 
