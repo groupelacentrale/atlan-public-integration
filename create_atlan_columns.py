@@ -89,7 +89,7 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
         if row['Readme']:
             create_readme(table_name, row["Table/Entity"], row['Name'], row['Readme'])
         if row['Term'] and row['Glossary']:
-            link_term(table_name, row["Table/Entity"], row['Name'], row['Term'], row["Glossary"])
+            link_term(table_name, row["Table/Entity"], row['Name'], row['Term'].strip(), row["Glossary"].strip())
 
 
 if __name__ == '__main__':

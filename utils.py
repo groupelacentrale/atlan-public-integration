@@ -28,8 +28,14 @@ def get_manifest_path():
     return os.path.join(BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME)
 
 
-def get_column_qualified_name(table_name, entity_name, column_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):
-    return prefix + "{}/{}/{}".format(table_name, entity_name, column_name).lower()
+def get_column_qualified_name(table_name, entity_name, column_name, integration_type="DynamoDb"):
+    if integration_type == "DynamoDb":
+        qualified_name = "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}"
+    elif integration_type == "glue":
+        qualified_name = "{}/default/{}/{}"
+    else:
+        raise Exception("Qualified name not supported yet for integration type {}".format(integration_type))
+    return qualified_name.format(table_name, entity_name, column_name).lower()
 
 
 def get_entity_qualified_name(table_name, entity_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):

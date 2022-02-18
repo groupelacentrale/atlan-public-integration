@@ -10,8 +10,6 @@ Usage Options:
 """
 
 import json
-import os
-import sys
 
 from atlanapi.createcolumnlineage import AtlanColumnLineage, AtlanColumnLineageEntityGenerator, AtlanColumnLineageSerializer
 from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
@@ -22,7 +20,7 @@ import utils
 import  logging
 
 #TODO: add support for 'Redshift', 'Tableau' by determining their qualified name prefix.
-from utils import get_column_qualified_name, construct_qualified_name_prefix
+from utils import get_column_qualified_name
 
 SUPPORTED_INTEGRATIONS = ["DynamoDb", "glue", "redshift"]
 
@@ -53,12 +51,10 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     logger.info("Searching to make sure lineage columns exist")
     k=[]
     full_qualified_name=[]
-    integ_prefix=[]
 
     for index, row in lineage_rows.iterrows():
         if row["Lineage Type (Source / Target)"] != "":
-            search_prefix = construct_qualified_name_prefix(row["Lineage Integration Type"])
-            query = AtlanQuery(qualified_name=get_column_qualified_name(row["Lineage Schema/Database"], row["Lineage Table/Entity"], row["Lineage Column/Attribute"], search_prefix), asset_type="AtlanColumn")
+            query = AtlanQuery(qualified_name=get_column_qualified_name(row["Lineage Schema/Database"], row["Lineage Table/Entity"], row["Lineage Column/Attribute"], row["Lineage Integration Type"]), asset_type="AtlanColumn")
             q_payload = AtlanQuerySerializer()
             query_payload = q_payload.serialize(query)
             query_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
@@ -68,13 +64,10 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
             t = json.loads(query_response.text)
             key_present = check_key(t, 'entities')
             f_qualified_name = get_qualified_name(t, key_present)
-            row_integ_prefix = construct_qualified_name_prefix(integration_type)
             k.append(key_present)
             full_qualified_name.append(f_qualified_name)
-            integ_prefix.append(row_integ_prefix)
     lineage_rows.insert(2, "column_present_in_atlan", k)
     lineage_rows.insert(3, "lineage_full_qualified_name", full_qualified_name)
-    lineage_rows.insert(4, "integration_prefix", integ_prefix)
 
     lineage_rows_verified = lineage_rows[lineage_rows.column_present_in_atlan.eq('true')]
     lineage_rows_not_verified = lineage_rows[lineage_rows.column_present_in_atlan.eq('false')]
@@ -90,10 +83,11 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
                 col_lineage = AtlanColumnLineage(source_integration_type=row["Lineage Integration Type"],
                                                  source_qualified_name=row["lineage_full_qualified_name"],
                                                  target_integration_type=integration_type,
-                                                 target_qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row["Column/Attribute"], row["integration_prefix"]))
+                                                 target_qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row["Column/Attribute"], integration_type))
+
             elif row["Lineage Type (Source / Target)"] == "Target":
                 col_lineage = AtlanColumnLineage(source_integration_type=integration_type,
-                                                 source_qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row["Column/Attribute"], row["integration_prefix"]),
+                                                 source_qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row["Column/Attribute"], integration_type),
                                                  target_integration_type=row["Lineage Integration Type"],
                                                  target_qualified_name=row["lineage_full_qualified_name"])
 
