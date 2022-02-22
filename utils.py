@@ -33,6 +33,8 @@ def get_column_qualified_name(table_name, entity_name, column_name, integration_
         qualified_name = "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}"
     elif integration_type == "glue":
         qualified_name = "{}/default/{}/{}"
+    elif integration_type =="redshift":
+        qualified_name = "{}/{}/{}"
     else:
         raise Exception("Qualified name not supported yet for integration type {}".format(integration_type))
     return qualified_name.format(table_name, entity_name, column_name).lower()
