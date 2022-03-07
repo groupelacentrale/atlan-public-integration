@@ -1,29 +1,30 @@
 import json
 
-class AtlanColumnLineage:
-    def __init__(self, source_integration_type, source_qualified_name, target_integration_type, target_qualified_name):
+class AtlanLineage:
+    def __init__(self, source_integration_type, source_qualified_name, target_integration_type, target_qualified_name, asset_type):
         self.source_integration_type = source_integration_type
         self.source_qualified_name = source_qualified_name
         self.target_integration_type = target_integration_type
         self.target_qualified_name = target_qualified_name
+        self.asset_type = asset_type
         self._lineage_qualified_name = "{}/{}/{}/{}".format(source_integration_type, source_qualified_name, target_integration_type, target_qualified_name)
         self._lineage_name = "{}-{} Transformation".format(source_integration_type, target_integration_type)
 
 
-class AtlanColumnLineageEntityGenerator:
+class AtlanLineageEntityGenerator:
     """
     Returns a dictionary entry for a single column-column lineage definition
     """
-    def create_column_lineage_entity(self, atlancolumnlineage):
-        column_lineage_info = {
+    def create_lineage_entity(self, atlanlineage):
+        lineage_info = {
                 "typeName": "AtlanProcess",
                 "attributes": {
-                    "qualifiedName": atlancolumnlineage._lineage_qualified_name,
-                    "name": atlancolumnlineage._lineage_name,
+                    "qualifiedName": atlanlineage._lineage_qualified_name,
+                    "name": atlanlineage._lineage_name,
                     "processConfig": [
                         {
                             "_data_type": "string",
-                            "_value": atlancolumnlineage._lineage_name,
+                            "_value": atlanlineage._lineage_name,
                             "_key": "process_type"
                         },
                         {
@@ -32,30 +33,30 @@ class AtlanColumnLineageEntityGenerator:
                             "_key": "query"
                         }
                     ],
-                    "description": atlancolumnlineage._lineage_name,
+                    "description": atlanlineage._lineage_name,
                     "typeName": "AtlanProcess",
                     "inputs": [
                         {
                             "uniqueAttributes": {
-                                "qualifiedName": atlancolumnlineage.source_qualified_name
+                                "qualifiedName": atlanlineage.source_qualified_name
                             },
-                            "typeName": "AtlanColumn"
+                            "typeName": atlanlineage.asset_type
                         }
                     ],
                     "outputs": [
                         {
                             "uniqueAttributes": {
-                                "qualifiedName": atlancolumnlineage.target_qualified_name
+                                "qualifiedName": atlanlineage.target_qualified_name
                             },
-                            "typeName": "AtlanColumn"
+                            "typeName": atlanlineage.asset_type
                         }
                     ]
                 }
         }
-        return column_lineage_info
+        return lineage_info
 
 
-class AtlanColumnLineageSerializer:
-    def serialize(self, atlanlineagecolumns):
-        payload = {"entities": atlanlineagecolumns}
+class AtlanLineageSerializer:
+    def serialize(self, atlanlineageentities):
+        payload = {"entities": atlanlineageentities}
         return json.dumps(payload)
