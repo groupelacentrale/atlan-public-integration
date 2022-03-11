@@ -56,3 +56,18 @@ def construct_qualified_name_prefix(integration_type):
     elif integration_type == "redshift":
         prefix = ""
     return prefix
+
+
+def check_key(dict, key):
+    if key in dict.keys():
+        key_present = 'true'
+    else:
+        key_present = 'false'
+    return key_present
+
+
+def get_qualified_name(dict, key_present):
+    if key_present == 'true':
+        return dict['entities'][0]['attributes']['qualifiedName']
+    else:
+        return None
