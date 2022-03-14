@@ -16,15 +16,16 @@ from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
 from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 
+from model.Asset import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
 from utils import construct_qualified_name_prefix
 
 
 def delete_schema(args):
 
     parser = OptionParser(usage='usage: %prog [options] arguments')
-    parser.set_defaults(integration_type="DynamoDb")
+    parser.set_defaults(integration_type=INTEGRATION_TYPE_DYNAMO_DB)
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
-    parser.add_option("-i", "--integration_type", choices=['DynamoDb', 'glue'], help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
+    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE], help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
     (options, args) = parser.parse_args()
 
     logging.info("Loading API configs...")

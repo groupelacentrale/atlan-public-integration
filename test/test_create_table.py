@@ -1,29 +1,27 @@
 import json
-from atlanapi.createtable import AtlanTable, AtlanTableSerializer
+from model.Asset import Entity, INTEGRATION_TYPE_DYNAMO_DB
 
 TABLE = "test_table"
 ENTITY = "test_entity"
-INTEGRATION_TYPE = "DynamoDb"
+INTEGRATION_TYPE = INTEGRATION_TYPE_DYNAMO_DB
 DESCRIPTION = "Example Description"
 DATA = {"entities": [
-            {
-                "typeName": "AtlanTable",
-                "attributes": {
-                    "qualifiedName": "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(TABLE, ENTITY),
-                    "description": DESCRIPTION,
-                    "name": ENTITY,
-                    "integrationType": INTEGRATION_TYPE,
-                    "typeName": "AtlanTable"
-                }
-            }
-        ]}
+    {
+        "typeName": "AtlanTable",
+        "attributes": {
+            "qualifiedName": "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(TABLE, ENTITY),
+            "description": DESCRIPTION,
+            "name": ENTITY,
+            "integrationType": INTEGRATION_TYPE,
+            "typeName": "AtlanTable"
+        }
+    }
+]}
+
 
 def test_create_table():
-    schema = AtlanTable(integration_type="DynamoDb",
-                         name=ENTITY,
-                         description = DESCRIPTION,
-                         qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}".format(TABLE, ENTITY))
-    s_payload = AtlanTableSerializer()
-    schema_payload = s_payload.serialize(schema)
-    assert json.dumps(DATA) == schema_payload
-
+    schema = Entity(integration_type=INTEGRATION_TYPE_DYNAMO_DB,
+                    entity_name=ENTITY,
+                    description=DESCRIPTION)
+    s_payload = schema.get_creation_payload()
+    assert json.dumps(DATA) == s_payload

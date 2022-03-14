@@ -1,8 +1,8 @@
 import json
-from atlanapi.createschema import AtlanSchema, AtlanSchemaSerializer
+from model.Asset import Schema, INTEGRATION_TYPE_DYNAMO_DB
 
 TABLE = "test"
-INTEGRATION_TYPE = "DynamoDb"
+INTEGRATION_TYPE = INTEGRATION_TYPE_DYNAMO_DB
 DATA = {"entities": [
             {
                 "typeName": "AtlanSchema",
@@ -17,9 +17,7 @@ DATA = {"entities": [
     ]}
 
 def test_create_schema():
-    schema = AtlanSchema(integration_type=INTEGRATION_TYPE,
-                         name=TABLE,
-                         qualified_name="dynamodb/dynamodb.atlan.com/dynamo_db/{}".format(TABLE))
-    s_payload = AtlanSchemaSerializer()
-    schema_payload = s_payload.serialize(schema)
-    assert json.dumps(DATA) == schema_payload
+    schema = Schema(integration_type=INTEGRATION_TYPE,
+                         schema_name=TABLE)
+    s_payload = schema.get_creation_payload()
+    assert json.dumps(DATA) == s_payload

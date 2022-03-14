@@ -14,12 +14,14 @@ import logging
 from atlanapi.atlanutils import AtlanConfig, AtlanSourceFile, SourceFileValidator
 from optparse import OptionParser
 
+from utils import get_template_source_file
+
 logger = logging.getLogger('main_logger')
 
 
 def validate_atlan_source_file(path_table_doc, integration_type, delimiter=","):
     logger.info("Loading header template...")
-    template_conf = AtlanConfig(os.path.join("/opt/app/config/template_source_file.yaml"))
+    template_conf = AtlanConfig(get_template_source_file())
     template_conf.load_yaml_configs()
 
     logger.info("Load table definition...")

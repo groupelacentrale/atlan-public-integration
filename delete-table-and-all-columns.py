@@ -17,6 +17,9 @@ from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
 from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 from ApiConfig import create_api_config
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from model.Asset import Entity
+
 
 def delete_atlan_table_and_all_columns(args):
 
@@ -29,24 +32,9 @@ def delete_atlan_table_and_all_columns(args):
     api_conf = create_api_config()
 
     logging.info("Searching for table metadata for {}.{}".format(options.schema, options.table))
-    qual_name = "{}/{}".format(options.schema, options.table)
-    query = AtlanQuery(qual_name)
-    query_payload = AtlanQuerySerializer()
-    query_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
-    payload = query_payload.serialize(query)
 
-    headers = {
-        'Content-Type': 'application/json;charset=utf-8',
-        'APIKEY': api_conf.api_key
-    }
-    atlan_api_query_request_object = AtlanApiRequest("POST", query_url, headers, payload)
-    query_response = atlan_api_query_request_object.send_atlan_request()
-
-    print(query_response.text)
-    t = json.loads(query_response.text)
-
-    #TODO: add try to make sure there is at least one result and one result only
-    table_info = t["entities"][0]
+    entity = Entity(schema_name=options.schema, entity_name=options.table)
+    table_info = get_asset_guid_by_qualified_name(entity.get_qualified_name(), 'AtlanTable')
 
     print('Delete the table {} (guid={}) and all its columns? Proceed (y/n)?'.format(table_info["attributes"]["qualifiedName"], table_info["guid"]))
     x = input()

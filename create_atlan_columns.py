@@ -10,19 +10,15 @@ Usage Options:
 """
 
 import logging
-import time
+from optparse import OptionParser
 
-from atlanapi.createReadme import create_readme
+import utils
+from atlanapi.atlanutils import AtlanSourceFile
+from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
 from atlanapi.get_entity_columns import get_entity_columns
-from atlanapi.linkTerm import link_term
-from atlanapi.createcolumn import AtlanColumn, AtlanColumnEntityGenerator, AtlanColumnSerializer
-from atlanapi.atlanutils import AtlanApiRequest, AtlanSourceFile
-from optparse import OptionParser
-from ApiConfig import create_api_config
-import utils
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from utils import get_column_qualified_name, get_entity_qualified_name
+from model.Asset import Column, Entity, INTEGRATION_TYPE_DYNAMO_DB
 
 logger = logging.getLogger('main_logger')
 
@@ -33,11 +29,9 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
     table_name = utils.get_table_name(path)
     source_data.load_csv()
 
-    api_conf = create_api_config()
-
     # Generate columns that are combinations of multiple variables
 
-    if includes_entity == True:
+    if includes_entity:
         source_data.assets_def["Name"] = source_data.assets_def["Table/Entity"] + "." + source_data.assets_def[
             "Column/Attribute"]
         source_data.assets_def = source_data.assets_def.drop(columns=["Table/Entity"])
@@ -45,51 +39,34 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
 
     logger.info("Generating API request to create columns for table: {}".format(table_name))
-    entity_items = []
     entities = {entity: [] for entity in source_data.assets_def["Table/Entity"]}
+    columns = []
 
     for index, row in source_data.assets_def.iterrows():
-        col = AtlanColumn(integration_type="DynamoDb",
-                          name=row['Name'],
-                          data_type=row['Type'],
-                          description=row['Summary (Description)'],
-                          qualified_name=get_column_qualified_name(table_name, row["Table/Entity"], row['Name']))
-        generator = AtlanColumnEntityGenerator()
-        e = generator.create_column_entity(col)
-        entity_items.append(e)
+        col = Column(integration_type=INTEGRATION_TYPE_DYNAMO_DB,
+                     entity_name=row["Table/Entity"],
+                     schema_name=table_name,
+                     column_name=row['Name'],
+                     data_type=row['Type'],
+                     description=row['Summary (Description)'],
+                     readme=row['Readme'],
+                     term=row['Term'].strip(),
+                     glossary=row['Glossary'].strip())
+        columns.append(col)
         entities[row["Table/Entity"]].append(row['Name'])
 
     # Deleting columns no longer mentioned in csv file
     for entity in entities:
-        asset_info = get_asset_guid_by_qualified_name(
-            get_entity_qualified_name(table_name, entity))
+        e = Entity(entity_name=entity, schema_name=table_name)
+        asset_info = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
         existing_columns = get_entity_columns(asset_info['guid'])
         for existing_column in existing_columns:
             if existing_column not in entities[entity]:
-                print('Deleting column {} ...'.format(existing_column))
+                logger.info('Deleting column {} ...'.format(existing_column))
                 delete_asset(existing_columns[existing_column])
-                print('{} Deleted successfully'.format(existing_column))
+                logger.info('{} Deleted successfully'.format(existing_column))
 
-    col_payload = AtlanColumnSerializer()
-    payload = col_payload.serialize(entity_items)
-
-    headers = {
-        'Content-Type': 'application/json',
-        'APIKEY': api_conf.api_key
-    }
-
-    logger.info("Posting API request")
-    column_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity/bulk'.format(api_conf.instance)
-    atlan_api_column_request_object = AtlanApiRequest("POST", column_post_url, headers, payload)
-    atlan_api_column_request_object.send_atlan_request()
-
-    time.sleep(1)
-
-    for index, row in source_data.assets_def.iterrows():
-        if row['Readme']:
-            create_readme(table_name, row["Table/Entity"], row['Name'], row['Readme'])
-        if row['Term'] and row['Glossary']:
-            link_term(table_name, row["Table/Entity"], row['Name'], row['Term'].strip(), row["Glossary"].strip())
+    create_assets(columns)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import json
 
+
 from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 
@@ -10,7 +11,8 @@ search_headers = {
     'APIKEY': api_conf.api_key
 }
 
-def get_asset_guid_by_qualified_name(qualified_name):
+
+def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
     query = json.dumps({
         "searchType": "BASIC",
         "typeName": "AtlanAsset",
@@ -18,23 +20,22 @@ def get_asset_guid_by_qualified_name(qualified_name):
         "includeClassificationAttributes": False,
         "includeSubClassifications": False,
         "includeSubTypes": True,
-        "limit": 300,
-        "offset": 0,
         "attributes": [],
-        "minScore": 100,
+        "limit": 20,
+        "offset": 0,
         "query": "",
         "entityFilters": {
             "condition": "AND",
             "criterion": [
                 {
-                    "condition": "OR",
-                    "criterion": [
-                        {
-                            "attributeName": "qualifiedName",
-                            "attributeValue": qualified_name,
-                            "operator": "eq"
-                        }
-                    ]
+                    "attributeName": "typeName",
+                    "attributeValue": asset_atlan_type,
+                    "operator": "eq"
+                },
+                {
+                    "attributeName": "qualifiedName",
+                    "attributeValue": qualified_name,
+                    "operator": "ENDS_WITH"
                 }
             ]
         }
@@ -46,4 +47,3 @@ def get_asset_guid_by_qualified_name(qualified_name):
     except:
         print("Cannot get search result for qualified_name '{}'".format(qualified_name))
         return {}
-

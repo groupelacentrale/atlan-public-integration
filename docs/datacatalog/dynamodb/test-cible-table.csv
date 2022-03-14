@@ -1,0 +1,8 @@
+Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
+test,autoviza.disabled,Boolean,autoviza state,true,Source,dynamodb,Rasalghul-DB-Prod-RasalghulLazarus-1TLXZBXNL1XCF,Classified,autoviza_disabled,,,
+test,autoviza.publicUrl,String,autoviza url,https://autoviza.fr/partner/report/ec236ca4-8159-44be-8a43-2c141bccb403/,Source,dynamodb,Rasalghul-DB-Prod-RasalghulLazarus-1TLXZBXNL1XCF,Classified,autoviza_publicUrl,,,
+test,id,String,,,,,,,,,,
+test,id__2,String,,,,,,,,,,
+test,name,String,,,,,,,,,,
+test,field,Boolean,,,,,,,,,,
+test,appels_estimes,Boolean,,<h2>Appels estimes</h2>,Target,Glue,data_datalake_prod,vitrines_configuration,customer_id,Appels estimés,Glossaire (FR),

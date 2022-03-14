@@ -1,3 +1,0 @@
-Integration Type,Database,Table,Entity,Description,Status
-DynamoDb,dynamo_db,test-table-cible,test,Test table with lineage for defining a DynamoDB table/entity,online
-DynamoDb,dynamo_db,test-table-source,test,Test table with lineage for defining a DynamoDB table/entity,online

@@ -1,8 +1,0 @@
-Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
-test,autoviza_available,Boolean,,,,,,,,,,
-test,autoviza_disabled,Boolean,test description,<h2>First readme</h2>,,,,,,,,
-test,id,String,,,,,,,,,,
-test,id__2,String,,,,,,,,,,
-test,name,String,,,,,,,,,,
-test,field,Boolean,,,,,,,,,,
-amine,appels_estimes,Boolean,,<h2>Appels estimes</h2>,,,,,,Appels estimés,Glossaire (FR),

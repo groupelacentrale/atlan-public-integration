@@ -2,6 +2,8 @@ import logging
 import sys
 import os
 
+from model.Asset import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
+
 BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
 MANIFEST_FILE_NAME = "manifest.csv"
 
@@ -21,53 +23,23 @@ def get_table_name(path):
 
 
 def get_path(integration_type, table_name):
-    return os.path.join(BASE_PATH_ATLAN_DOCS, integration_type, "{}.csv".format(table_name))
+    return os.path.join(BASE_PATH_ATLAN_DOCS, integration_type.lower(), "{}.csv".format(table_name))
 
 
 def get_manifest_path():
     return os.path.join(BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME)
 
 
-def get_column_qualified_name(table_name, entity_name, column_name, integration_type="DynamoDb"):
-    if integration_type == "DynamoDb":
-        qualified_name = "dynamodb/dynamodb.atlan.com/dynamo_db/{}/{}/{}"
-    elif integration_type == "glue":
-        qualified_name = "{}/default/{}/{}"
-    elif integration_type =="redshift":
-        qualified_name = "{}/{}/{}"
-    else:
-        raise Exception("Qualified name not supported yet for integration type {}".format(integration_type))
-    return qualified_name.format(table_name, entity_name, column_name).lower()
-
-
-def get_entity_qualified_name(table_name, entity_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):
-    return prefix + "{}/{}".format(table_name, entity_name).lower()
-
-
-def get_schema_qualified_name(table_name, prefix="dynamodb/dynamodb.atlan.com/dynamo_db/"):
-    return prefix + "{}".format(table_name).lower()
+def get_template_source_file():
+    script_dir = os.path.dirname(__file__)
+    return os.path.join(script_dir, "config/template_source_file.yaml")
 
 
 def construct_qualified_name_prefix(integration_type):
-    if integration_type == "DynamoDb":
+    if integration_type == INTEGRATION_TYPE_DYNAMO_DB:
         prefix = "dynamodb/dynamodb.atlan.com/dynamo_db/"
-    elif integration_type == "glue":
+    elif integration_type == INTEGRATION_TYPE_GLUE:
         prefix = "{}/default/"
-    elif integration_type == "redshift":
+    elif integration_type == INTEGRATION_TYPE_REDSHIFT:
         prefix = ""
     return prefix
-
-
-def check_key(dict, key):
-    if key in dict.keys():
-        key_present = 'true'
-    else:
-        key_present = 'false'
-    return key_present
-
-
-def get_qualified_name(dict, key_present):
-    if key_present == 'true':
-        return dict['entities'][0]['attributes']['qualifiedName']
-    else:
-        return None

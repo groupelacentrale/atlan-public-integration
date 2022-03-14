@@ -5,63 +5,65 @@ A script to read table metadata from a user-specified AWS Catalog database and t
 metadata, and write to an output .csv file that can be imported into Atlan, the internal Data Governance tool.
 
 Usage Options:
--t --table : name of the DynamoDB table --> Atlan Schema
--e --entity : name of the DynamoDB entity -> Atlan Table
--d --description : description of the entity
+-p --path : path to the manifest file
+-d --delimiter : Source file csv delimiter (default = ',')
 """
 
 import logging
-from atlanapi.createtable import AtlanTable, AtlanTableSerializer
-from atlanapi.createschema import AtlanSchema, AtlanSchemaSerializer
-from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
-from ApiConfig import create_api_config
-from utils import get_schema_qualified_name, get_entity_qualified_name
+
+from atlanapi.atlanutils import AtlanSourceFile
+from atlanapi.createAsset import create_assets
+from model.Asset import Schema, Entity
 
 logger = logging.getLogger('main_logger')
 
 
-def create_atlan_dynamodb_entity(table, entity, description):
-    api_conf = create_api_config()
+def create_atlan_schema_and_entity(path_to_manifest, sep=","):
 
-    headers = {
-        'Content-Type': 'application/json',
-        'APIKEY': api_conf.api_key
-    }
+    # load manifest
+    source_data = AtlanSourceFile(path_to_manifest, sep)
+    source_data.load_csv()
 
-    logger.info("Generating API request to create schema so it is searchable: {}".format(table))
-    schema = AtlanSchema(integration_type="DynamoDb",
-                         name=table,
-                         qualified_name=get_schema_qualified_name(table))
-    s_payload = AtlanSchemaSerializer()
-    schema_payload = s_payload.serialize(schema)
+    assets = []
+    all_schemas = {}
+    for index, row in source_data.assets_def.iterrows():
+        if row['Table/Entity']:
+            entity = Entity(entity_name=row['Table/Entity'],
+                            schema_name=row['Schema'],
+                            description=row['Summary (Description)'],
+                            readme=row['Readme'],
+                            term=row['Term'],
+                            glossary=row['Glossary'],
+                            integration_type=row['Integration Type'])
+            assets.append(entity)
+            # Create schema from entity row in case schema row is missing
+            schema = Schema(schema_name=row['Schema'], integration_type=row['Integration Type'])
+            assets.append(schema)
+        else:
+            schema = Schema(schema_name=row['Schema'],
+                            description=row['Summary (Description)'],
+                            readme=row['Readme'],
+                            term=row['Term'],
+                            glossary=row['Glossary'],
+                            integration_type=row['Integration Type'])
+            assets.append(schema)
 
-    logger.info("Posting API request to create schema")
-    schema_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity/bulk'.format(api_conf.instance)
-    atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, schema_payload)
-    atlan_api_schema_request_object.send_atlan_request()
+        all_schemas[row['Schema']] = row['Integration Type']
 
-    logger.info("Generating API request to create schema.table: {}.{}".format(table, entity))
-    entity = AtlanTable(integration_type="DynamoDb",
-                        name=entity,
-                        qualified_name=get_entity_qualified_name(table, entity),
-                        description=description)
-    e_payload = AtlanTableSerializer()
-    entity_payload = e_payload.serialize(entity)
+    logger.info("Creating Schemas and entities...")
+    create_assets(assets)
 
-    logger.info("Posting API request to create entity")
-    entity_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity/bulk'.format(api_conf.instance)
-    atlan_api_entity_request_object = AtlanApiRequest("POST", entity_post_url, headers, entity_payload)
-    atlan_api_entity_request_object.send_atlan_request()
+    return all_schemas
+
 
 
 if __name__ == '__main__':
     # TODO : Add option for integration type to generalize the script
     # NOTE: -t --table should be equal to the title of the source file csv (cf le Modèle Physique DynamoDb NOE)
     parser = OptionParser(usage='usage: %prog [options] arguments')
-    parser.add_option("-t", "--table", help="Name of the DynamoDB table -> Atlan Schema")
-    parser.add_option("-e", "--entity", help="Name of the DynamoDB entity -> Atlan Table")
-    parser.add_option("-d", "--description", help="Description of the entity")
+    parser.add_option("-p", "--path", help="path of the manifest file")
+    parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 
-    create_atlan_dynamodb_entity(options.table, options.entity, options.description)
+    create_atlan_dynamodb_entity(options.path, options.delimiter)

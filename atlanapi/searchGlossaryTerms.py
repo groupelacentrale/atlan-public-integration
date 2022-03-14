@@ -10,10 +10,12 @@ search_headers = {
     'APIKEY': api_conf.api_key
 }
 
+
 def matching_term_predicate(entity, glossary_term_name, glossary):
     return (entity["displayText"] == glossary_term_name and
             entity["attributes"]["anchor"]["uniqueAttributes"]["qualifiedName"] == "Glossary" and
             entity["attributes"]["anchor"]["uniqueAttributes"]["name"] == glossary)
+
 
 def get_glossary_term_guid_by_name(glossary_term_name, glossary):
     query = json.dumps({
@@ -36,10 +38,10 @@ def get_glossary_term_guid_by_name(glossary_term_name, glossary):
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
         result = next(
-            (entity for entity in search_response["entities"] if matching_term_predicate(entity, glossary_term_name, glossary)), None)
+            (entity for entity in search_response["entities"] if
+             matching_term_predicate(entity, glossary_term_name, glossary)), None)
         print(result)
         return result["guid"]
     except:
         print("Cannot get search result for glossary term '{}'".format(glossary_term_name))
         return {}
-

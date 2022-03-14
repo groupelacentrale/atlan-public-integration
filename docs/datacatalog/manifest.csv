@@ -1,0 +1,3 @@
+Integration Type,Database,Schema,Table/Entity,Summary (Description),Readme,Term,Glossary,Status
+DynamoDb,dynamo_db,test-cible-table,test,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),
+DynamoDb,dynamo_db,test-cible-table,"",Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online
