@@ -38,6 +38,9 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     columns = []
     for index, row in source_data.assets_def.iterrows():
         if not row["Lineage Integration Type"] or not row["Lineage Integration Type"].lower() in SUPPORTED_INTEGRATIONS:
+            if row["Lineage Integration Type"]:
+                logger.warning("Lineage integration type '{}' is not supported, supported integration types for "
+                               "lineage are {}".format(row["Lineage Integration Type"], SUPPORTED_INTEGRATIONS))
             continue
         if row["Lineage Type (Source / Target)"] != "":
             lineage = ColumnLineage(column=Column(schema_name=table_name,

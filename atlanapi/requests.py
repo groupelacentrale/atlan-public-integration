@@ -111,9 +111,9 @@ def create_entity_lineage_request_payload(asset):
         _lineage_name = "{}-{} Transformation".format(asset.entity.integration_type, asset.lineage_integration_type)
     else:
         _lineage_qualified_name = "{}/{}/{}/{}".format(asset.lineage_integration_type,
-                                                       asset.lineage_full_qualified_name(),
+                                                       asset.lineage_full_qualified_name,
                                                        asset.entity.integration_type,
-                                                       asset.entity.get_qualified_name)
+                                                       asset.entity.get_qualified_name())
         _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.entity.integration_type)
 
     return {
