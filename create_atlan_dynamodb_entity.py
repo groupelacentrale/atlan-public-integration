@@ -66,4 +66,4 @@ if __name__ == '__main__':
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 
-    create_atlan_dynamodb_entity(options.path, options.delimiter)
+    create_atlan_schema_and_entity(options.path, options.delimiter)
