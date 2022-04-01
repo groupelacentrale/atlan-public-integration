@@ -18,7 +18,8 @@ from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
 from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from model.Asset import Column, Entity, INTEGRATION_TYPE_DYNAMO_DB
+from model.Asset import Column, Entity
+from utils import INTEGRATION_TYPE_DYNAMO_DB
 
 logger = logging.getLogger('main_logger')
 

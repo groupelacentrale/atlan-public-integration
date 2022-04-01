@@ -1,5 +1,6 @@
 import json
-from model.Asset import Entity, INTEGRATION_TYPE_DYNAMO_DB
+from model.Asset import Entity
+from utils import INTEGRATION_TYPE_DYNAMO_DB
 
 TABLE = "test_table"
 ENTITY = "test_entity"

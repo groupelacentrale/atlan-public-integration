@@ -2,12 +2,7 @@ import json
 
 from atlanapi.requests import create_entity_lineage_request_payload, create_column_lineage_request_payload, \
     create_schema_request_payload, create_column_request_payload, create_entity_request_payload
-
-
-INTEGRATION_TYPE_DYNAMO_DB = 'dynamodb'
-INTEGRATION_TYPE_GLUE = 'glue'
-INTEGRATION_TYPE_REDSHIFT = 'redshift'
-
+from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
 
 class Column:
     def __init__(self, integration_type, schema_name, entity_name, column_name, data_type=None, description=None,

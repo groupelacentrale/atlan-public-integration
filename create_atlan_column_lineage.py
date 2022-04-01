@@ -18,8 +18,8 @@ from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
 # TODO: add support for 'Redshift', 'Tableau' by determining their qualified name prefix.
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from model.Asset import Column, ColumnLineage, EntityLineage, Entity, INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, \
-    INTEGRATION_TYPE_REDSHIFT
+from model.Asset import Column, ColumnLineage, EntityLineage, Entity
+from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
 
 SUPPORTED_INTEGRATIONS = [INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT]
 

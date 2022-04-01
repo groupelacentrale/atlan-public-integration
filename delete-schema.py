@@ -16,7 +16,7 @@ from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
 from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 
-from model.Asset import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
+from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
 from utils import construct_qualified_name_prefix
 
 

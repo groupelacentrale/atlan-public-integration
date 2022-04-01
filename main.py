@@ -4,7 +4,7 @@ import utils
 from create_atlan_column_lineage import create_atlan_column_lineage
 from create_atlan_columns import create_atlan_columns
 from create_atlan_dynamodb_entity import create_atlan_schema_and_entity
-from model.Asset import INTEGRATION_TYPE_DYNAMO_DB
+from utils import INTEGRATION_TYPE_DYNAMO_DB
 from validate_atlan_source_file import validate_atlan_source_file as validate
 
 if __name__ == '__main__':

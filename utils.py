@@ -2,11 +2,12 @@ import logging
 import sys
 import os
 
-from model.Asset import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
-
 BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
 MANIFEST_FILE_NAME = "manifest.csv"
 
+INTEGRATION_TYPE_DYNAMO_DB = 'dynamodb'
+INTEGRATION_TYPE_GLUE = 'glue'
+INTEGRATION_TYPE_REDSHIFT = 'redshift'
 
 def setup_logger(logger_name, level=logging.INFO):
     logger = logging.getLogger(logger_name)

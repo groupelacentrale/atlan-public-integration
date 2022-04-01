@@ -1,5 +1,12 @@
 import os
 
+from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
+
+GET_REQUEST_INTEGRATION_TYPE = {
+    INTEGRATION_TYPE_DYNAMO_DB: 'DynamoDb',
+    INTEGRATION_TYPE_GLUE: 'Glue',
+    INTEGRATION_TYPE_REDSHIFT: 'Redshift',
+}
 
 def create_column_request_payload(asset):
     return {
@@ -7,7 +14,7 @@ def create_column_request_payload(asset):
         "attributes": {
             "typeName": "AtlanColumn",
             "description": asset.description,
-            "integrationType": asset.integration_type,
+            "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
             "qualifiedName": asset.get_qualified_name(),
             "name": asset.column_name,
             "order": 1,
@@ -29,7 +36,7 @@ def create_entity_request_payload(asset):
             "qualifiedName": asset.get_qualified_name(),
             "description": asset.description,
             "name": asset.entity_name,
-            "integrationType": asset.integration_type,
+            "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
             "typeName": "AtlanTable"
         }
     }
@@ -41,7 +48,7 @@ def create_schema_request_payload(asset):
         "attributes": {
             "typeName": "AtlanSchema",
             "description": asset.description,
-            "integrationType": asset.integration_type,
+            "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
             "qualifiedName": asset.get_qualified_name(),
             "name": asset.schema_name
         }
