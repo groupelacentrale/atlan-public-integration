@@ -19,17 +19,18 @@ from model.Asset import Schema, Entity
 logger = logging.getLogger('main_logger')
 
 
-def create_atlan_schema_and_entity(path_to_manifest, sep=","):
+def create_atlan_schema_and_entities(path_to_manifest, sep=","):
 
     logger.info("Loading manifest...")
     source_data = AtlanSourceFile(path_to_manifest, sep)
     source_data.load_csv()
 
     assets = []
-    all_schemas = {}
+    assets_info = []
     for index, row in source_data.assets_def.iterrows():
         if row['Table/Entity']:
             entity = Entity(entity_name=row['Table/Entity'],
+                            database_name=row['Database'],
                             schema_name=row['Schema'],
                             description=row['Summary (Description)'],
                             readme=row['Readme'],
@@ -38,10 +39,19 @@ def create_atlan_schema_and_entity(path_to_manifest, sep=","):
                             integration_type=row['Integration Type'])
             assets.append(entity)
             # Create schema from entity row in case schema row is missing
-            schema = Schema(schema_name=row['Schema'], integration_type=row['Integration Type'])
+            schema = Schema(database_name=row['Database'],
+                            schema_name=row['Schema'],
+                            integration_type=row['Integration Type'])
             assets.append(schema)
+            assets_info.append({
+                'database_name': row['Database'],
+                'schema_name': row['Schema'],
+                'entity_name': row['Table/Entity'],
+                'integration_type': row['Integration Type']
+            })
         else:
-            schema = Schema(schema_name=row['Schema'],
+            schema = Schema(database_name=row['Database'],
+                            schema_name=row['Schema'],
                             description=row['Summary (Description)'],
                             readme=row['Readme'],
                             term=row['Term'],
@@ -49,11 +59,9 @@ def create_atlan_schema_and_entity(path_to_manifest, sep=","):
                             integration_type=row['Integration Type'])
             assets.append(schema)
 
-        all_schemas[row['Schema']] = row['Integration Type']
-
     create_assets(assets)
 
-    return all_schemas
+    return assets_info
 
 
 if __name__ == '__main__':
@@ -64,4 +72,4 @@ if __name__ == '__main__':
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 
-    create_atlan_schema_and_entity(options.path, options.delimiter)
+    create_atlan_schema_and_entities(options.path, options.delimiter)

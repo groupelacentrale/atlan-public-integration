@@ -7,6 +7,12 @@ inputs:
   atlan_instance:
     description: 'atlan instance'
     required: true
+  atlan_prod_aws_account_id:
+    description: 'AWS prod account ID'
+    required: true
+  atlan_redshift_server_url:
+    description: 'Redshift server url'
+    required: true
 
 runs:
   using: 'docker'
@@ -14,3 +20,5 @@ runs:
   env:
     ATLAN_API_KEY: ${{ inputs.atlan_api_key }}
     ATLAN_INSTANCE: ${{ inputs.atlan_instance }}
+    ATLAN_PROD_AWS_ACCOUNT_ID: ${{ inputs.atlan_prod_aws_account_id }}
+    ATLAN_REDSHIFT_SERVER_URL: ${{ inputs.atlan_redshift_server_url }}

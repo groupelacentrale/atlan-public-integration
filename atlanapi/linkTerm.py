@@ -1,7 +1,7 @@
 import json
 import logging
 
-from ApiConfig import create_api_config
+from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
@@ -29,8 +29,9 @@ def link_term(asset):
     atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
 
     try:
-        search_response = json.loads(atlan_api_request_object.send_atlan_request().text)
-        return search_response["entities"][0]
-        logger.debug("Glossary term '{}' linked successfully to column '{}'".format(asset.term, asset.get_asset_name()))
+        atlan_api_request_object.send_atlan_request()
+        logger.debug("Glossary term '{}' linked successfully to {} '{}'"
+                     .format(asset.term, asset.get_atlan_type_name(), asset.get_asset_name()))
     except Exception as e:
-        logger.warning("Error while linking glossary term '{}' to column '{}'. Glossary term must already exist in Atlan.".format(asset.term, asset.get_asset_name()))
+        logger.warning("Error while linking glossary term '{}' to {} '{}'. Glossary term must already exist in Atlan."
+                       .format(asset.term, asset.get_atlan_type_name(), asset.get_asset_name()))

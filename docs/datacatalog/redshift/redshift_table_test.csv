@@ -1,0 +1,8 @@
+Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
+redshift_table_test,id,String,Cutomer reference,C000220,Target,redshift,dwhstats/dwh_stats,fct_event_client_count_full,event_page,,,
+redshift_table_test,groupeId,String,groupe id,120588,,,,,,,,
+redshift_table_test,published_name,String,Published name of the customer,Alvergnas Automobiles,,,,,,,,
+redshift_table_test,location,Map,GPS coordinates of the customer,"{""longitude"":3.9576139,""latitude"":45.05235}",,,,,,,,
+redshift_table_test,proId,Number,Id of the customer in progate db,954,,,,,,,,
+redshift_table_test,page_groupe_active,Boolean,True if the groupe page in the customer showroom is displayed,true,,,,,,,,
+redshift_table_test,parent_id,Number,The id of the parent group configured in salesforce,120588,,,,,,Appels estimés,Glossaire (FR),

@@ -11,12 +11,12 @@ import json
 import os
 import sys
 
-from ApiConfig import create_api_config
+from atlanapi.ApiConfig import create_api_config
 from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
 from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 
-from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
 from utils import construct_qualified_name_prefix
 
 

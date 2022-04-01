@@ -1,7 +1,7 @@
 import logging
 import json
 
-from ApiConfig import create_api_config
+from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 
 logger = logging.getLogger('main_logger')

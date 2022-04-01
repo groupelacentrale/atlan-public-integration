@@ -13,10 +13,9 @@ import json
 import os
 import sys
 
-from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
 from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
-from ApiConfig import create_api_config
+from atlanapi.ApiConfig import create_api_config
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.Asset import Entity
 

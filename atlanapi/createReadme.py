@@ -1,7 +1,7 @@
 import logging
 import json
 
-from ApiConfig import create_api_config
+from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.Asset import ColumnLineage, EntityLineage

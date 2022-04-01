@@ -1,12 +1,13 @@
 import os
 
-from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
 
 GET_REQUEST_INTEGRATION_TYPE = {
     INTEGRATION_TYPE_DYNAMO_DB: 'DynamoDb',
-    INTEGRATION_TYPE_GLUE: 'Glue',
-    INTEGRATION_TYPE_REDSHIFT: 'Redshift',
+    INTEGRATION_TYPE_GLUE: 'GLUE',
+    INTEGRATION_TYPE_REDSHIFT: 'REDSHIFT',
 }
+
 
 def create_column_request_payload(asset):
     return {
@@ -53,7 +54,6 @@ def create_schema_request_payload(asset):
             "name": asset.schema_name
         }
     }
-
 
 
 def create_column_lineage_request_payload(asset):

@@ -2,7 +2,7 @@ import logging
 import json
 import time
 
-from ApiConfig import create_api_config
+from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
@@ -39,4 +39,3 @@ def create_assets(assets):
     for asset in assets:
         create_readme(asset)
         link_term(asset)
-
