@@ -25,9 +25,12 @@ def link_term(asset):
     }
     link_to_term_url = 'https://{}/api/metadata/atlas/tenants/default/glossary/terms/{}/assignedEntities'.format(
         api_conf.instance, term_guid)
+
     atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
+
     try:
-        atlan_api_request_object.send_atlan_request()
-        logger.info('Term {} linked successfully to {}'.format(asset.term, asset.get_asset_name()))
+        search_response = json.loads(atlan_api_request_object.send_atlan_request().text)
+        return search_response["entities"][0]
+        logger.debug("Glossary term '{}' linked successfully to column '{}'".format(asset.term, asset.get_asset_name()))
     except Exception as e:
-        logger.error('Error while linking term {} to {}\nReason: {}'.format(asset.term, asset.get_asset_name(), e))
+        logger.error("Error while linking glossary term '{}' to column '{}'. Glossary term must already exist in Atlan.".format(asset.term, asset.get_asset_name()))

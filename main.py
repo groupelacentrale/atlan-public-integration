@@ -11,24 +11,24 @@ if __name__ == '__main__':
     # setting up logger
     utils.setup_logger('main_logger')
     logger = logging.getLogger('main_logger')
-    logger.info("******* starting the job ...")
+    logger.info("******* Starting the job ...")
 
-    logger.info("Creating Schemas and entities...")
+    logger.info("******* Creating Schemas and entities...")
     all_schemas = create_atlan_schema_and_entity(utils.get_manifest_path())
 
     logger.info("******* Validating files")
     for schema in all_schemas.keys():
-        logger.info("Validating the csv file of the table {}".format(schema))
+        logger.info("--- Validating the csv file of the table: '{}' ---".format(schema))
         validate(utils.get_path(all_schemas[schema], schema), all_schemas[schema])
 
     logger.info("******* Creating columns")
     for schema in all_schemas.keys():
-        logger.info("Creating columns for table={}".format(schema))
+        logger.info("--- Creating columns for table: '{}' ---".format(schema))
         create_atlan_columns(utils.get_path(all_schemas[schema], schema))
 
     logger.info("******* Creating lineage")
     for schema in all_schemas.keys():
-        logger.info("Creating lineage for table={}".format(schema))
+        logger.info("--- Creating lineage for table: '{}' ---".format(schema))
         create_atlan_column_lineage(utils.get_path(all_schemas[schema], schema), INTEGRATION_TYPE_DYNAMO_DB)
 
     logger.info("******* The job finished with success")

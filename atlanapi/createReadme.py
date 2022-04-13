@@ -1,9 +1,12 @@
+import logging
 import json
 
 from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.Asset import ColumnLineage, EntityLineage
+
+logger = logging.getLogger('main_logger')
 
 
 def create_readme(asset):
@@ -40,8 +43,8 @@ def create_readme(asset):
     atlan_api_readme_request_object = AtlanApiRequest("POST", readme_post_url, headers, readme_payload)
     try:
         atlan_api_readme_request_object.send_atlan_request()
-        print('Readme added successfully to {}'.format(asset.get_asset_name()))
+        logger.debug('Readme added successfully to {}'.format(asset.get_asset_name()))
     except Exception as e:
-        print('Error while adding readme to the {}\nReason: {}'.format(asset.get_asset_name(), e))
+        logger.error('Error while adding readme to the {}\nReason: {}'.format(asset.get_asset_name(), e))
 
 

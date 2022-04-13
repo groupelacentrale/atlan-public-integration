@@ -21,7 +21,7 @@ logger = logging.getLogger('main_logger')
 
 def create_atlan_schema_and_entity(path_to_manifest, sep=","):
 
-    # load manifest
+    logger.info("Loading manifest...")
     source_data = AtlanSourceFile(path_to_manifest, sep)
     source_data.load_csv()
 
@@ -51,11 +51,9 @@ def create_atlan_schema_and_entity(path_to_manifest, sep=","):
 
         all_schemas[row['Schema']] = row['Integration Type']
 
-    logger.info("Creating Schemas and entities...")
     create_assets(assets)
 
     return all_schemas
-
 
 
 if __name__ == '__main__':

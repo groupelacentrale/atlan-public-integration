@@ -1,7 +1,10 @@
+import logging
 import json
 
 from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+
+logger = logging.getLogger('main_logger')
 
 api_conf = create_api_config()
 search_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
@@ -40,8 +43,8 @@ def get_glossary_term_guid_by_name(glossary_term_name, glossary):
         result = next(
             (entity for entity in search_response["entities"] if
              matching_term_predicate(entity, glossary_term_name, glossary)), None)
-        print(result)
+        logger.debug(result)
         return result["guid"]
     except:
-        print("Cannot get search result for glossary term '{}'".format(glossary_term_name))
+        logger.debug("Cannot get search result for glossary term '{}'".format(glossary_term_name))
         return {}

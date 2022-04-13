@@ -1,8 +1,11 @@
+import logging
 import pandas as pd
 from pandas.errors import ParserError
 import requests
 import sys
 import yaml
+
+logger = logging.getLogger('main_logger')
 
 SUPPORTED_REQUEST_TYPES = ["POST", "GET", "DELETE"]
 
@@ -21,19 +24,20 @@ class AtlanApiRequest:
         try:
             api_response = requests.request(self.request_type,
                                                self.url, headers=self.headers, data=self.data)
-            api_response.raise_for_status()
-            print("{} successful: {}\n{}".format(self.request_type, api_response.status_code, api_response.text))
+            # this line will raise an error in the logs, if wanted:
+            # api_response.raise_for_status()
+            logger.debug("{} successful: {}\nAPI Response Text: {}".format(self.request_type, api_response.status_code, api_response.text))
         except requests.exceptions.HTTPError as errh:
-            print(errh)
+            logger.error(errh)
             raise errh
         except requests.exceptions.ConnectionError as errc:
-            print(errc)
+            logger.error(errc)
             raise errc
         except requests.exceptions.Timeout as errt:
-            print(errt)
+            logger.error(errt)
             raise errt
         except requests.exceptions.RequestException as err:
-            print(err)
+            logger.error(err)
             raise err
         return api_response
 
@@ -48,7 +52,7 @@ class AtlanConfig:
             try:
                 self.params = yaml.safe_load(template)
             except yaml.YAMLERROR as exc:
-                print(exc)
+                logger.error(exc)
         return self.params
 
 
@@ -78,11 +82,11 @@ class AtlanSourceFile:
                                           escapechar=self.escapechar, encoding=self.encoding,
                                           warn_bad_lines=self.warn_bad_lines, error_bad_lines=self.error_bad_lines)
         except ParserError as p_err:
-            print("{}: Problem parsing fields in source file {}. Verify the number of columns are consistent".format(p_err, self.csv_filepath))
+            logger.error("{}: Problem parsing fields in source file {}. Verify the number of columns are consistent".format(p_err, self.csv_filepath))
             raise
         except Exception as e:
-            print(sys.stderr, "Exception: {}\n".format(e))
-            print("Problem loading source file {}. Verify that source file is present"
+            logger.critical(sys.stderr, "Exception: {}\n".format(e))
+            logger.critical("Problem loading source file {}. Verify that source file is present"
                 .format(self.csv_filepath))
             sys.exit(1)
         else:
@@ -90,12 +94,11 @@ class AtlanSourceFile:
 
     def validate_csv_column_length(self, header_template):
         expected_column_length = len(header_template)
-
         try:
             with open(self.csv_filepath, 'r') as csv_f:
                 self.lines = csv_f.readlines()
         except IOError as i_err:
-            print("{}: Problem loading csv file {}. Verify the field exists".format(i_err, self.csv_filepath))
+            logger.error("{}: Problem loading csv file {}. Verify the field exists".format(i_err, self.csv_filepath))
             raise
 
         for i, e in enumerate(self.lines):
