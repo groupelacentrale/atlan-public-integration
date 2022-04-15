@@ -35,7 +35,7 @@ def create_assets(assets):
 
     time.sleep(1)
 
-    logger.info("Creating Readme and linking glossary terms...")
+    logger.debug("Creating Readme and linking glossary terms...")
     for asset in assets:
         create_readme(asset)
         link_term(asset)

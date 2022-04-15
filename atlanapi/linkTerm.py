@@ -33,4 +33,4 @@ def link_term(asset):
         return search_response["entities"][0]
         logger.debug("Glossary term '{}' linked successfully to column '{}'".format(asset.term, asset.get_asset_name()))
     except Exception as e:
-        logger.error("Error while linking glossary term '{}' to column '{}'. Glossary term must already exist in Atlan.".format(asset.term, asset.get_asset_name()))
+        logger.warning("Error while linking glossary term '{}' to column '{}'. Glossary term must already exist in Atlan.".format(asset.term, asset.get_asset_name()))

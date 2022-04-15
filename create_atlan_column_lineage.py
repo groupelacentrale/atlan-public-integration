@@ -61,7 +61,7 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
 
     if len(lineage_columns_not_verified):
         for lineage_not_verified in lineage_columns_not_verified:
-            logger.error("Cannot create lineage: column '{}/{}/{}' not found in Atlan. Target/Source columns must already exist in Atlan to create lineage.".format(lineage_not_verified.lineage_schema_name,
+            logger.warning("Cannot create lineage: column '{}/{}/{}' not found in Atlan. Target/Source columns must already exist in Atlan to create lineage.".format(lineage_not_verified.lineage_schema_name,
                                              lineage_not_verified.lineage_entity_name,
                                              lineage_not_verified.lineage_column_name))
 

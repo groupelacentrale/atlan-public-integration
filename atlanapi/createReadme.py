@@ -45,6 +45,6 @@ def create_readme(asset):
         atlan_api_readme_request_object.send_atlan_request()
         logger.debug('Readme added successfully to {}'.format(asset.get_asset_name()))
     except Exception as e:
-        logger.error('Error while adding readme to the {}\nReason: {}'.format(asset.get_asset_name(), e))
+        logger.warning('Error while adding readme to the {}\nReason: {}'.format(asset.get_asset_name(), e))
 
 

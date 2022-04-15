@@ -64,11 +64,10 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
         existing_columns = get_entity_columns(asset_info['guid'])
         for existing_column in existing_columns:
             if existing_column not in entities[entity]:
-                logger.debug('Deleting column {} ...'.format(existing_column))
+                logger.info("Deleting column no longer mentioned in csv file: '{}'...".format(existing_column))
                 delete_asset(existing_columns[existing_column])
-                logger.debug('{} Deleted successfully'.format(existing_column))
+                logger.info('{} Deleted successfully'.format(existing_column))
 
-    logger.info("Deleting columns no longer mentioned in csv file")
     create_assets(columns)
 
 
