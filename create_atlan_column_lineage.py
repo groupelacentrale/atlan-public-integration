@@ -16,18 +16,18 @@ from optparse import OptionParser
 import utils
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
-# TODO: add support for 'Redshift', 'Tableau' by determining their qualified name prefix.
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.Asset import Column, ColumnLineage, EntityLineage, Entity
 from utils import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
 
+# TODO: add support for 'Tableau' by determining their qualified name prefix.
 SUPPORTED_INTEGRATIONS = [INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT]
 
 logger = logging.getLogger('main_logger')
 
 
 def create_atlan_column_lineage(path, integration_type, delimiter=","):
-    logger.info("Load table definition...")
+    logger.debug("Load table definition...")
     source_data = AtlanSourceFile(path, sep=delimiter)
     table_name = utils.get_table_name(path)
     source_data.load_csv()
@@ -60,18 +60,17 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
     lineage_columns_not_verified = list(filter(lambda col: not col.lineage_full_qualified_name, columns))
 
     if len(lineage_columns_not_verified):
-        logger.warning("Target columns must already exist in Atlan to create lineage. "
-                       "The following target columns were not found in Atlan:")
         for lineage_not_verified in lineage_columns_not_verified:
-            logger.warning("{}/{}/{}".format(lineage_not_verified.lineage_schema_name,
+            logger.warning("Cannot create lineage: column '{}/{}/{}' not found in Atlan. Target/Source columns must already exist in Atlan to create lineage.".format(lineage_not_verified.lineage_schema_name,
                                              lineage_not_verified.lineage_entity_name,
                                              lineage_not_verified.lineage_column_name))
-    logger.info("Generating API request to create lineage for verified columns in table: {}".format(table_name))
 
     lineage_columns_verified = list(filter(lambda col: col.lineage_full_qualified_name, columns))
+
+    logger.info("Creating lineage relationships for verified columns in table: {}".format(table_name))
     create_assets(lineage_columns_verified)
 
-    logger.info("Generate schema/table qualified names")
+    logger.debug("Generate schema/table qualified names")
     entities_lineage = {}
     for lineage in lineage_columns_verified:
         entity_lineage = EntityLineage(entity=Entity(schema_name=table_name, entity_name=lineage.column.entity_name,
@@ -83,6 +82,7 @@ def create_atlan_column_lineage(path, integration_type, delimiter=","):
                                        lineage_full_qualified_name=os.path.split(lineage.lineage_full_qualified_name)[0])
         entities_lineage[entity_lineage.entity.get_qualified_name()] = entity_lineage
 
+    logger.info("Creating entity lineage relationships for table: {}".format(table_name))
     create_assets(entities_lineage.values())
 
 

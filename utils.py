@@ -11,7 +11,7 @@ INTEGRATION_TYPE_REDSHIFT = 'redshift'
 
 def setup_logger(logger_name, level=logging.INFO):
     logger = logging.getLogger(logger_name)
-    formatter = logging.Formatter('%(asctime)s : %(message)s')
+    formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(formatter)
     logger.setLevel(level)

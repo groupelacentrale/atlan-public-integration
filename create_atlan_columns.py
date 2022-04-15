@@ -25,7 +25,7 @@ logger = logging.getLogger('main_logger')
 
 
 def create_atlan_columns(path, delimiter=",", includes_entity=False):
-    logger.info("Load table definition...")
+    logger.debug("Load table definition...")
     source_data = AtlanSourceFile(path, sep=delimiter)
     table_name = utils.get_table_name(path)
     source_data.load_csv()
@@ -39,7 +39,7 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
     else:
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
 
-    logger.info("Generating API request to create columns for table: {}".format(table_name))
+    logger.debug("Preparing API request to create columns for table: {}".format(table_name))
     entities = {entity: [] for entity in source_data.assets_def["Table/Entity"]}
     columns = []
 
@@ -56,14 +56,16 @@ def create_atlan_columns(path, delimiter=",", includes_entity=False):
         columns.append(col)
         entities[row["Table/Entity"]].append(row['Name'])
 
-    # Deleting columns no longer mentioned in csv file
+    logger.debug("Preparing API request to delete columns no longer mentioned in csv file")
     for entity in entities:
         e = Entity(entity_name=entity, schema_name=table_name)
+        # logging.info("Getting table id...")
         asset_info = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
+        # logging.info("Getting existing column ids...")
         existing_columns = get_entity_columns(asset_info['guid'])
         for existing_column in existing_columns:
             if existing_column not in entities[entity]:
-                logger.info('Deleting column {} ...'.format(existing_column))
+                logger.info("Deleting column no longer mentioned in csv file: '{}'...".format(existing_column))
                 delete_asset(existing_columns[existing_column])
                 logger.info('{} Deleted successfully'.format(existing_column))
 

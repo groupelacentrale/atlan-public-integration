@@ -9,8 +9,9 @@ Usage Options:
 -d --delimiter : Source file csv delimiter (default = ',')
 """
 
-import os
 import logging
+import os
+
 from atlanapi.atlanutils import AtlanConfig, AtlanSourceFile, SourceFileValidator
 from optparse import OptionParser
 
@@ -20,11 +21,11 @@ logger = logging.getLogger('main_logger')
 
 
 def validate_atlan_source_file(path_table_doc, integration_type, delimiter=","):
-    logger.info("Loading header template...")
+    logger.debug("Loading header template...")
     template_conf = AtlanConfig(get_template_source_file())
     template_conf.load_yaml_configs()
 
-    logger.info("Load table definition...")
+    logger.debug("Load table definition...")
     source_data = AtlanSourceFile(path_table_doc, delimiter)
 
     source_data.load_csv()
@@ -32,14 +33,14 @@ def validate_atlan_source_file(path_table_doc, integration_type, delimiter=","):
     logger.info("Validating source file headers")
     validation_source_file = SourceFileValidator(source_data.assets_def)
     validation_source_file.validate_headers(template_conf.params["Headers"])
-    logger.info("OK: source file headers match expected for table {}".format(path_table_doc))
+    logger.info("OK: source file headers match expected for file {}".format(os.path.split(path_table_doc)[1]))
 
     # Add conditions for different integration types as they become supported (e.g., glue)
     logger.info("Validating data type values for source columns")
     # TODO: add validation step for other integration types as they become supported
-    if integration_type == 'dynamodb':
+    if integration_type.lower() == 'dynamodb':
         validation_source_file.validate_data_type_values(template_conf.params["DynamoDbDataTypes"])
-        print("OK: source file datatypes are all valid values for {}".format(integration_type))
+        logger.info("OK: source file datatypes are all valid values for integration type: '{}'".format(integration_type.lower()))
     else:
         pass
 

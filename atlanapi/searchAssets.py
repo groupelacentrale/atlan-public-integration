@@ -1,8 +1,10 @@
+import logging
 import json
-
 
 from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+
+logger = logging.getLogger('main_logger')
 
 api_conf = create_api_config()
 search_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
@@ -44,6 +46,6 @@ def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
         return search_response["entities"][0]
-    except:
-        print("Cannot get search result for qualified_name '{}'".format(qualified_name))
+    except Exception as e:
+        logger.debug("Cannot get search result for qualified_name: '{}'".format(qualified_name))
         return {}

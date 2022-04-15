@@ -1,7 +1,10 @@
+import logging
 import json
 
 from ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+
+logger = logging.getLogger('main_logger')
 
 api_conf = create_api_config()
 search_headers = {
@@ -18,9 +21,10 @@ def get_entity_columns(entity_guid):
         columns = columns_response["entities"]
         if columns:
             return {column['displayText']: column['guid'] for column in columns}
-        print("entity '{}' do not have any columns".format(entity_guid))
+        # Not really an error, because it is normal that an entity doesn't have columns at first.
+        logger.debug("entity '{}' does not have any columns".format(entity_guid))
         return {}
     except:
-        print("Error while fetching columns for entity id '{}'".format(entity_guid))
+        logger.error("Error while fetching columns for entity id '{}'".format(entity_guid))
         return {}
 
