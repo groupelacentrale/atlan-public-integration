@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 
-from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, \
+from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_GLUE, \
     INTEGRATION_TYPE_REDSHIFT
 
 
@@ -39,14 +39,3 @@ def get_manifest_path():
 def get_template_source_file():
     script_dir = os.path.dirname(__file__)
     return os.path.join(script_dir, "config/template_source_file.yaml")
-
-
-def construct_qualified_name_prefix(integration_type):
-    prefix = ""
-    if integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-        prefix = "dynamodb/dynamodb.atlan.com/dynamo_db/"
-    elif integration_type == INTEGRATION_TYPE_GLUE:
-        prefix = "{}/default/"
-    elif integration_type == INTEGRATION_TYPE_REDSHIFT:
-        prefix = ""
-    return prefix

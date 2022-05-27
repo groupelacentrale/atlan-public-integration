@@ -7,17 +7,15 @@ Usage Options:
 -i --integration_type : name of the Atlan integration type (e.g., dynamodb)
 """
 
-import json
 import os
 import sys
 
-from atlanapi.ApiConfig import create_api_config
-from atlanapi.createquery import AtlanQuery, AtlanQuerySerializer
-from atlanapi.atlanutils import AtlanApiRequest
 from optparse import OptionParser
 
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
-from utils import construct_qualified_name_prefix
+from atlanapi.delete_asset import delete_asset
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
+from model.Asset import Schema
 
 
 def delete_schema(args):
@@ -25,62 +23,30 @@ def delete_schema(args):
     parser = OptionParser(usage='usage: %prog [options] arguments')
     parser.set_defaults(integration_type=INTEGRATION_TYPE_DYNAMO_DB)
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
-    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE], help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
+    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE,
+                                                           INTEGRATION_TYPE_REDSHIFT],
+                      help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
+    parser.add_option("-d", "--database", help="Database name")
     (options, args) = parser.parse_args()
 
     logging.info("Loading API configs...")
-    api_conf = create_api_config()
 
-    headers = {
-        'Content-Type': 'application/json;charset=utf-8',
-        'APIKEY': api_conf.api_key
-    }
-
-    # If no tables remain for the schema, then delete schema
-    qual_name_prefix = construct_qualified_name_prefix(options.integration_type)
-    schema_tables_qual_name = qual_name_prefix.format(options.schema)
-    query_schema_tables = AtlanQuery(schema_tables_qual_name, asset_type='AtlanTable')
-    query_schema_tables_payload = AtlanQuerySerializer()
-    query_schema_tables_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(
-        api_conf.instance)
-    schema_tables_payload = query_schema_tables_payload.serialize(query_schema_tables)
-    atlan_api_query_schema_tables_request_object = AtlanApiRequest("POST", query_schema_tables_url, headers, schema_tables_payload)
-    query_schema_tables_response = atlan_api_query_schema_tables_request_object.send_atlan_request()
-    query_schema_tables_response_text = json.loads(query_schema_tables_response.text)
+    schema = Schema(database_name=options.database, schema_name=options.schema,
+                    integration_type=options.integration_type)
+    table_info = get_asset_guid_by_qualified_name(schema.get_qualified_name(), 'AtlanTable')
 
     # If no tables are found belonging to the schema, delete schema
-    response_count = query_schema_tables_response_text["approximateCount"]
-
-    if response_count == 0:
+    if "guid" not in table_info:
         print("No tables found attached to schema. Deleting schema.")
-        # Get schema guid
-        schema_qual_name = options.schema
-        query_schema = AtlanQuery(schema_qual_name, asset_type='AtlanSchema')
-        query_schema_payload = AtlanQuerySerializer()
 
-        query_schema_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
-        schema_payload = query_schema_payload.serialize(query_schema)
-        atlan_api_query_schema_request_object = AtlanApiRequest("POST", query_schema_url, headers, schema_payload)
-        query_schema_response = atlan_api_query_schema_request_object.send_atlan_request()
-        query_schema_response_text = json.loads(query_schema_response.text)
-
-        # Test that there is one and only one response
-        validate_single_return_response(query_schema_response_text["approximateCount"])
-
-        schema_guid = query_schema_response_text["entities"][0]["guid"]
         logging.info("Deleting schema: {}".format(options.schema))
-        dt_schema_url = "https://{}/api/metadata/atlas/tenants/default/entity/guid/{}?deleteType=HARD".format(api_conf.instance, schema_guid)
-        dt_schema_payload = {}
-        dt_schema_headers = {
-            'accept': 'application/json, text/plain, */*',
-            'APIKEY': api_conf.api_key
-        }
-        atlan_api_schema_delete_request_object = AtlanApiRequest("DELETE", dt_schema_url, dt_schema_headers, dt_schema_payload)
-        schema_delete_query_response = atlan_api_schema_delete_request_object.send_atlan_request()
-        logging.info("API response: {}".format(schema_delete_query_response.text))
+        print(schema.get_qualified_name())
+        schema_info = get_asset_guid_by_qualified_name(schema.get_qualified_name(), schema.get_atlan_type_name())
+        print("deleting schema with guid {}".format(schema_info["guid"]))
+        delete_asset(schema_info["guid"])
 
-    if response_count > 0:
-        print("There are still {} tables attached to the schema, so skipping the step to delete the schema: {}".format(response_count, options.schema))
+    else:
+        print("There are still tables attached to the schema, so skipping the step to delete the schema: {}".format(options.schema))
         #TODO: print out list of attached tables.
 
 

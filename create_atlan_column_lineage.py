@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 
+from exception.EnvVariableNotFound import EnvVariableNotFound
 from utils import get_csv_file_name
 
 """
@@ -28,14 +29,13 @@ SUPPORTED_INTEGRATIONS = [INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INT
 logger = logging.getLogger('main_logger')
 
 
-def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name, integration_type, delimiter=","):
-    logger.debug("Load table definition...")
+def get_columns_lineage(database_name, schema_name, table_or_entity_name, integration_type, delimiter):
+    # Filter dataframe to include only lineage target columns that already exist in Atlan.
+    logger.info("Searching to make sure lineage columns exist")
+
     path_csv_table = utils.get_path(integration_type, schema_name, table_or_entity_name)
     source_data = AtlanSourceFile(path_csv_table, sep=delimiter)
     source_data.load_csv()
-
-    # Filter dataframe to include only lineage target columns that already exist in Atlan.
-    logger.info("Searching to make sure lineage columns exist")
 
     columns = []
     for index, row in source_data.assets_def.iterrows():
@@ -55,11 +55,21 @@ def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name
                                     lineage_entity_name=row["Lineage Table/Entity"],
                                     lineage_column_name=row["Lineage Column/Attribute"],
                                     lineage_integration_type=row["Lineage Integration Type"])
-            asset = get_asset_guid_by_qualified_name(lineage.get_qualified_name(),
-                                                     lineage.get_atlan_type_name())
-            if 'attributes' in asset:
-                lineage.lineage_full_qualified_name = asset['attributes']['qualifiedName']
-            columns.append(lineage)
+            try:
+                asset = get_asset_guid_by_qualified_name(lineage.get_qualified_name(),
+                                                         lineage.get_atlan_type_name())
+                if 'attributes' in asset:
+                    lineage.lineage_full_qualified_name = asset['attributes']['qualifiedName']
+                columns.append(lineage)
+            except EnvVariableNotFound as e:
+                logger.warning(e.message)
+    return columns
+
+
+def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name, integration_type, delimiter=","):
+    logger.debug("Load table definition...")
+
+    columns = get_columns_lineage(database_name, schema_name, table_or_entity_name, integration_type, delimiter)
     lineage_columns_not_verified = list(filter(lambda col: not col.lineage_full_qualified_name, columns))
 
     if len(lineage_columns_not_verified):
