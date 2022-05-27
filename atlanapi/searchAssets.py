@@ -37,12 +37,13 @@ def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
                 {
                     "attributeName": "qualifiedName",
                     "attributeValue": qualified_name,
-                    "operator": "ENDS_WITH"
+                    "operator": "CONTAINS"
                 }
             ]
         }
     })
     atlan_api_query_request_object = AtlanApiRequest("POST", search_url, search_headers, query)
+
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
         return search_response["entities"][0]

@@ -23,8 +23,10 @@ from model.Asset import Entity
 def delete_atlan_table_and_all_columns(args):
 
     parser = OptionParser(usage='usage: %prog [options] arguments')
+    parser.add_option("-d", "--database", help="Name of the database -> Atlan Database")
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
     parser.add_option("-t", "--table", help="Name of the DynamoDB entity -> Atlan Table")
+    parser.add_option("-i", "--integration_type", help="Name of the integration type -> Atlan integration type")
     (options, args) = parser.parse_args()
 
     logging.info("Loading API configs...")
@@ -32,7 +34,8 @@ def delete_atlan_table_and_all_columns(args):
 
     logging.info("Searching for table metadata for {}.{}".format(options.schema, options.table))
 
-    entity = Entity(schema_name=options.schema, entity_name=options.table)
+    entity = Entity(database_name=options.database, schema_name=options.schema, entity_name=options.table,
+                    integration_type=options.integration_type)
     table_info = get_asset_guid_by_qualified_name(entity.get_qualified_name(), 'AtlanTable')
 
     print('Delete the table {} (guid={}) and all its columns? Proceed (y/n)?'.format(table_info["attributes"]["qualifiedName"], table_info["guid"]))
