@@ -14,7 +14,7 @@ search_headers = {
 }
 
 
-def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
+def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type, operator="eq"):
     query = json.dumps({
         "searchType": "BASIC",
         "typeName": "AtlanAsset",
@@ -37,7 +37,7 @@ def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
                 {
                     "attributeName": "qualifiedName",
                     "attributeValue": qualified_name,
-                    "operator": "CONTAINS"
+                    "operator": operator
                 }
             ]
         }
