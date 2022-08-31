@@ -111,14 +111,27 @@ A script to locate an Atlan table using its schema and table name, then retrieve
 all columns, and finally delete the table.
 
 The script is run using the following arguments:
--s --schema : name of the database schema
--t --table : name of the database table
+-s --schema : name of the database schema (redshift or glue) or dynamodb table
+-t --table : name of the database table (redshift or glue) or dynamodb entity
+-d --database : name of the database
+-i --integration_type (e.g., glue, dynamodb, redshift)
 
-Example: 
+Examples: 
+
+Delete table and columns: redshift
 ````python
-python delete-table-and-all-columns.py -s "default" -t "pn-da-all"
+ATLAN_API_KEY=<API_KEY> ATLAN_INSTANCE=<ATLAN_INSTANCE_URL> ATLAN_REDSHIFT_SERVER_URL=<REDSHIFT_URL> /usr/local/bin/python3.9 delete-table-and-all-columns.py -s redshift_schema_test -t redshift_table_test -d test_database -i redshift
 ````
 
+Delete table and columns: glue
+````python
+ATLAN_API_KEY=<API_KEY> ATLAN_INSTANCE=<ATLAN_INSTANCE_URL> ATLAN_PROD_AWS_ACCOUNT_ID=<AWS_ACCOUNT_ID> /usr/local/bin/python3.9 delete-table-and-all-columns.py -s datalake_test -t test_glue_integration -d glue -i glue
+````
+
+Delete table and columns: dynamodb
+````python
+ATLAN_API_KEY=<API_KEY> ATLAN_INSTANCE=<ATLAN_INSTANCE_URL> /usr/local/bin/python3.9 delete-table-and-all-columns.py -s test-table-lineage -t test -d dynamo_db -i dynamodb
+````
 
 ### delete-schema.py
 A script to delete an Atlan Schema if no connected tables are present.  
@@ -128,8 +141,22 @@ detected, at this point the two scripts remain separate.
 
 The script is run using the following arguments:
 -s --schema : name of the database schema
+-d --database : name of the database
+-i --integration_type (e.g., glue, dynamodb, redshift)
 
-Example: 
+Examples: 
+
+Delete schema: redshift
 ````python
-python delete-schema.py -s "test-schema"
+ATLAN_API_KEY=<API_KEY> ATLAN_INSTANCE=<ATLAN_INSTANCE_URL> ATLAN_REDSHIFT_SERVER_URL=<REDSHIFT_URL> /usr/local/bin/python3.9 delete-shema.py -s redshift_schema_test -d redshift_database_test redshift_table_test -i redshift
+````
+
+Delete schema: glue
+````python
+ATLAN_API_KEY=<API_KEY> ATLAN_INSTANCE=<ATLAN_INSTANCE_URL> ATLAN_PROD_AWS_ACCOUNT_ID=<AWS_ACCOUNT_ID> /usr/local/bin/python3.9 delete-schema.py -s datalake_test -t test_glue_integration -d glue -i glue
+````
+
+Delete schema: dynamodb
+````python
+ATLAN_API_KEY=<API_KEY> ATLAN_INSTANCE=<ATLAN_INSTANCE_URL> ATLAN_PROD_AWS_ACCOUNT_ID=<AWS_ACCOUNT_ID> /usr/local/bin/python3.9 delete-schema.py -s test-table-lineage -t test -d dynamo_db -i dynamodb
 ````
