@@ -14,7 +14,7 @@ This repository contains several scripts for automating asset integration into A
 
 ## Compatibility:
 1. Python 3.7 Tested OK
-2. Python 3.9 Tested KO (because of cffi==1.14.6 see [cffi documentation](https://cffi.readthedocs.io/en/release-1.14/installation.html))
+2. Python 3.10 Tested KO (because of cffi==1.14.6 see [cffi documentation](https://cffi.readthedocs.io/en/release-1.14/installation.html))
 
 ## Preparations:
 ### Repo setup
