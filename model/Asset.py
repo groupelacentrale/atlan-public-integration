@@ -125,8 +125,7 @@ class Entity:
             glossary = {}
             integration_type = {}
             description = {})
-        """.format(self.entity,
-                   self.database_name,
+        """.format(self.database_name,
                    self.entity_name,
                    self.schema_name,
                    self.readme,
