@@ -115,6 +115,26 @@ class Entity:
     def get_lineage_payload(self):
         raise Exception("Not implemented !")
 
+    def __repr__(self):
+        return """Entity(
+            database_name = {}
+            entity_name = {}
+            schema_name = {}
+            readme = {}
+            term = {}
+            glossary = {}
+            integration_type = {}
+            description = {})
+        """.format(self.entity,
+                   self.database_name,
+                   self.entity_name,
+                   self.schema_name,
+                   self.readme,
+                   self.term,
+                   self.glossary,
+                   self.integration_type,
+                   self.description)
+
 
 class Schema:
     def __init__(self, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
@@ -233,7 +253,7 @@ class EntityLineage:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
-        return qualified_name.format(self.lineage_database_name, self.lineage_schema_name, self.lineage_entity_name)\
+        return qualified_name.format(self.lineage_database_name, self.lineage_schema_name, self.lineage_entity_name) \
             .lower()
 
     def get_asset_name(self):
@@ -248,6 +268,19 @@ class EntityLineage:
     def get_creation_payload(self):
         raise Exception("Column are creating in bulk mode only")
 
-    def __str__(self):
-        return "integration_type={}, database_name={}, entity_name={}, schema_name{}"\
-            .format(self.lineage_integration_type, self.lineage_database_name, self.lineage_entity_name, self.lineage_schema_name)
+    def __repr__(self):
+        return """EntityLineage(
+                 entity={},
+                 lineage_type={},
+                 lineage_integration_type={},
+                 lineage_database_name={},
+                 lineage_schema_name={},
+                 lineage_entity_name={},
+                 lineage_full_qualified_name={})
+        """.format(self.entity,
+                   self.lineage_type,
+                   self.lineage_integration_type,
+                   self.lineage_database_name,
+                   self.lineage_schema_name,
+                   self.lineage_entity_name,
+                   self.lineage_full_qualified_name)
