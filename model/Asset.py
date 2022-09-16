@@ -247,3 +247,7 @@ class EntityLineage:
 
     def get_creation_payload(self):
         raise Exception("Column are creating in bulk mode only")
+
+    def __str__(self):
+        return "integration_type={}, database_name={}, entity_name={}, schema_name{}"\
+            .format(self.lineage_integration_type, self.lineage_database_name, self.lineage_entity_name, self.lineage_schema_name)
