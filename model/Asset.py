@@ -116,12 +116,10 @@ class Entity:
         raise Exception("Not implemented !")
 
     def __repr__(self):
-        return """
-        (integration_type = {}
+        return """(integration_type = {}
             database_name = {}
             schema_name = {}
-            entity_name = {})
-        """.format(
+            entity_name = {})""".format(
             self.integration_type,
             self.database_name,
             self.schema_name,
@@ -278,8 +276,7 @@ class EntityLineage:
                          schema_name={},
                          entity_name={}) 
                         ---> 
-                         {}
-                    """.format(
+                         {}""".format(
                 self.lineage_integration_type,
                 self.lineage_database_name,
                 self.lineage_schema_name,
@@ -287,19 +284,17 @@ class EntityLineage:
                 self.entity
             )
         else:
-            return """ {}
+            return """{}
                         --->
                     (integration_type={},
                       database_name={},
                       schema_name={},
-                      entity_name={}) 
-                 """.format(
+                      entity_name={})""".format(
                 self.entity,
                 self.lineage_integration_type,
                 self.lineage_database_name,
                 self.lineage_schema_name,
                 self.lineage_entity_name,
-
             )
 
     def __hash__(self):
