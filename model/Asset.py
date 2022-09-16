@@ -116,23 +116,17 @@ class Entity:
         raise Exception("Not implemented !")
 
     def __repr__(self):
-        return """Entity(
+        return """
+        (integration_type = {}
             database_name = {}
-            entity_name = {}
             schema_name = {}
-            readme = {}
-            term = {}
-            glossary = {}
-            integration_type = {}
-            description = {})
-        """.format(self.database_name,
-                   self.entity_name,
-                   self.schema_name,
-                   self.readme,
-                   self.term,
-                   self.glossary,
-                   self.integration_type,
-                   self.description)
+            entity_name = {})
+        """.format(
+            self.integration_type,
+            self.database_name,
+            self.schema_name,
+            self.entity_name,
+        )
 
     def __hash__(self):
         return hash((self.database_name, self.entity_name, self.schema_name, self.integration_type))
@@ -278,21 +272,35 @@ class EntityLineage:
         raise Exception("Column are creating in bulk mode only")
 
     def __repr__(self):
-        return """EntityLineage(
-                 entity={},
-                 lineage_type={},
-                 lineage_integration_type={},
-                 lineage_database_name={},
-                 lineage_schema_name={},
-                 lineage_entity_name={},
-                 lineage_full_qualified_name={})
-        """.format(self.entity,
-                   self.lineage_type,
-                   self.lineage_integration_type,
-                   self.lineage_database_name,
-                   self.lineage_schema_name,
-                   self.lineage_entity_name,
-                   self.lineage_full_qualified_name)
+        if self.lineage_type.lower() == "source":
+            return """(integration_type={},
+                         database_name={},
+                         schema_name={},
+                         entity_name={}) 
+                        ---> 
+                         {}
+                    """.format(
+                self.lineage_integration_type,
+                self.lineage_database_name,
+                self.lineage_schema_name,
+                self.lineage_entity_name,
+                self.entity
+            )
+        else:
+            return """ {}
+                        --->
+                    (integration_type={},
+                      database_name={},
+                      schema_name={},
+                      entity_name={}) 
+                 """.format(
+                self.entity,
+                self.lineage_integration_type,
+                self.lineage_database_name,
+                self.lineage_schema_name,
+                self.lineage_entity_name,
+
+            )
 
     def __hash__(self):
         return hash((self.entity.__hash__(),
