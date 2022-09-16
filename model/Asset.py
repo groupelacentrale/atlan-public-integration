@@ -134,6 +134,16 @@ class Entity:
                    self.integration_type,
                    self.description)
 
+    def __hash__(self):
+        return hash((self.database_name, self.entity_name, self.schema_name, self.integration_type))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return self.database_name == other.database_name \
+               and self.entity_name == other.entity_name \
+               and self.schema_name == other.schema_name \
+               and self.integration_type == other.integration_type
+
 
 class Schema:
     def __init__(self, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
@@ -283,3 +293,20 @@ class EntityLineage:
                    self.lineage_schema_name,
                    self.lineage_entity_name,
                    self.lineage_full_qualified_name)
+
+    def __hash__(self):
+        return hash((self.entity.__hash__(),
+                     self.lineage_type,
+                     self.lineage_integration_type,
+                     self.lineage_database_name,
+                     self.lineage_schema_name,
+                     self.lineage_entity_name))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return self.entity == other.entity \
+               and self.lineage_type == other.lineage_type \
+               and self.lineage_integration_type == other.lineage_integration_type \
+               and self.lineage_database_name == other.lineage_database_name \
+               and self.lineage_schema_name == other.lineage_schema_name \
+               and self.lineage_entity_name == other.lineage_entity_name
