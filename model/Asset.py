@@ -116,10 +116,7 @@ class Entity:
         raise Exception("Not implemented !")
 
     def __repr__(self):
-        return """(integration_type = {}
-            database_name = {}
-            schema_name = {}
-            entity_name = {})""".format(
+        return "({},{},{},{})".format(
             self.integration_type,
             self.database_name,
             self.schema_name,
@@ -271,12 +268,7 @@ class EntityLineage:
 
     def __repr__(self):
         if self.lineage_type.lower() == "source":
-            return """(integration_type={},
-                         database_name={},
-                         schema_name={},
-                         entity_name={}) 
-                        ---> 
-                         {}""".format(
+            return "({},{},{},{}) ---> {}".format(
                 self.lineage_integration_type,
                 self.lineage_database_name,
                 self.lineage_schema_name,
@@ -284,12 +276,7 @@ class EntityLineage:
                 self.entity
             )
         else:
-            return """{}
-                        --->
-                    (integration_type={},
-                      database_name={},
-                      schema_name={},
-                      entity_name={})""".format(
+            return "{} ---> ({},{},{},{})".format(
                 self.entity,
                 self.lineage_integration_type,
                 self.lineage_database_name,
