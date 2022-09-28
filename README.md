@@ -11,6 +11,11 @@ This repository contains several scripts for automating asset integration into A
 * **test/** : directory containing unit tests (TO-DO)
 * **create_atlan_table_py** : A script to create a DynamoDB table definition in Atlan from a set of arguments.
 # Using the Scripts
+
+## Compatibility:
+1. Python 3.7 Tested OK
+2. Python 3.10 Tested KO (because of cffi==1.14.6 see [cffi documentation](https://cffi.readthedocs.io/en/release-1.14/installation.html))
+
 ## Preparations:
 ### Repo setup
 1. git clone the repo locally
