@@ -32,24 +32,32 @@ def create_column_request_payload(asset):
 
 def create_entity_request_payload(asset):
     return {
-        "typeName": "AtlanTable",
+        "typeName": "Table",
         "attributes": {
             "qualifiedName": asset.get_qualified_name(),
             "description": asset.description,
             "name": asset.entity_name,
             "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
-            "typeName": "AtlanTable"
+            "connectorQualifiedName": "dynamodb/dynamodb.atlan.com",
+            "databaseName": asset.database_name,
+            "databaseQualifiedName": "dynamodb/dynamodb.atlan.com/{}".format(asset.database_name),
+            "schemaName": asset.schema_name,
+            "schemaQualifiedName": "dynamodb/dynamodb.atlan.com/{}/{}".format(asset.database_name, asset.schema_name, asset.entity_name),
         }
     }
 
 
 def create_schema_request_payload(asset):
     return {
-        "typeName": "AtlanSchema",
+        "typeName": "Schema",
         "attributes": {
-            "typeName": "AtlanSchema",
+            "name": asset.schema_name,
             "description": asset.description,
             "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
+            "connectorName": "dynamodb",
+            "connectionQualifiedName": "dynamodb/dynamodb.atlan.com",
+            "databaseName": asset.database_name,
+            "databaseQualifiedName": "dynamodb/dynamodb.atlan.com/{}".format(asset.database_name),
             "qualifiedName": asset.get_qualified_name(),
             "name": asset.schema_name
         }

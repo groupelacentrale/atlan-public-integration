@@ -10,7 +10,7 @@ api_conf = create_api_config()
 search_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
 search_headers = {
     'Content-Type': 'application/json;charset=utf-8',
-    'APIKEY': api_conf.api_key
+    'Authorization': api_conf.api_token
 }
 
 

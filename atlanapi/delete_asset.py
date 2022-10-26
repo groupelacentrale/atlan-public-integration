@@ -7,7 +7,7 @@ from atlanapi.atlanutils import AtlanApiRequest
 api_conf = create_api_config()
 search_headers = {
     'Content-Type': 'application/json;charset=utf-8',
-    'APIKEY': api_conf.api_key
+    'Authorization': api_conf.api_token
 }
 
 logger = logging.getLogger('main_logger')

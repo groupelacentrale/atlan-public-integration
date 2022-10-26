@@ -14,7 +14,7 @@ api_conf = create_api_config()
 
 headers = {
     'Content-Type': 'application/json',
-    'APIKEY': api_conf.api_key
+    'Authorization': api_conf.api_token
 }
 
 

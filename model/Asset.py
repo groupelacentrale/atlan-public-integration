@@ -75,16 +75,23 @@ class Column:
 
 
 class Entity:
-    def __init__(self, entity_name, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
+    def __init__(self,
+                 entity_name,
+                 database_name,
+                 schema_name,
+                 description=None,
+                 readme=None,
+                 term=None,
+                 glossary=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB):
-        self.database_name = database_name
         self.entity_name = entity_name
+        self.database_name = database_name
         self.schema_name = schema_name
+        self.description = description
         self.readme = readme
         self.term = term
         self.glossary = glossary
         self.integration_type = integration_type.lower()
-        self.description = description
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:

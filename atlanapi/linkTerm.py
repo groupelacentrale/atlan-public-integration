@@ -22,7 +22,7 @@ def link_term(asset):
         api_conf = create_api_config()
         headers = {
             'Content-Type': 'application/json;charset=utf-8',
-            'APIKEY': api_conf.api_key
+            'Authorization': api_conf.api_token
         }
         link_to_term_url = 'https://{}/api/metadata/atlas/tenants/default/glossary/terms/{}/assignedEntities'.format(
             api_conf.instance, term_guid)
