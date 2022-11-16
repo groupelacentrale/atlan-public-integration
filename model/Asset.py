@@ -65,7 +65,7 @@ class Column:
         return self.column_name
 
     def get_atlan_type_name(self):
-        return 'AtlanColumn'
+        return 'Column'
 
     def get_creation_payload_for_bulk_mode(self):
         return create_column_request_payload(self)

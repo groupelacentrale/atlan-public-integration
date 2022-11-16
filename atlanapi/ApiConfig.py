@@ -9,5 +9,5 @@ class ApiConfig:
 
 def create_api_config():
     atlan_api_token = os.getenv('ATLAN_TOKEN')
-    atlan_instance = os.environ.get('ATLAN_INSTANCE')
+    atlan_instance = os.environ.get('ATLAN_NEW_INSTANCE')
     return ApiConfig(atlan_api_token, atlan_instance)
