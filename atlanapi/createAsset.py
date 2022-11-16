@@ -22,7 +22,7 @@ def create_asset(asset):
     create_assets([asset])
 
 
-def create_assets(assets):
+def create_assets(assets, tag):
     try:
         if not assets:
             return
@@ -31,7 +31,7 @@ def create_assets(assets):
 
         payload = json.dumps({"entities": list(payloads_for_bulk)})
 
-        schema_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity/bulk'.format(api_conf.instance)
+        schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
         atlan_api_schema_request_object.send_atlan_request()
 

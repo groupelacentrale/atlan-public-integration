@@ -44,7 +44,7 @@ if __name__ == '__main__':
                              asset_info['schema_name'],
                              asset_info['entity_name'],
                              asset_info['integration_type'])
-
+    """
     logger.info("******* Creating lineage")
     for asset_info in assets_info:
         logger.info("--- Creating lineage for table: '{}' ---"
@@ -55,5 +55,5 @@ if __name__ == '__main__':
                                     asset_info['schema_name'],
                                     asset_info['entity_name'],
                                     asset_info['integration_type'])
-
+    """
     logger.info("******* The job finished with success")

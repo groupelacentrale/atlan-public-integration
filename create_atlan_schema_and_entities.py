@@ -59,7 +59,7 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             integration_type=row['Integration Type'])
             assets.append(schema)
 
-    create_assets(assets)
+    create_assets(assets, "createSchemas")
 
     return assets_info
 

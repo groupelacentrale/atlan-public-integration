@@ -75,7 +75,7 @@ def create_atlan_columns(database_name,
                     logger.info("Deleting column no longer mentioned in csv file: '{}'...".format(existing_column))
                     delete_asset(existing_columns[existing_column])
                     logger.info('{} Deleted successfully'.format(existing_column))
-    create_assets(columns)
+    create_assets(columns, "createColumns")
 
 
 if __name__ == '__main__':

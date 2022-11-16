@@ -1,10 +1,10 @@
 name: 'Data atlan integration'
 description: 'update atlan data catalog'
 inputs:
-  atlan_api_key:
+  atlan_token:
     description: 'atlan api key'
     required: true
-  atlan_instance:
+  atlan_new_instance:
     description: 'atlan instance'
     required: true
   atlan_prod_aws_account_id:
@@ -18,7 +18,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    ATLAN_API_KEY: ${{ inputs.atlan_api_key }}
-    ATLAN_INSTANCE: ${{ inputs.atlan_instance }}
+    ATLAN_TOKEN: ${{ inputs.atlan_token }}
+    ATLAN_NEW_INSTANCE: ${{ inputs.atlan_new_instance }}
     ATLAN_PROD_AWS_ACCOUNT_ID: ${{ inputs.atlan_prod_aws_account_id }}
     ATLAN_REDSHIFT_SERVER_URL: ${{ inputs.atlan_redshift_server_url }}
