@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 
-from constants import BASE_PATH_SAMPLE_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_GLUE, \
+from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_GLUE, \
     INTEGRATION_TYPE_REDSHIFT
 
 
@@ -29,11 +29,11 @@ def get_csv_file_name(schema_name, entity_name, integration_type):
 def get_path(integration_type, schema_name, table_or_entity_name):
     csv_file_name = get_csv_file_name(schema_name, table_or_entity_name, integration_type)
 
-    return os.path.join(BASE_PATH_SAMPLE_ATLAN_DOCS, integration_type.lower(), "{}.csv".format(csv_file_name))
+    return os.path.join(BASE_PATH_ATLAN_DOCS, integration_type.lower(), "{}.csv".format(csv_file_name))
 
 
 def get_manifest_path():
-    return os.path.join(BASE_PATH_SAMPLE_ATLAN_DOCS, MANIFEST_FILE_NAME)
+    return os.path.join(BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME)
 
 
 def get_template_source_file():
