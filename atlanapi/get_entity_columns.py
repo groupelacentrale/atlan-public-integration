@@ -14,7 +14,7 @@ search_headers = {
 
 
 def get_entity_columns(entity_guid):
-    search_url = "https://{}/api/metadata/atlas/tenants/default/search/relationship?guid={}&relation=columns".format(api_conf.instance,entity_guid)
+    search_url = "https://{}//api/meta/entity/guid/{}".format(api_conf.instance, entity_guid)
     atlan_api_query_request_object = AtlanApiRequest("GET", search_url, search_headers, {})
     try:
         columns_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)

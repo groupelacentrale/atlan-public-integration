@@ -108,7 +108,7 @@ class Entity:
         return self.entity_name
 
     def get_atlan_type_name(self):
-        return 'AtlanTable'
+        return 'Table'
 
     def get_creation_payload(self):
         table_info = {"entities": [
