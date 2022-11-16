@@ -1,30 +1,38 @@
-import os
-
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
-
-GET_REQUEST_INTEGRATION_TYPE = {
-    INTEGRATION_TYPE_DYNAMO_DB: 'DynamoDb',
-    INTEGRATION_TYPE_GLUE: 'GLUE',
-    INTEGRATION_TYPE_REDSHIFT: 'REDSHIFT',
-}
+def get_attribute_qualified_name(asset, level):
+    # TODO : Faire le cas de l'intégration GLUE
+    return '/'.join(asset.get_qualified_name().split('/')[:-level])
 
 
 def create_column_request_payload(asset):
+    # Faking static variable behaviour to preserve column's order
+
+    if not hasattr(create_column_request_payload, "count_order"):
+        create_column_request_payload.count_order = 0
+    create_column_request_payload.count_order += 1
+
     return {
-        "typeName": "AtlanColumn",
+        "typeName": "Column",
         "attributes": {
-            "typeName": "AtlanColumn",
-            "description": asset.description,
-            "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
-            "qualifiedName": asset.get_qualified_name(),
             "name": asset.column_name,
-            "order": 1,
+            "description": asset.description,
+            "qualifiedName": asset.get_qualified_name(),
+            "connectorName": asset.integration_type,
+            "connectionQualifiedName": get_attribute_qualified_name(asset, 4),
+            "databaseName": asset.database_name,
+            "databaseQualifiedName": get_attribute_qualified_name(asset, 3),
+            "schemaName": asset.schema_name,
+            "schemaQualifiedName": get_attribute_qualified_name(asset, 2),
+            "tableName": asset.entity_name,
+            "tableQualifiedName": get_attribute_qualified_name(asset, 1),
             "dataType": asset.data_type,
-            "table": {
-                "uniqueAttributes": {
-                    "qualifiedName": os.path.split(asset.get_qualified_name())[0]
-                },
-                "typeName": "AtlanTable"
+            "order": create_column_request_payload.count_order,
+            "relationshipAttributes": {
+                "table": {
+                    "typeName": "Table",
+                    "uniqueAttributes": {
+                        "qualifiedName": get_attribute_qualified_name(asset, 1)
+                    }
+                }
             }
         }
     }
@@ -34,15 +42,15 @@ def create_entity_request_payload(asset):
     return {
         "typeName": "Table",
         "attributes": {
-            "qualifiedName": asset.get_qualified_name(),
             "description": asset.description,
             "name": asset.entity_name,
-            "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
-            "connectorQualifiedName": "dynamodb/dynamodb.atlan.com",
+            "qualifiedName": asset.get_qualified_name(),
+            "connectorName": asset.integration_type,
+            "connectionQualifiedName": get_attribute_qualified_name(asset, 3),
             "databaseName": asset.database_name,
-            "databaseQualifiedName": "dynamodb/dynamodb.atlan.com/{}".format(asset.database_name),
+            "databaseQualifiedName": get_attribute_qualified_name(asset, 2),
             "schemaName": asset.schema_name,
-            "schemaQualifiedName": "dynamodb/dynamodb.atlan.com/{}/{}".format(asset.database_name, asset.schema_name, asset.entity_name),
+            "schemaQualifiedName": get_attribute_qualified_name(asset, 1),
         }
     }
 
@@ -53,13 +61,11 @@ def create_schema_request_payload(asset):
         "attributes": {
             "name": asset.schema_name,
             "description": asset.description,
-            "integrationType": GET_REQUEST_INTEGRATION_TYPE[asset.integration_type],
-            "connectorName": "dynamodb",
-            "connectionQualifiedName": "dynamodb/dynamodb.atlan.com",
-            "databaseName": asset.database_name,
-            "databaseQualifiedName": "dynamodb/dynamodb.atlan.com/{}".format(asset.database_name),
             "qualifiedName": asset.get_qualified_name(),
-            "name": asset.schema_name
+            "connectorName": asset.integration_type,
+            "connectionQualifiedName": get_attribute_qualified_name(asset, 2),
+            "databaseName": asset.database_name,
+            "databaseQualifiedName": get_attribute_qualified_name(asset, 1),
         }
     }
 
@@ -73,9 +79,9 @@ def create_column_lineage_request_payload(asset):
         _lineage_name = "{}-{} Transformation".format(asset.column.integration_type, asset.lineage_integration_type)
     else:
         _lineage_qualified_name = "{}/{}/{}/{}".format(asset.lineage_integration_type,
-                                                   asset.lineage_full_qualified_name,
-                                                   asset.column.integration_type,
-                                                   asset.column.get_qualified_name())
+                                                       asset.lineage_full_qualified_name,
+                                                       asset.column.integration_type,
+                                                       asset.column.get_qualified_name())
         _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.column.integration_type)
 
     return {
