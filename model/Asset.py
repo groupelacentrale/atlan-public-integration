@@ -51,7 +51,7 @@ class Column:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb.atlan.com/{}/{}/{}/{}"
+            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -95,7 +95,7 @@ class Entity:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb.atlan.com/{}/{}/{}"
+            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -154,7 +154,7 @@ class Schema:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb.atlan.com/{}/{}"
+            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -205,7 +205,7 @@ class ColumnLineage:
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb.atlan.com/{}/{}/{}/{}"
+            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -250,7 +250,7 @@ class EntityLineage:
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb.atlan.com/{}/{}/{}"
+            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
