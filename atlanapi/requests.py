@@ -85,40 +85,37 @@ def create_column_lineage_request_payload(asset):
         _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.column.integration_type)
 
     return {
-        "typeName": "AtlanProcess",
+        "typeName": "ColumnProcess",
         "attributes": {
             "qualifiedName": _lineage_qualified_name,
             "name": _lineage_name,
-            "processConfig": [
-                {
-                    "_data_type": "string",
-                    "_value": _lineage_name,
-                    "_key": "process_type"
-                },
-                {
-                    "_data_type": "string",
-                    "_value": "",
-                    "_key": "query"
-                }
-            ],
-            "description": _lineage_name,
-            "typeName": "AtlanProcess",
-            "inputs": [
-                {
+            "connectorName": get_attribute_qualified_name(asset.column, 4),
+            "connectionName": get_attribute_qualified_name(asset.column, 4),
+            "connectionQualifiedName": get_attribute_qualified_name(asset.column, 4),
+            "relationshipAttributes": {
+                "inputs": [
+                    {
+                        "typeName": "Column",
+                        "uniqueAttributes": {
+                            "qualifiedName": asset.column.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
+                        }
+                    }
+                ],
+                "outputs": [
+                    {
+                        "typeName": "Column",
+                        "uniqueAttributes": {
+                            "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.column.get_qualified_name()
+                        }
+                    }
+                ],
+                "process": {
+                    "typeName": "Process",
                     "uniqueAttributes": {
-                        "qualifiedName": asset.column.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
-                    },
-                    "typeName": "AtlanColumn"
+                        "qualifiedName": asset.get_qualified_name()
+                    }
                 }
-            ],
-            "outputs": [
-                {
-                    "uniqueAttributes": {
-                        "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.column.get_qualified_name()
-                    },
-                    "typeName": "AtlanColumn"
-                }
-            ]
+            }
         }
     }
 
@@ -138,39 +135,29 @@ def create_entity_lineage_request_payload(asset):
         _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.entity.integration_type)
 
     return {
-        "typeName": "AtlanProcess",
+        "typeName": "Process",
         "attributes": {
-            "qualifiedName": _lineage_qualified_name,
             "name": _lineage_name,
-            "processConfig": [
-                {
-                    "_data_type": "string",
-                    "_value": _lineage_name,
-                    "_key": "process_type"
-                },
-                {
-                    "_data_type": "string",
-                    "_value": "",
-                    "_key": "query"
-                }
-            ],
-            "description": _lineage_name,
-            "typeName": "AtlanProcess",
-            "inputs": [
-                {
-                    "uniqueAttributes": {
-                        "qualifiedName": asset.entity.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
-                    },
-                    "typeName": "AtlanTable"
-                }
-            ],
-            "outputs": [
-                {
-                    "uniqueAttributes": {
-                        "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.entity.get_qualified_name()
-                    },
-                    "typeName": "AtlanTable"
-                }
-            ]
+            "qualifiedName": _lineage_qualified_name,
+            "connectorName": get_attribute_qualified_name(asset.entity, 3),
+            "connectionName": get_attribute_qualified_name(asset.entity, 3),
+            "relationAttributes": {
+                "inputs": [
+                    {
+                        "typeName": "Table",
+                        "uniqueAttributes": {
+                            "qualifiedName": asset.entity.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
+                        }
+                    }
+                ],
+                "outputs": [
+                    {
+                        "typeName": "Table",
+                        "uniqueAttributes": {
+                            "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.entity.get_qualified_name()
+                        }
+                    }
+                ]
+            }
         }
     }

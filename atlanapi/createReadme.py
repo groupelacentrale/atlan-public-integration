@@ -17,9 +17,8 @@ def create_readme(asset):
         asset_info = get_asset_guid_by_qualified_name(asset_qualified_name, asset.get_atlan_type_name())
         asset_guid = asset_info['guid']
         column_info = {
-            "typeName": "AtlanFile",
+            "typeName": "Readme",
             "attributes": {
-                "mimeType": "text/markdown",
                 "name": "{}-readme.md".format(asset_guid),
                 "content": asset.readme,
                 "qualifiedName": "{}/files/{}-readme.md".format(asset_qualified_name, asset_guid),
@@ -38,8 +37,8 @@ def create_readme(asset):
         api_conf = create_api_config()
         readme_post_url = 'https://{}/api/metadata/atlas/tenants/default/entity'.format(api_conf.instance)
         headers = {
-            'Content-Type': 'application/json;charset=utf-8',
-            'APIKEY': api_conf.api_key
+            'Authorization': api_conf.api_token,
+            'Content-Type': 'application/json'
         }
         atlan_api_readme_request_object = AtlanApiRequest("POST", readme_post_url, headers, readme_payload)
         atlan_api_readme_request_object.send_atlan_request()

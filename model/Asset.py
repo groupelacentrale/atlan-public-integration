@@ -4,7 +4,8 @@ import json
 
 from atlanapi.requests import create_entity_lineage_request_payload, create_column_lineage_request_payload, \
     create_schema_request_payload, create_column_request_payload, create_entity_request_payload
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT, \
+from constants import DYNAMODB_CONN_QUALIFIED_NAME, INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, \
+    INTEGRATION_TYPE_REDSHIFT, \
     GLUE_DATABASE_NAME, DYNAMO_DB_DATABASE_NAME
 from exception.EnvVariableNotFound import EnvVariableNotFound
 
@@ -51,9 +52,9 @@ class Column:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}/{}"
+            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_GLUE:
-            qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}/{}"
+            qualified_name = "{}/" + get_atlan_prod_aws_account_id("Column", self.entity_name) + "/{}/default/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
             qualified_name = "redshift/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
         else:
@@ -95,7 +96,7 @@ class Entity:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}"
+            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -154,7 +155,7 @@ class Schema:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}"
+            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -168,7 +169,7 @@ class Schema:
         return self.schema_name
 
     def get_atlan_type_name(self):
-        return 'AtlanSchema'
+        return 'Schema'
 
     def get_creation_payload(self):
         table_info = {"entities": [
@@ -205,7 +206,7 @@ class ColumnLineage:
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}/{}"
+            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
@@ -250,7 +251,7 @@ class EntityLineage:
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = "dynamodb/dynamodb2.atlan.com/{}/{}/{}"
+            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
             qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:

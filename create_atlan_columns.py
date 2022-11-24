@@ -45,7 +45,7 @@ def create_atlan_columns(database_name,
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
 
     logger.debug("Preparing API request to create columns for table: {}"
-                .format(schema_name if integration_type == INTEGRATION_TYPE_DYNAMO_DB else table_or_entity_name))
+                 .format(schema_name if integration_type == INTEGRATION_TYPE_DYNAMO_DB else table_or_entity_name))
     columns = []
 
     for index, row in source_data.assets_def.iterrows():
@@ -68,8 +68,8 @@ def create_atlan_columns(database_name,
             entities[column.entity_name].append(column.column_name)
         for entity in entities:
             e = Entity(entity_name=entity, database_name=database_name, schema_name=schema_name)
-            asset_info = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
-            existing_columns = get_entity_columns(asset_info['guid'])
+            asset_info_guid = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
+            existing_columns = get_entity_columns(asset_info_guid)
             for existing_column in existing_columns:
                 if existing_column not in entities[entity]:
                     logger.info("Deleting column no longer mentioned in csv file: '{}'...".format(existing_column))
