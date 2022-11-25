@@ -63,7 +63,7 @@ def create_asset_connection(asset):
                 {
                     "typeName": "Connection",
                     "attributes": {
-                        "name": os.path.split(connection)[1] + "-integration",
+                        "name": asset.integration_type + "-integration",
                         "category": "warehouse",
                         "connectorName": asset.integration_type,
                         "qualifiedName": qualified_name,
