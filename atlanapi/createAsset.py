@@ -8,6 +8,7 @@ from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from model import Asset
 
@@ -46,38 +47,70 @@ def get_asset_attribute_qualified_name(asset, level):
 
 def create_asset_connection(asset):
     logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
-    qualified_name = get_asset_attribute_qualified_name()
+    qualified_name = get_asset_attribute_qualified_name(asset, 2)
+    if get_asset_guid_by_qualified_name(qualified_name, "Connection") != "":
+        logger.info("Connection : {} already exists, does not need to be created".format(qualified_name))
+    else:
+        logger.info("Connection : {} does not exist, creating database...".format(qualified_name))
+        if asset.integration_type == INTEGRATION_TYPE_DYNAMO_DB :
+            connection = DYNAMODB_CONN_QN
+        elif asset.integration_type == INTEGRATION_TYPE_ATHENA :
+            connection = ATHENA_CONN_QN
+        elif asset.integration_type == INTEGRATION_TYPE_REDSHIFT :
+            connection = REDSHIFT_CONN_QN
+        data = {
+            "entities": [
+                {
+                    "typeName": "Connection",
+                    "attributes": {
+                        "name": os.path.split(connection)[1] + "-integration",
+                        "category": "warehouse",
+                        "connectorName": asset.integration_type,
+                        "qualifiedName": qualified_name,
+                        "adminUsers": [
+                            "mfelja"
+                        ]
+                    }
+                }
+            ]
+        }
+
+        url = "https://{}/api/meta/entity/bulk#createConnections".format(api_conf.instance)
+        request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
+        response = request_object.send_atlan_request()
+        logger.info(response.content)
+        logger.debug("...created")
 
 
 def create_asset_database(asset):
     qualified_name = get_asset_attribute_qualified_name(asset, 1)
-    if get_asset_guid_by_qualified_name(qualified_name, "Database") is None:
+    if get_asset_guid_by_qualified_name(qualified_name, "Database") != "":
         logger.info("Database : {} already exists, does not need to be created".format(asset.database_name))
-        return
-    logger.info("Database : {} does not exist, creating database...".format(asset.database_name))
+    else:
+        logger.info("Database : {} does not exist, creating database...".format(asset.database_name))
 
-    data = {
-        "entities": [
-            {
-                "typeName": "Database",
-                "attributes": {
-                    "name": asset.database_name,
-                    "qualifiedName": qualified_name,
-                    "description": "Databse Integration : {}".format(asset.integration_type),
-                    "connectorName": os.path.split(qualified_name)[0],
-                    "connectionQualifiedName": os.path.split(qualified_name)[0]
+        data = {
+            "entities": [
+                {
+                    "typeName": "Database",
+                    "attributes": {
+                        "name": asset.database_name,
+                        "qualifiedName": qualified_name,
+                        "description": "Databse Integration : {}".format(asset.integration_type),
+                        "connectorName": os.path.split(qualified_name)[0],
+                        "connectionQualifiedName": os.path.split(qualified_name)[0]
+                    }
                 }
-            }
-        ]
-    }
-    logger.info("QualifiedName database : {}".format(qualified_name))
-    logger.info("ConnectorName : {}".format(os.path.split(qualified_name)[0]))
-    logger.info("Connection Qualified Name : {}".format(os.path.split(qualified_name)[0]))
-    url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
-    request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
-    response = request_object.send_atlan_request()
-    logger.info(response.content)
-    logger.debug("...created")
+            ]
+        }
+        logger.info("QualifiedName database : {}".format(qualified_name))
+        logger.info("ConnectorName : {}".format(os.path.split(qualified_name)[0]))
+        logger.info("Connection Qualified Name : {}".format(os.path.split(qualified_name)[0]))
+        url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
+        request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
+        response = request_object.send_atlan_request()
+        logger.info(response.content)
+        logger.debug("...created")
 
 
 def create_asset(asset):
