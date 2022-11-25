@@ -4,15 +4,12 @@ import os
 import time
 
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from constants import DYNAMODB_CONN_QUALIFIED_NAME, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_DYNAMO_DB, \
-    INTEGRATION_TYPE_REDSHIFT
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from model import Asset
-from model.Asset import get_atlan_prod_aws_account_id, get_atlan_redshift_server_url
 
 logger = logging.getLogger('main_logger')
 
@@ -23,13 +20,37 @@ headers = {
     'Authorization': 'Bearer ' + api_conf.api_token
 }
 
+"""
+Looking for asset attribute database qualified name
+- asset is Schema, qualified name :         default/mongodb/database/schema
+- get_attribute_qualified_name(asset, 1) -> default/mongodb/database
 
-def create_asset_database(asset):
+- asset is Entity, qualified name :         default/mongodb/database/schema/entity
+- get_attribute_qualified_name(asset, 1) -> default/mongodb/database/schema
+- get_attribute_qualified_name(asset, 2) -> default/mongodb/database
+"""
+
+
+def get_attribute_qualified_name(asset, level):
+    return '/'.join(asset.get_qualified_name().split('/')[:-level])
+
+
+def get_asset_attribute_qualified_name(asset, level):
     logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
     if isinstance(asset, Asset.Schema):
-        qualified_name = os.path.split(asset.get_qualified_name())[0]
+        qualified_name = get_attribute_qualified_name(asset, level)
     else:
-        qualified_name = os.path.split(os.path.split(asset.get_qualified_name())[0])[0]
+        qualified_name = get_attribute_qualified_name(asset, level + 1)
+    return qualified_name
+
+
+def create_asset_connection(asset):
+    logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
+    qualified_name = get_asset_attribute_qualified_name()
+
+
+def create_asset_database(asset):
+    qualified_name = get_asset_attribute_qualified_name(asset, 1)
     if get_asset_guid_by_qualified_name(qualified_name, "Database") is None:
         logger.info("Database : {} already exists, does not need to be created".format(asset.database_name))
         return

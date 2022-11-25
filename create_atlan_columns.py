@@ -18,7 +18,7 @@ from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
 from model.Asset import Column, Entity
 
 logger = logging.getLogger('main_logger')
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     parser.add_option("-d", "--database", help="Name of the database")
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
     parser.add_option("-t", "--table", help="Name of the DynamoDB entity -> Atlan Table")
-    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE],
+    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA],
                       help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')"
                            "(default = '{}}')".format(INTEGRATION_TYPE_DYNAMO_DB))
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")

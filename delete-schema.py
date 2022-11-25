@@ -14,7 +14,7 @@ from optparse import OptionParser
 
 from atlanapi.delete_asset import delete_asset
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 from model.Asset import Schema
 
 
@@ -23,7 +23,7 @@ def delete_schema(args):
     parser = OptionParser(usage='usage: %prog [options] arguments')
     parser.set_defaults(integration_type=INTEGRATION_TYPE_DYNAMO_DB)
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
-    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE,
+    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA,
                                                            INTEGRATION_TYPE_REDSHIFT],
                       help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
     parser.add_option("-d", "--database", help="Database name")

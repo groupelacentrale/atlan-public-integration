@@ -21,10 +21,10 @@ from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.Asset import Column, ColumnLineage, EntityLineage, Entity
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 
 # TODO: add support for 'Tableau' by determining their qualified name prefix.
-SUPPORTED_INTEGRATIONS = [INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, INTEGRATION_TYPE_REDSHIFT]
+SUPPORTED_INTEGRATIONS = [INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT]
 
 logger = logging.getLogger('main_logger')
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     parser.add_option("-d", "--database", help="Name of the database")
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
     parser.add_option("-t", "--table", help="Name of the DynamoDB entity -> Atlan Table")
-    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE],
+    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA],
                       help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()

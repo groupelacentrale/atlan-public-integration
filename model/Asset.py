@@ -4,9 +4,9 @@ import json
 
 from atlanapi.requests import create_entity_lineage_request_payload, create_column_lineage_request_payload, \
     create_schema_request_payload, create_column_request_payload, create_entity_request_payload
-from constants import DYNAMODB_CONN_QUALIFIED_NAME, INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE, \
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
     INTEGRATION_TYPE_REDSHIFT, \
-    GLUE_DATABASE_NAME, DYNAMO_DB_DATABASE_NAME
+    DYNAMO_DB_DATABASE_NAME, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_DATABASE_NAME, ATHENA_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
 
 logger = logging.getLogger('main_logger')
@@ -52,11 +52,11 @@ class Column:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}/{}"
-        elif self.integration_type == INTEGRATION_TYPE_GLUE:
-            qualified_name = "{}/" + get_atlan_prod_aws_account_id("Column", self.entity_name) + "/{}/default/{}/{}"
+            qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}/{}"
+        elif self.integration_type == INTEGRATION_TYPE_ATHENA:
+            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = "redshift/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
@@ -96,11 +96,11 @@ class Entity:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}"
-        elif self.integration_type == INTEGRATION_TYPE_GLUE:
-            qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}"
+            qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}"
+        elif self.integration_type == INTEGRATION_TYPE_ATHENA:
+            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = "redshift/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}".format(self.integration_type))
         return qualified_name.format(self.database_name, self.schema_name, self.entity_name).lower()
@@ -155,11 +155,11 @@ class Schema:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}"
-        elif self.integration_type == INTEGRATION_TYPE_GLUE:
-            qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}"
+            qualified_name = DYNAMODB_CONN_QN + "/{}/{}"
+        elif self.integration_type == INTEGRATION_TYPE_ATHENA:
+            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = "redshift/" + get_atlan_redshift_server_url(self) + "/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
@@ -194,8 +194,8 @@ class ColumnLineage:
             # Because lineage_schema_name is a concatenation of the database and schema name. Ex: dwhstats/dwh_stats
             self.lineage_database_name = lineage_schema_name.split('/')[0]
             self.lineage_schema_name = lineage_schema_name.split('/')[1]
-        elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
-            self.lineage_database_name = GLUE_DATABASE_NAME
+        elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
+            self.lineage_database_name = ATHENA_DATABASE_NAME
             self.lineage_schema_name = lineage_schema_name
         elif self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             self.lineage_database_name = DYNAMO_DB_DATABASE_NAME
@@ -206,11 +206,11 @@ class ColumnLineage:
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}/{}"
-        elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
-            qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}/{}"
+            qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}/{}"
+        elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
+            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = "redshift/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
@@ -223,7 +223,7 @@ class ColumnLineage:
         return self.lineage_column_name
 
     def get_atlan_type_name(self):
-        return 'AtlanColumn'
+        return 'Column'
 
     def get_creation_payload_for_bulk_mode(self):
         return create_column_lineage_request_payload(self)
@@ -251,11 +251,11 @@ class EntityLineage:
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QUALIFIED_NAME + "/{}/{}/{}"
-        elif self.lineage_integration_type == INTEGRATION_TYPE_GLUE:
-            qualified_name = "{}/" + get_atlan_prod_aws_account_id(self) + "/{}/default/{}"
+            qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}"
+        elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
+            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = "redshift/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
@@ -266,7 +266,7 @@ class EntityLineage:
         raise Exception("Not implemented !")
 
     def get_atlan_type_name(self):
-        return 'AtlanTable'
+        return 'Table'
 
     def get_creation_payload_for_bulk_mode(self):
         return create_entity_lineage_request_payload(self)
