@@ -1,8 +1,0 @@
-Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
-test_glue_integration,id,String,Cutomer reference,C000220,Target,glue,data_datalake_prod,vitrines_groupes,id,,,
-test_glue_integration,groupeId,String,groupe id,120588,Target,glue,data_datalake_prod,vitrines_groupes,groupeId,,,
-test_glue_integration,published_name,String,Published name of the customer,Alvergnas Automobiles,Target,glue,data_datalake_prod,vitrines_groupes,published_name,,,
-test_glue_integration,location,Map,GPS coordinates of the customer,"{""longitude"":3.9576139,""latitude"":45.05235}",Target,glue,data_datalake_prod,vitrines_groupes,location,,,
-test_glue_integration,proId,Number,Id of the customer in progate db,954,Target,glue,data_datalake_prod,vitrines_groupes,proId,,,
-test_glue_integration,page_groupe_active,Boolean,True if the groupe page in the customer showroom is displayed,true,Target,glue,data_datalake_prod,vitrines_groupes,page_groupe_active,,,
-test_glue_integration,parent_id,Number,The id of the parent group configured in salesforce,120588,Target,glue,data_datalake_prod,vitrines_groupes,parent_id,Appels estimés,Glossaire (FR),
