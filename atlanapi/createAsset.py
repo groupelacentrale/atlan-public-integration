@@ -15,10 +15,10 @@ from model import Asset
 logger = logging.getLogger('main_logger')
 
 api_conf = create_api_config()
-
+authorization = 'Bearer {}'.format(api_conf.api_token)
 headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + api_conf.api_token
+    'Authorization': authorization,
+    'Content-Type': 'application/json'
 }
 
 """
@@ -48,7 +48,8 @@ def get_asset_attribute_qualified_name(asset, level):
 def create_asset_connection(asset):
     logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
     qualified_name = get_asset_attribute_qualified_name(asset, 2)
-    if get_asset_guid_by_qualified_name(qualified_name, "Connection") != "":
+    logger.info("CONNECTION ---------> Qualified Name {}".format(qualified_name))
+    if get_asset_guid_by_qualified_name(qualified_name, "Connection"):
         logger.info("Connection : {} already exists, does not need to be created".format(qualified_name))
     else:
         logger.info("Connection : {} does not exist, creating database...".format(qualified_name))
@@ -84,7 +85,8 @@ def create_asset_connection(asset):
 
 def create_asset_database(asset):
     qualified_name = get_asset_attribute_qualified_name(asset, 1)
-    if get_asset_guid_by_qualified_name(qualified_name, "Database") != "":
+    logger.info("DATABASE ---------> Qualified Name {}".format(qualified_name))
+    if get_asset_guid_by_qualified_name(qualified_name, "Database"):
         logger.info("Database : {} already exists, does not need to be created".format(asset.database_name))
     else:
         logger.info("Database : {} does not exist, creating database...".format(asset.database_name))
@@ -97,14 +99,14 @@ def create_asset_database(asset):
                         "name": asset.database_name,
                         "qualifiedName": qualified_name,
                         "description": "Databse Integration : {}".format(asset.integration_type),
-                        "connectorName": os.path.split(qualified_name)[0],
+                        "connectorName": asset.integration_type,
                         "connectionQualifiedName": os.path.split(qualified_name)[0]
                     }
                 }
             ]
         }
         logger.info("QualifiedName database : {}".format(qualified_name))
-        logger.info("ConnectorName : {}".format(os.path.split(qualified_name)[0]))
+        logger.info("ConnectorName : {}".format(asset.integration_type))
         logger.info("Connection Qualified Name : {}".format(os.path.split(qualified_name)[0]))
         url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
         request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))

@@ -6,9 +6,10 @@ from atlanapi.atlanutils import AtlanApiRequest
 logger = logging.getLogger('main_logger')
 
 api_conf = create_api_config()
+authorization = 'Bearer {}'.format(api_conf.api_token)
 search_headers = {
-    'Content-Type': 'application/json;charset=utf-8',
-    'Authorization': 'Bearer ' + api_conf.api_token
+    'Authorization': authorization,
+    'Content-Type': 'application/json'
 }
 
 
@@ -17,7 +18,6 @@ def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
     atlan_api_query_request_object = AtlanApiRequest("GET", search_url, search_headers, {})
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
-        print("-------------->"+search_response["guid"])
         return search_response["guid"]
     except Exception as e:
         logger.debug("Cannot get search result for qualified_name: '{}'".format(qualified_name))

@@ -10,7 +10,7 @@ via the Atlan API, the internal Data Governance tool.
 
 Usage Options:
 -t --table : name of the DynamoDB table with the metadata to read
--i --integration_type : Atlan source integration type ('DynamoDb', 'glue'). A venir: 'Redshift', 'Tableau'
+-i --integration_type : Atlan source integration type ('DynamoDb', 'athena'). A venir: 'Redshift', 'Tableau'
 """
 
 import logging
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
     parser.add_option("-t", "--table", help="Name of the DynamoDB entity -> Atlan Table")
     parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA],
-                      help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')")
+                      help="Atlan source integration type: ('DynamoDb', 'athena') à venir: 'Redshift', 'Tableau')")
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")
     (options, args) = parser.parse_args()
 

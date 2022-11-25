@@ -8,8 +8,8 @@ INTEGRATION_TYPE_ATHENA = 'athena'
 INTEGRATION_TYPE_REDSHIFT = 'redshift'
 
 DYNAMODB_CONN_QN = "dynamodb/dynamodb2.atlan.com"
-REDSHIFT_CONN_QN = "default/redshift"
-ATHENA_CONN_QN = "default/athena"
+REDSHIFT_CONN_QN = "default/redshift/"
+ATHENA_CONN_QN = "default/athena/"
 
 ATHENA_DATABASE_NAME = 'AwsDataCatalog'
 DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
