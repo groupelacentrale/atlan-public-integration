@@ -17,7 +17,7 @@ import os
 from atlanapi.atlanutils import AtlanConfig, AtlanSourceFile, SourceFileValidator
 from optparse import OptionParser
 
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
+from constants import INTEGRATION_TYPE_DYNAMO_DB
 from utils import get_template_source_file
 
 logger = logging.getLogger('main_logger')

@@ -12,8 +12,7 @@ from atlanapi.linkTerm import link_term
 from exception.EnvVariableNotFound import EnvVariableNotFound
 
 api_conf = create_api_config()
-token = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJFUXhTd2pMVFBJYlFUeS1tMG9GeWtLVnlMSEllUHRfSGR0Q2VwazByaWZFIn0.eyJleHAiOjIwNzU0NTk2MzYsImlhdCI6MTY2NTQ5MTYzNiwianRpIjoiMGUzZTM0ZTAtMjNmNC00NTg4LWEwMGYtYjRjYTg0Y2QwM2IzIiwiaXNzIjoiaHR0cHM6Ly9ncm91cGVsYWNlbnRyYWxlLmF0bGFuLmNvbS9hdXRoL3JlYWxtcy9kZWZhdWx0IiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjAzNGIxMTFlLTI2NzMtNDJkZC04Y2RmLWE3MDU4ODg4NTU3NCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFwaWtleS1iY2JkOGFmMC02ODRiLTRhYTQtYmM3Ni03NDNjOGZkOWM5ZGMiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIiRndWVzdCIsImRlZmF1bHQtcm9sZXMtZGVmYXVsdCIsIm9mZmxpbmVfYWNjZXNzIiwiRGF0YSBFbmdpbmVlciIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJ2aWV3LXJlYWxtIiwidmlldy1pZGVudGl0eS1wcm92aWRlcnMiLCJtYW5hZ2UtaWRlbnRpdHktcHJvdmlkZXJzIiwiaW1wZXJzb25hdGlvbiIsInJlYWxtLWFkbWluIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUgb2ZmbGluZV9hY2Nlc3MiLCJjcmVhdGVkQXQiOiIxNjY1NDkxNjMyMDg1IiwiY2xpZW50SWQiOiJhcGlrZXktYmNiZDhhZjAtNjg0Yi00YWE0LWJjNzYtNzQzYzhmZDljOWRjIiwiY2xpZW50SG9zdCI6IjE3Mi4yOS4xMC4xNDEiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImdyb3VwcyI6W10sInJlYWxtIjoiZGVmYXVsdCIsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1hcGlrZXktYmNiZDhhZjAtNjg0Yi00YWE0LWJjNzYtNzQzYzhmZDljOWRjIiwidXNlcklkIjoiMDM0YjExMWUtMjY3My00MmRkLThjZGYtYTcwNTg4ODg1NTc0IiwiY2xpZW50QWRkcmVzcyI6IjE3Mi4yOS4xMC4xNDEiLCJ1c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1hcGlrZXktYmNiZDhhZjAtNjg0Yi00YWE0LWJjNzYtNzQzYzhmZDljOWRjIn0.HTLpaIZX4ilopzgxYUTjUbRWE8ZMZ4kjdrzmoFvL14pVjIZ11IKo6vHWeHxrVWKoZItABmyoYOKAgZ9ms1H_Nc7QdEOwxRhvxMPiN0lpW1pYMUUx6w1Q0aX3347lNvqnxWUkUpeY-bmJNEk3_Q2y-LItTMlk8Fe7nwE1axzihw8xSBiO8fnxnodgABUp19X11cbePlllWEgpjuF2Z-q2v8XYIuR_UxuyzOS5E8AkyydhgAfEkeqvUttG8u4PL0FDK34XKcr5YbvH5AJgwImZnwMfdFhCdW668O-14JFfMfHkGbQYgnF-pVt6rx45B2MGlicqU5szX3Rs7VYaYI_s4A'
-auth_token = 'Bearer {}'.format(token)
+auth_token = 'Bearer {}'.format(api_conf.api_token)
 logger = logging.getLogger('')
 
 headers = {
@@ -29,7 +28,7 @@ TABLE = "test_table"
 ENTITY = "test_entity"
 DATABASE = "test_db_dynamo"
 DESCRIPTION = "Example Description : Michel test atlan V2 succeeded"
-CONNECTOR_NAME = "dynamodb-prod"
+CONNECTOR_NAME = "dynamodb/dynamodb2.atlan.com"
 SCHEMA = "test_schema"
 README = "test_readme"
 TERM = "test_term"
@@ -44,16 +43,19 @@ def test_create_database(connector_name, db_name):
                 "attributes": {
                     "name": db_name,
                     "connectorName": connector_name,
-                    "qualifiedName": "dynamodb/dynamodb.atlan.com/{}".format(db_name),
+                    "qualifiedName": "dynamodb/dynamodb2.atlan.com/{}".format(db_name),
                     "description": "Test create Databse Integration SUCCEED",
-                    "connectionQualifiedName": "dynamodb/dynamodb.atlan.com"
+                    "connectionQualifiedName": "dynamodb/dynamodb2.atlan.com"
                 }
             }
         ]
     }
+
     url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
+    print(url)
     request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
-    request_object.send_atlan_request()
+    rep = request_object.send_atlan_request()
+    print(rep.content)
 
 
 def test_create_schema():
@@ -85,7 +87,7 @@ def test_create_table():
         {
             "typeName": "Table",
             "attributes": {
-                "name": ENTITY,
+                "name": "table-tst",
                 "description": "Test integration create table",
                 "qualifiedName": "dynamodb/dynamodb.atlan.com/{}/{}/{}".format(DATABASE, SCHEMA, ENTITY),
                 "schemaName": SCHEMA,
@@ -96,7 +98,7 @@ def test_create_table():
             }
         }
     ]}
-    url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.new_instance, 'createTables')
+    url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createTables')
     request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
     response = request_object.send_atlan_request()
     print(response.content)
@@ -171,9 +173,8 @@ def create_assets(assets, tag):
         logger.debug("Generating API request to create assets in bulk mode so it is searchable")
         payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
+        print(payloads_for_bulk)
         payload = json.dumps({"entities": list(payloads_for_bulk)})
-
-        print(payload)
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
         response = atlan_api_schema_request_object.send_atlan_request()
@@ -283,21 +284,21 @@ def test_create_column():
         "attributes": {
             "name": "cococococo",
             "description": "integration column test",
-            "qualifiedName": "dynamodb/dynamodb.atlan.com/dynamo_db/test-table-cible/test_cible/cococococo",
+            "qualifiedName": "dynamodb/dynamodb2.atlan.com/dynamo_db/test-table-cible/test_cible/cococococo",
             "connectorName": "dynamodb",
-            "connectionQualifiedName": "dynamodb/dynamodb.atlan.com",
+            "connectionQualifiedName": "dynamodb/dynamodb2.atlan.com",
             "databaseName": "dynamo_db",
-            "databaseQualifiedName": "dynamodb/dynamodb.atlan.com/dynamo_db",
+            "databaseQualifiedName": "dynamodb/dynamodb2.atlan.com/dynamo_db",
             "schemaName": "test-table-ciblr",
-            "schemaQualifiedName": "dynamodb/dynamodb.atlan.com/dynamo_db/test-table-cible",
+            "schemaQualifiedName": "dynamodb/dynamodb2.atlan.com/dynamo_db/test-table-cible",
             "tableName": "test_cible",
-            "tableQualifiedName": "dynamodb/dynamodb.atlan.com/dynamo_db/test-table-cible/test_cible",
+            "tableQualifiedName": "dynamodb/dynamodb2.atlan.com/dynamo_db/test-table-cible/test_cible",
             "dataType": "String",
             "relationshipAttributes": {
                 "table": {
                     "typeName": "Table",
                     "uniqueAttributes": {
-                        "qualifiedName":  "dynamodb/dynamodb.atlan.com/dynamo_db/test-table-cible/test_cible"
+                        "qualifiedName":  "dynamodb/dynamodb2.atlan.com/dynamo_db/test-table-cible/test_cible"
                     }
                 }
             }
@@ -309,20 +310,44 @@ def test_create_column():
     response = request_object.send_atlan_request()
     print(response.content)
 
+def create_connection():
+    data = {
+        "entities": [
+            {
+                "typeName": "Connection",
+                "attributes": {
+                    "name": "dynamodb2.atlan.com",
+                    "category": "warehouse",
+                    "connectorName": "dynamodb",
+                    "qualifiedName": "dynamodb/dynamodb2.atlan.com",
+                    "adminUsers": [
+                        "mfelja"
+                    ]
+                }
+            }
+        ]
+    }
+
+    url = "https://{}/api/meta/entity/bulk#createConnections".format(api_conf.instance)
+    request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
+    rep = request_object.send_atlan_request()
+    print(rep.content)
+
 
 if __name__ == '__main__':
-    # test_create_database()
+    #test_create_database("dynamodb", "test_db")
     # test_create_schema()
-    # test_create_table()
+    #test_create_table()
 
     # test_delete_asset("")
-    #test_delete_asset("7d5ad3e7-309f-4351-8dbb-435a66f8bd48")
-    #test_delete_asset("4ac7471c-8802-4968-88a5-c27c79708e35")
+    test_delete_asset("93283f73-c2a1-43b3-9a22-a8186a7efb70")
+
 
 
     #test_create_column()
 
+    #create_connection()
 
-    test_integrate_sample()
 
-    # print(test_db_exists("dynamo_db"))
+    #test_integrate_sample()
+    #print(test_db_exists("dynamo_db"))

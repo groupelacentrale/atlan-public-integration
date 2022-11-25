@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 
-from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_GLUE, \
+from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_ATHENA, \
     INTEGRATION_TYPE_REDSHIFT
 
 
@@ -21,7 +21,7 @@ def get_table_name(path):
 
 
 def get_csv_file_name(schema_name, entity_name, integration_type):
-    if integration_type == INTEGRATION_TYPE_GLUE or integration_type == INTEGRATION_TYPE_REDSHIFT:
+    if integration_type == INTEGRATION_TYPE_ATHENA or integration_type == INTEGRATION_TYPE_REDSHIFT:
         return entity_name
     return schema_name
 
