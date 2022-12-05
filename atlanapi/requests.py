@@ -60,6 +60,14 @@ def create_entity_request_payload(asset):
             "databaseQualifiedName": get_attribute_qualified_name(asset, 2),
             "schemaName": asset.schema_name,
             "schemaQualifiedName": get_attribute_qualified_name(asset, 1),
+            "relationshipAttributes": {
+                "atlanSchema": {
+                    "typeName": "Schema",
+                    "uniqueAttributes": {
+                        "qualifiedName": get_attribute_qualified_name(asset, 1)
+                    }
+                }
+            }
         }
     }
 
@@ -75,6 +83,14 @@ def create_schema_request_payload(asset):
             "connectionQualifiedName": get_attribute_qualified_name(asset, 2),
             "databaseName": asset.database_name,
             "databaseQualifiedName": get_attribute_qualified_name(asset, 1),
+            "relationshipAttributes": {
+                "database": {
+                    "typeName": "Database",
+                    "uniqueAttributes": {
+                        "qualifiedName": get_attribute_qualified_name(asset, 1)
+                    }
+                }
+            }
         }
     }
 

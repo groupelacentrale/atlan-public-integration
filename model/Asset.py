@@ -27,6 +27,17 @@ def get_atlan_redshift_server_url(asset):
     return ATLAN_REDSHIFT_SERVER_URL
 
 
+def auto_str(cls):
+    def __str__(self):
+        return '%s(%s)' % (
+            type(self).__name__,
+            ', '.join('%s=%s' % item for item in vars(self).items())
+        )
+    cls.__str__ = __str__
+    return cls
+
+
+@auto_str
 class Column:
     def __init__(self,
                  integration_type,
@@ -75,6 +86,7 @@ class Column:
         raise Exception("Column are creating in bulk mode only")
 
 
+@auto_str
 class Entity:
     def __init__(self,
                  entity_name,
@@ -142,6 +154,7 @@ class Entity:
                and self.integration_type == other.integration_type
 
 
+@auto_str
 class Schema:
     def __init__(self, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB):
@@ -184,6 +197,7 @@ class Schema:
         raise Exception("Not implemented !")
 
 
+@auto_str
 class ColumnLineage:
     def __init__(self, column, lineage_type=None, lineage_integration_type=None,
                  lineage_schema_name=None, lineage_entity_name=None, lineage_column_name=None):
@@ -232,6 +246,7 @@ class ColumnLineage:
         raise Exception("Column are creating in bulk mode only")
 
 
+@auto_str
 class EntityLineage:
     def __init__(self,
                  entity,

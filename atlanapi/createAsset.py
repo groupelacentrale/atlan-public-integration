@@ -115,10 +115,6 @@ def create_asset_database(asset):
         logger.debug("...created")
 
 
-def create_asset(asset):
-    create_assets([asset])
-
-
 def create_assets(assets, tag):
     try:
         if not assets:

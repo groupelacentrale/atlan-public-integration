@@ -1,5 +1,5 @@
 Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
-test_cible2,autoviza_available,Boolean,test test,,,,,,,,,
-test_cible2,autoviza_disabled,Boolean,test auto moto bang,,,,,,,,,
-test_cible2,id__2,String,,,,,,,,,,
-test_cible2,field,Boolean,,,,,,,,,,
+test_cible6,autoviza_available,Boolean,test test,,,,,,,,,
+test_cible6,autoviza_disabled,Boolean,test auto moto bang,,,,,,,,,
+test_cible6,id__2,String,,,,,,,,,,
+test_cible6,field,Boolean,,,,,,,,,,
