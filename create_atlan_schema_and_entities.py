@@ -26,7 +26,8 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
     source_data = AtlanSourceFile(path_to_manifest, sep)
     source_data.load_csv()
 
-    assets = []
+    tables = []
+    schemas = []
     assets_info = []
     for index, row in source_data.assets_def.iterrows():
         if row['Table/Entity']:
@@ -38,12 +39,12 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             term=row['Term'],
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
-            assets.append(entity)
+            tables.append(entity)
             # Create schema from entity row in case schema row is missing
             schema = Schema(database_name=row['Database'],
                             schema_name=row['Schema'],
                             integration_type=row['Integration Type'])
-            assets.append(schema)
+            schemas.append(schema)
             assets_info.append({
                 'database_name': row['Database'],
                 'schema_name': row['Schema'],
@@ -58,11 +59,12 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             term=row['Term'],
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
-            assets.append(schema)
+            schemas.append(schema)
     #Create asset's database if does not exist
-    for asset in assets:
-        create_asset_database(asset)
-    create_assets(assets, "createSchemas")
+    for table in tables:
+        create_asset_database(table)
+    create_assets(schemas, "createSchemas")
+    create_assets(tables, "createTables")
 
     return assets_info
 
