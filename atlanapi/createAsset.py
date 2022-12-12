@@ -46,9 +46,7 @@ def get_asset_attribute_qualified_name(asset, level):
 
 
 def create_asset_connection(asset):
-    logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
     qualified_name = get_asset_attribute_qualified_name(asset, 2)
-    logger.info("CONNECTION ---------> Qualified Name {}".format(qualified_name))
     if get_asset_guid_by_qualified_name(qualified_name, "Connection"):
         logger.info("Connection : {} already exists, does not need to be created".format(qualified_name))
     else:
@@ -85,7 +83,6 @@ def create_asset_connection(asset):
 
 def create_asset_database(asset):
     qualified_name = get_asset_attribute_qualified_name(asset, 1)
-    logger.info("DATABASE ---------> Qualified Name {}".format(qualified_name))
     if get_asset_guid_by_qualified_name(qualified_name, "Database"):
         logger.info("Database : {} already exists, does not need to be created".format(asset.database_name))
     else:
@@ -97,9 +94,9 @@ def create_asset_database(asset):
                     "typeName": "Database",
                     "attributes": {
                         "name": asset.database_name,
+                        "connectorName": asset.integration_type,
                         "qualifiedName": qualified_name,
                         "description": "Databse Integration : {}".format(asset.integration_type),
-                        "connectorName": asset.integration_type,
                         "connectionQualifiedName": os.path.split(qualified_name)[0]
                     }
                 }
@@ -110,8 +107,7 @@ def create_asset_database(asset):
         logger.info("Connection Qualified Name : {}".format(os.path.split(qualified_name)[0]))
         url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
         request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
-        response = request_object.send_atlan_request()
-        logger.info(response.content)
+        request_object.send_atlan_request()
         logger.debug("...created")
 
 
@@ -126,9 +122,7 @@ def create_assets(assets, tag):
 
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        response = atlan_api_schema_request_object.send_atlan_request()
-        logger.info(response.content)
-
+        atlan_api_schema_request_object.send_atlan_request()
         time.sleep(1)
 
         logger.debug("Creating Readme and linking glossary terms...")

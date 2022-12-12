@@ -23,24 +23,24 @@ def create_column_request_payload(asset):
         "typeName": "Column",
         "attributes": {
             "name": asset.column_name,
-            "description": asset.description,
             "qualifiedName": asset.get_qualified_name(),
             "connectorName": asset.integration_type,
-            "connectionQualifiedName": get_attribute_qualified_name(asset, 4),
-            "databaseName": asset.database_name,
-            "databaseQualifiedName": get_attribute_qualified_name(asset, 3),
-            "schemaName": asset.schema_name,
-            "schemaQualifiedName": get_attribute_qualified_name(asset, 2),
             "tableName": asset.entity_name,
             "tableQualifiedName": get_attribute_qualified_name(asset, 1),
+            "schemaName": asset.schema_name,
+            "schemaQualifiedName": get_attribute_qualified_name(asset, 2),
+            "databaseName": asset.database_name,
+            "databaseQualifiedName": get_attribute_qualified_name(asset, 3),
+            "connectionQualifiedName": get_attribute_qualified_name(asset, 4),
             "dataType": asset.data_type,
             "order": create_column_request_payload.count_order,
-            "relationshipAttributes": {
-                "table": {
-                    "typeName": "Table",
-                    "uniqueAttributes": {
-                        "qualifiedName": get_attribute_qualified_name(asset, 1)
-                    }
+            "description": asset.description
+        },
+        "relationshipAttributes": {
+            "table": {
+                "typeName": "Table",
+                "uniqueAttributes": {
+                    "qualifiedName": get_attribute_qualified_name(asset, 1)
                 }
             }
         }
@@ -51,21 +51,21 @@ def create_entity_request_payload(asset):
     return {
         "typeName": "Table",
         "attributes": {
-            "description": asset.description,
             "name": asset.entity_name,
             "qualifiedName": asset.get_qualified_name(),
             "connectorName": asset.integration_type,
-            "connectionQualifiedName": get_attribute_qualified_name(asset, 3),
-            "databaseName": asset.database_name,
-            "databaseQualifiedName": get_attribute_qualified_name(asset, 2),
             "schemaName": asset.schema_name,
             "schemaQualifiedName": get_attribute_qualified_name(asset, 1),
-            "relationshipAttributes": {
-                "atlanSchema": {
-                    "typeName": "Schema",
-                    "uniqueAttributes": {
-                        "qualifiedName": get_attribute_qualified_name(asset, 1)
-                    }
+            "databaseName": asset.database_name,
+            "databaseQualifiedName": get_attribute_qualified_name(asset, 2),
+            "connectionQualifiedName": get_attribute_qualified_name(asset, 3),
+            "description": asset.description
+        },
+        "relationshipAttributes": {
+            "atlanSchema": {
+                "typeName": "Schema",
+                "uniqueAttributes": {
+                    "qualifiedName": get_attribute_qualified_name(asset, 1)
                 }
             }
         }
@@ -77,18 +77,17 @@ def create_schema_request_payload(asset):
         "typeName": "Schema",
         "attributes": {
             "name": asset.schema_name,
-            "description": asset.description,
             "qualifiedName": asset.get_qualified_name(),
-            "connectorName": asset.integration_type,
-            "connectionQualifiedName": get_attribute_qualified_name(asset, 2),
             "databaseName": asset.database_name,
             "databaseQualifiedName": get_attribute_qualified_name(asset, 1),
-            "relationshipAttributes": {
-                "database": {
-                    "typeName": "Database",
-                    "uniqueAttributes": {
-                        "qualifiedName": get_attribute_qualified_name(asset, 1)
-                    }
+            "connectorName": asset.integration_type,
+            "connectionQualifiedName": get_attribute_qualified_name(asset, 2)
+        },
+        "relationshipAttributes": {
+            "database": {
+                "typeName": "Database",
+                "uniqueAttributes": {
+                    "qualifiedName": get_attribute_qualified_name(asset, 1)
                 }
             }
         }
@@ -112,8 +111,8 @@ def create_column_lineage_request_payload(asset):
     return {
         "typeName": "ColumnProcess",
         "attributes": {
-            "qualifiedName": _lineage_qualified_name,
             "name": _lineage_name,
+            "qualifiedName": _lineage_qualified_name,
             "connectorName": get_attribute_qualified_name(asset.column, 4),
             "connectionName": get_attribute_qualified_name(asset.column, 4),
             "connectionQualifiedName": get_attribute_qualified_name(asset.column, 4),
@@ -164,8 +163,8 @@ def create_entity_lineage_request_payload(asset):
         "attributes": {
             "name": _lineage_name,
             "qualifiedName": _lineage_qualified_name,
-            "connectorName": get_attribute_qualified_name(asset.entity, 3),
-            "connectionName": get_attribute_qualified_name(asset.entity, 3),
+            "connectorName": asset.integration_type,
+            "connectionQualifiedName": get_attribute_qualified_name(asset.entity, 3),
             "relationAttributes": {
                 "inputs": [
                     {
