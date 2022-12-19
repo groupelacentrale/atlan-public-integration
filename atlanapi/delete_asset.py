@@ -17,7 +17,7 @@ def delete_asset(asset_guid):
     search_url = 'https://{}/api/meta/entity/bulk?guid={}&deleteType=HARD#bulk_delete_assets"'.format(api_conf.instance, asset_guid)
     atlan_api_query_request_object = AtlanApiRequest("DELETE", search_url, search_headers, {})
     try:
-        json.loads(atlan_api_query_request_object.send_atlan_request().text)
+        return atlan_api_query_request_object.send_atlan_request().status_code == 200
     except Exception as e:
         logger.warning("Error while deleting an asset with id '{}'".format(asset_guid), e)
         return {}

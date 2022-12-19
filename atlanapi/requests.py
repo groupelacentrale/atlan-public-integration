@@ -79,6 +79,7 @@ def create_schema_request_payload(asset):
             "name": asset.schema_name,
             "qualifiedName": asset.get_qualified_name(),
             "databaseName": asset.database_name,
+            "description": asset.description,
             "databaseQualifiedName": get_attribute_qualified_name(asset, 1),
             "connectorName": asset.integration_type,
             "connectionQualifiedName": get_attribute_qualified_name(asset, 2)
