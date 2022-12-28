@@ -102,9 +102,6 @@ def create_asset_database(asset):
                 }
             ]
         }
-        logger.info("QualifiedName database : {}".format(qualified_name))
-        logger.info("ConnectorName : {}".format(asset.integration_type))
-        logger.info("Connection Qualified Name : {}".format(os.path.split(qualified_name)[0]))
         url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
         request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
         request_object.send_atlan_request()

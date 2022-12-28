@@ -1,12 +1,13 @@
 """
 Looking for asset attribute database qualified name
-- asset is Schema, qualified name :         default/mongodb/database/schema
+- asset is Schema, qualified name :         default/mongodb(2)/database(1)/schema
 - get_attribute_qualified_name(asset, 1) -> default/mongodb/database
 
-- asset is Entity, qualified name :         default/mongodb/database/schema/entity
+- asset is Entity, qualified name :         default/mongodb(3)/database(2)/schema(1)/entity
 - get_attribute_qualified_name(asset, 1) -> default/mongodb/database/schema
 - get_attribute_qualified_name(asset, 2) -> default/mongodb/database
 """
+import os
 
 
 def get_attribute_qualified_name(asset, level):
@@ -97,17 +98,15 @@ def create_schema_request_payload(asset):
 
 def create_column_lineage_request_payload(asset):
     if asset.lineage_type == "Target":
-        _lineage_qualified_name = "{}/{}/{}/{}".format(asset.column.integration_type,
-                                                       asset.column.get_qualified_name(),
-                                                       asset.lineage_integration_type,
-                                                       asset.lineage_full_qualified_name)
+        _lineage_qualified_name = "{}/{}".format(asset.column.get_qualified_name(),
+                                                 asset.lineage_full_qualified_name)
         _lineage_name = "{}-{} Transformation".format(asset.column.integration_type, asset.lineage_integration_type)
+        process_lineage_qualified_name = "{}/{}".format(get_attribute_qualified_name(asset.column, 1), os.path.split(asset.lineage_full_qualified_name)[0])
     else:
-        _lineage_qualified_name = "{}/{}/{}/{}".format(asset.lineage_integration_type,
-                                                       asset.lineage_full_qualified_name,
-                                                       asset.column.integration_type,
-                                                       asset.column.get_qualified_name())
+        _lineage_qualified_name = "{}/{}".format(asset.lineage_full_qualified_name,
+                                                 asset.column.get_qualified_name())
         _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.column.integration_type)
+        process_lineage_qualified_name = "{}/{}".format(os.path.split(asset.lineage_full_qualified_name)[0], get_attribute_qualified_name(asset.column, 1))
 
     return {
         "typeName": "ColumnProcess",
@@ -115,30 +114,29 @@ def create_column_lineage_request_payload(asset):
             "name": _lineage_name,
             "qualifiedName": _lineage_qualified_name,
             "connectorName": get_attribute_qualified_name(asset.column, 4),
-            "connectionName": get_attribute_qualified_name(asset.column, 4),
-            "connectionQualifiedName": get_attribute_qualified_name(asset.column, 4),
-            "relationshipAttributes": {
-                "inputs": [
-                    {
-                        "typeName": "Column",
-                        "uniqueAttributes": {
-                            "qualifiedName": asset.column.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
-                        }
-                    }
-                ],
-                "outputs": [
-                    {
-                        "typeName": "Column",
-                        "uniqueAttributes": {
-                            "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.column.get_qualified_name()
-                        }
-                    }
-                ],
-                "process": {
-                    "typeName": "Process",
+            "connectionQualifiedName": get_attribute_qualified_name(asset.column, 4)
+        },
+        "relationshipAttributes": {
+            "inputs": [
+                {
+                    "typeName": "Column",
                     "uniqueAttributes": {
-                        "qualifiedName": asset.get_qualified_name()
+                        "qualifiedName": asset.column.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
                     }
+                }
+            ],
+            "outputs": [
+                {
+                    "typeName": "Column",
+                    "uniqueAttributes": {
+                        "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.column.get_qualified_name()
+                    }
+                }
+            ],
+            "process": {
+                "typeName": "Process",
+                "uniqueAttributes": {
+                    "qualifiedName": process_lineage_qualified_name
                 }
             }
         }
@@ -147,16 +145,12 @@ def create_column_lineage_request_payload(asset):
 
 def create_entity_lineage_request_payload(asset):
     if asset.lineage_type == "Target":
-        _lineage_qualified_name = "{}/{}/{}/{}".format(asset.entity.integration_type,
-                                                       asset.entity.get_qualified_name(),
-                                                       asset.lineage_integration_type,
-                                                       asset.lineage_full_qualified_name)
+        _lineage_qualified_name = "{}/{}".format(asset.entity.get_qualified_name(),
+                                                 asset.lineage_full_qualified_name)
         _lineage_name = "{}-{} Transformation".format(asset.entity.integration_type, asset.lineage_integration_type)
     else:
-        _lineage_qualified_name = "{}/{}/{}/{}".format(asset.lineage_integration_type,
-                                                       asset.lineage_full_qualified_name,
-                                                       asset.entity.integration_type,
-                                                       asset.entity.get_qualified_name())
+        _lineage_qualified_name = "{}/{}".format(asset.lineage_full_qualified_name,
+                                                 asset.entity.get_qualified_name())
         _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.entity.integration_type)
 
     return {
@@ -164,25 +158,26 @@ def create_entity_lineage_request_payload(asset):
         "attributes": {
             "name": _lineage_name,
             "qualifiedName": _lineage_qualified_name,
-            "connectorName": asset.integration_type,
+            "connectorName": asset.entity.integration_type,
             "connectionQualifiedName": get_attribute_qualified_name(asset.entity, 3),
-            "relationAttributes": {
-                "inputs": [
-                    {
-                        "typeName": "Table",
-                        "uniqueAttributes": {
-                            "qualifiedName": asset.entity.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
-                        }
+
+        },
+        "relationshipAttributes": {
+            "inputs": [
+                {
+                    "typeName": "Table",
+                    "uniqueAttributes": {
+                        "qualifiedName": asset.entity.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
                     }
-                ],
-                "outputs": [
-                    {
-                        "typeName": "Table",
-                        "uniqueAttributes": {
-                            "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.entity.get_qualified_name()
-                        }
+                }
+            ],
+            "outputs": [
+                {
+                    "typeName": "Table",
+                    "uniqueAttributes": {
+                        "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.entity.get_qualified_name()
                     }
-                ]
-            }
+                }
+            ]
         }
     }

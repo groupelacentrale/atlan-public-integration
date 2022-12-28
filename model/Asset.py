@@ -200,7 +200,7 @@ class Schema:
 @auto_str
 class ColumnLineage:
     def __init__(self, column, lineage_type=None, lineage_integration_type=None,
-                 lineage_schema_name=None, lineage_entity_name=None, lineage_column_name=None):
+                 lineage_schema_name=None, lineage_entity_name=None, lineage_column_name=None, lineage_full_qualified_name=None):
         self.column = column
         self.lineage_type = lineage_type
         self.lineage_integration_type = lineage_integration_type.lower()
@@ -216,7 +216,7 @@ class ColumnLineage:
             self.lineage_schema_name = lineage_schema_name
         self.lineage_entity_name = lineage_entity_name
         self.lineage_column_name = lineage_column_name
-        self.lineage_full_qualified_name = None
+        self.lineage_full_qualified_name = lineage_full_qualified_name
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
@@ -281,7 +281,7 @@ class EntityLineage:
         raise Exception("Not implemented !")
 
     def get_atlan_type_name(self):
-        return 'Table'
+        return 'Process'
 
     def get_creation_payload_for_bulk_mode(self):
         return create_entity_lineage_request_payload(self)
