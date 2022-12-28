@@ -65,9 +65,9 @@ class Column:
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" +get_atlan_prod_aws_account_id(self) + "/{}/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
@@ -110,9 +110,9 @@ class Entity:
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}".format(self.integration_type))
         return qualified_name.format(self.database_name, self.schema_name, self.entity_name).lower()
@@ -170,9 +170,9 @@ class Schema:
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_prod_aws_account_id(self) + "/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
@@ -222,9 +222,9 @@ class ColumnLineage:
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
@@ -268,9 +268,9 @@ class EntityLineage:
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_prod_aws_account_id(self) + "/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))

@@ -1,13 +1,14 @@
 import json
 
-from constants import DYNAMODB_CONN_QN, INTEGRATION_TYPE_DYNAMO_DB
+from constants import DYNAMODB_CONN_QN, INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, ATHENA_CONN_QN, \
+    INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN
 from model.Asset import EntityLineage, ColumnLineage, Entity, Column
 
 COLUMN = "col_index"
 COLUMNOP = "col_index_output"
 ENTITY = "test_table"
 ENTITY_OUT = "test_table_out"
-INTEGRATION_TYPE = INTEGRATION_TYPE_DYNAMO_DB.lower()
+INTEGRATION_TYPE = INTEGRATION_TYPE_DYNAMO_DB
 DESCRIPTION = "Test Unit"
 DATABASE = "dynamo_db2"
 DATATYPE = "INT"
@@ -15,19 +16,30 @@ SCHEMA = "test_schema"
 TARGET = "Target"
 SOURCE = "SOURCE"
 
-IN_PROC = "{}/{}/{}/{}".format(DYNAMODB_CONN_QN, DATABASE, SCHEMA, ENTITY)
-OUT_PROC = "{}/{}/{}/{}".format(DYNAMODB_CONN_QN, DATABASE, SCHEMA, ENTITY_OUT)
+#Default connection qualified name is dynamo
+CONN_QN = DYNAMODB_CONN_QN
+CONN_NAME = INTEGRATION_TYPE_DYNAMO_DB.lower()
 
-IN_COL_PROC = "{}/{}/{}/{}/{}".format(DYNAMODB_CONN_QN, DATABASE, SCHEMA, ENTITY, COLUMN)
-OUT_COL_PROC = "{}/{}/{}/{}/{}".format(DYNAMODB_CONN_QN, DATABASE, SCHEMA, ENTITY_OUT, COLUMNOP)
+if INTEGRATION_TYPE == INTEGRATION_TYPE_ATHENA:
+    CONN_NAME = ATHENA_CONN_QN
+    CONN_QN = ATHENA_CONN_QN + "/athena-tmp-test"
+elif INTEGRATION_TYPE == INTEGRATION_TYPE_REDSHIFT:
+    CONN_NAME = REDSHIFT_CONN_QN
+    CONN_QN = REDSHIFT_CONN_QN + "/redshift-tmp"
+
+IN_PROC = "{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY)
+OUT_PROC = "{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY_OUT)
+
+IN_COL_PROC = "{}/{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY, COLUMN)
+OUT_COL_PROC = "{}/{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY_OUT, COLUMNOP)
 
 DATA_PROCESS = {
     "typeName": "Process",
     "attributes": {
         "name": "{}-{} Transformation".format(INTEGRATION_TYPE, INTEGRATION_TYPE),
-        "qualifiedName": "{}/{}".format(IN_COL_PROC, OUT_COL_PROC),
-        "connectorName": DYNAMODB_CONN_QN,
-        "connectionQualifiedName": DYNAMODB_CONN_QN
+        "qualifiedName": "{}/{}".format(IN_PROC, OUT_PROC),
+        "connectorName": CONN_NAME,
+        "connectionQualifiedName": CONN_QN
     },
     "relationshipAttributes": {
         "inputs": [
@@ -54,8 +66,8 @@ DATA_COLUMN_PROCESS = {
     "attributes": {
         "name": "{}-{} Transformation".format(INTEGRATION_TYPE, INTEGRATION_TYPE),
         "qualifiedName": "{}/{}".format(IN_COL_PROC, OUT_COL_PROC),
-        "connectorName": DYNAMODB_CONN_QN,
-        "connectionQualifiedName": DYNAMODB_CONN_QN
+        "connectorName": CONN_NAME,
+        "connectionQualifiedName": CONN_QN
     },
     "relationshipAttributes": {
         "inputs": [
@@ -111,7 +123,7 @@ def test_process_lineage_payload():
     assert json.dumps(process.get_creation_payload_for_bulk_mode()) == json.dumps(DATA_PROCESS)
 
 
-def test_column_lineage():
+def test_column_lineage_payload():
 
     column_inp = Column(integration_type=INTEGRATION_TYPE,
                         database_name=DATABASE,

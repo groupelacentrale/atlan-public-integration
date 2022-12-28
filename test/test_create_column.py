@@ -4,33 +4,44 @@ from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.Asset import Column
-from constants import INTEGRATION_TYPE_DYNAMO_DB
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, INTEGRATION_TYPE_ATHENA, \
+    ATHENA_CONN_QN, REDSHIFT_CONN_QN
 
 COLUMN = "col_index"
-ENTITY = "test_table"
-INTEGRATION_TYPE = "DynamoDb"
-DESCRIPTION = "Test Unit"
 DATABASE = "dynamo_db2"
 SCHEMA = "test_schema"
-README = "test_readme"
+ENTITY = "test_table"
+INTEGRATION_TYPE = INTEGRATION_TYPE_REDSHIFT
+DESCRIPTION = "Test integration schema test_schema"
 TERM = "test_term"
-GLOSSARY = "test_glossary"
+README = "test_schema readme"
+GLOSSARY = "test_schema glossary"
 DATA_TYPE = "INT"
+
+# Default connection qualified name is dynamo
+CONN_QN = DYNAMODB_CONN_QN
+CONN_NAME = INTEGRATION_TYPE_DYNAMO_DB.lower()
+
+if INTEGRATION_TYPE == INTEGRATION_TYPE_ATHENA:
+    CONN_NAME = ATHENA_CONN_QN
+    CONN_QN = ATHENA_CONN_QN + "/athena-tmp-test"
+elif INTEGRATION_TYPE == INTEGRATION_TYPE_REDSHIFT:
+    CONN_NAME = REDSHIFT_CONN_QN
+    CONN_QN = REDSHIFT_CONN_QN + "/redshift-tmp"
 
 DATA = {
     "typeName": "Column",
     "attributes": {
         "name": COLUMN,
-        "qualifiedName": "dynamodb/dynamodb2.atlan.com/{}/{}/{}/{}".format(DATABASE, SCHEMA, ENTITY,
-                                                                           COLUMN),
-        "connectorName": "dynamodb",
+        "qualifiedName": "{}/{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY, COLUMN),
+        "connectorName": CONN_NAME,
         "tableName": ENTITY,
-        "tableQualifiedName": "dynamodb/dynamodb2.atlan.com/{}/{}/{}".format(DATABASE, SCHEMA, ENTITY),
+        "tableQualifiedName": "{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY),
         "schemaName": SCHEMA,
-        "schemaQualifiedName": "dynamodb/dynamodb2.atlan.com/{}/{}".format(DATABASE, SCHEMA),
+        "schemaQualifiedName": "{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA),
         "databaseName": DATABASE,
-        "databaseQualifiedName": "dynamodb/dynamodb2.atlan.com/{}".format(DATABASE),
-        "connectionQualifiedName": "dynamodb/dynamodb2.atlan.com",
+        "databaseQualifiedName": "{}/{}".format(CONN_QN, DATABASE),
+        "connectionQualifiedName": CONN_QN,
         "dataType": DATA_TYPE,
         "order": 1,
         "description": DESCRIPTION
@@ -39,8 +50,7 @@ DATA = {
         "table": {
             "typeName": "Table",
             "uniqueAttributes": {
-                "qualifiedName": "dynamodb/dynamodb2.atlan.com/{}/{}/{}".format(DATABASE, SCHEMA,
-                                                                                ENTITY)
+                "qualifiedName": "{}/{}/{}/{}".format(CONN_QN, DATABASE, SCHEMA, ENTITY)
             }
         }
     }
@@ -48,7 +58,7 @@ DATA = {
 
 
 def test_column_payload_bulk_mode():
-    column = Column(integration_type=INTEGRATION_TYPE_DYNAMO_DB,
+    column = Column(integration_type=INTEGRATION_TYPE,
                     database_name=DATABASE,
                     schema_name=SCHEMA,
                     entity_name=ENTITY,
@@ -60,7 +70,7 @@ def test_column_payload_bulk_mode():
 
 
 def test_create_column():
-    column = Column(integration_type=INTEGRATION_TYPE_DYNAMO_DB,
+    column = Column(integration_type=INTEGRATION_TYPE,
                     database_name=DATABASE,
                     schema_name=SCHEMA,
                     entity_name=ENTITY,

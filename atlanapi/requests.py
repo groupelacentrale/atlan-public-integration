@@ -1,3 +1,12 @@
+import os
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
+
+GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
+    INTEGRATION_TYPE_DYNAMO_DB: 'dynamodb',
+    INTEGRATION_TYPE_ATHENA: 'default/athena',
+    INTEGRATION_TYPE_REDSHIFT: 'default/redshift'
+}
+
 """
 Looking for asset attribute database qualified name
 - asset is Schema, qualified name :         default/mongodb(2)/database(1)/schema
@@ -7,9 +16,6 @@ Looking for asset attribute database qualified name
 - get_attribute_qualified_name(asset, 1) -> default/mongodb/database/schema
 - get_attribute_qualified_name(asset, 2) -> default/mongodb/database
 """
-import os
-
-
 def get_attribute_qualified_name(asset, level):
     return '/'.join(asset.get_qualified_name().split('/')[:-level])
 
@@ -25,7 +31,7 @@ def create_column_request_payload(asset):
         "attributes": {
             "name": asset.column_name,
             "qualifiedName": asset.get_qualified_name(),
-            "connectorName": asset.integration_type,
+            "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.integration_type],
             "tableName": asset.entity_name,
             "tableQualifiedName": get_attribute_qualified_name(asset, 1),
             "schemaName": asset.schema_name,
@@ -54,7 +60,7 @@ def create_entity_request_payload(asset):
         "attributes": {
             "name": asset.entity_name,
             "qualifiedName": asset.get_qualified_name(),
-            "connectorName": asset.integration_type,
+            "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.integration_type],
             "schemaName": asset.schema_name,
             "schemaQualifiedName": get_attribute_qualified_name(asset, 1),
             "databaseName": asset.database_name,
@@ -82,7 +88,7 @@ def create_schema_request_payload(asset):
             "databaseName": asset.database_name,
             "description": asset.description,
             "databaseQualifiedName": get_attribute_qualified_name(asset, 1),
-            "connectorName": asset.integration_type,
+            "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.integration_type],
             "connectionQualifiedName": get_attribute_qualified_name(asset, 2)
         },
         "relationshipAttributes": {
@@ -113,7 +119,7 @@ def create_column_lineage_request_payload(asset):
         "attributes": {
             "name": _lineage_name,
             "qualifiedName": _lineage_qualified_name,
-            "connectorName": get_attribute_qualified_name(asset.column, 4),
+            "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.lineage_integration_type],
             "connectionQualifiedName": get_attribute_qualified_name(asset.column, 4)
         },
         "relationshipAttributes": {
@@ -158,7 +164,7 @@ def create_entity_lineage_request_payload(asset):
         "attributes": {
             "name": _lineage_name,
             "qualifiedName": _lineage_qualified_name,
-            "connectorName": asset.entity.integration_type,
+            "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.lineage_integration_type],
             "connectionQualifiedName": get_attribute_qualified_name(asset.entity, 3),
 
         },
