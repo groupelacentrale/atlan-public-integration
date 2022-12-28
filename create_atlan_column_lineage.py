@@ -84,7 +84,7 @@ def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name
 
     logger.info("Creating lineage relationships for verified columns in table: {}"
                 .format(get_csv_file_name(schema_name, table_or_entity_name, integration_type)))
-    create_assets(lineage_columns_verified)
+    create_assets(lineage_columns_verified, "createColumnProcesses")
 
     logger.debug("Generate schema/table qualified names")
     entities_lineage = set()
@@ -108,7 +108,7 @@ def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name
     for i in entities_lineage:
         logger.info(i)
     logger.info("-----------------")
-    create_assets(entities_lineage)
+    create_assets(entities_lineage, "createProcesses")
 
 
 if __name__ == '__main__':
