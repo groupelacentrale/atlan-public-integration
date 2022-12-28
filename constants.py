@@ -1,6 +1,6 @@
-#BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
+BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
 #BASE_PATH_ATLAN_DOCS = "./docs/datacatalog"
-BASE_PATH_ATLAN_DOCS = "./docs/sample/datacatalog"
+#BASE_PATH_ATLAN_DOCS = "./docs/sample/datacatalog"
 MANIFEST_FILE_NAME = "manifest.csv"
 
 INTEGRATION_TYPE_DYNAMO_DB = 'dynamodb'
