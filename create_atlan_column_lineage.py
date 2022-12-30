@@ -59,7 +59,7 @@ def get_columns_lineage(database_name, schema_name, table_or_entity_name, integr
                 asset = get_asset_guid_by_qualified_name(lineage.get_qualified_name(),
                                                          lineage.get_atlan_type_name())
                 if 'attributes' in asset:
-                    lineage.lineage_full_qualified_name = asset['attributes']['qualifiedName']
+                    lineage.lineage_full_qualified_name = lineage.get_qualified_name()
                 columns.append(lineage)
             except EnvVariableNotFound as e:
                 logger.warning(e.message)
