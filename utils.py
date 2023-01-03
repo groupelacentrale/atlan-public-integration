@@ -21,7 +21,7 @@ def get_table_name(path):
 
 
 def get_csv_file_name(schema_name, entity_name, integration_type):
-    if integration_type == INTEGRATION_TYPE_ATHENA or integration_type == INTEGRATION_TYPE_REDSHIFT:
+    if integration_type.lower() == INTEGRATION_TYPE_ATHENA or integration_type.lower() == INTEGRATION_TYPE_REDSHIFT:
         return entity_name
     return schema_name
 

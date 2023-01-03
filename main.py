@@ -1,10 +1,11 @@
 import logging
+import sys
 
 import utils
 from create_atlan_column_lineage import create_atlan_column_lineage
 from create_atlan_columns import create_atlan_columns
 from create_atlan_schema_and_entities import create_atlan_schema_and_entities
-from model.Asset import ATLAN_PROD_AWS_ACCOUNT_ID, ATLAN_REDSHIFT_SERVER_URL
+from model import ATLAN_PROD_AWS_ACCOUNT_ID, ATLAN_REDSHIFT_SERVER_URL
 from validate_atlan_source_file import validate_atlan_source_file as validate
 
 
@@ -24,7 +25,7 @@ if __name__ == '__main__':
                        '-integration-action.yml to complete your github action correctly')
 
     logger.info("******* Creating Schemas and entities...")
-    assets_info = create_atlan_schema_and_entities(utils.get_manifest_path())
+    assets_info, tables = create_atlan_schema_and_entities(utils.get_manifest_path())
 
     logger.info("******* Validating files")
     for asset_info in assets_info:
@@ -35,7 +36,7 @@ if __name__ == '__main__':
         validate(asset_info['schema_name'], asset_info['entity_name'], asset_info['integration_type'])
 
     logger.info("******* Creating columns")
-    for asset_info in assets_info:
+    for index, asset_info in enumerate(assets_info):
         logger.info("--- Creating columns for table: '{}' ---"
                     .format(utils.get_csv_file_name(asset_info['schema_name'],
                                                     asset_info['entity_name'],
@@ -43,7 +44,8 @@ if __name__ == '__main__':
         create_atlan_columns(asset_info['database_name'],
                              asset_info['schema_name'],
                              asset_info['entity_name'],
-                             asset_info['integration_type'])
+                             asset_info['integration_type'],
+                             table=tables[index])
 
     logger.info("******* Creating lineage")
     for asset_info in assets_info:

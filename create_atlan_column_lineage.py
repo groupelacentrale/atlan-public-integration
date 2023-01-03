@@ -20,7 +20,7 @@ import utils
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from model.Asset import Column, ColumnLineage, EntityLineage, Entity
+from model import Column, ColumnLineage, TableLineage, Table
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 
 # TODO: add support for 'Tableau' by determining their qualified name prefix.
@@ -89,7 +89,7 @@ def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name
     logger.debug("Generate schema/table qualified names")
     entities_lineage = set()
     for lineage in lineage_columns_verified:
-        entity_lineage = EntityLineage(entity=Entity(database_name=database_name,
+        entity_lineage = TableLineage(entity=Table(database_name=database_name,
                                                      schema_name=schema_name,
                                                      entity_name=lineage.column.entity_name,
                                                      integration_type=integration_type),

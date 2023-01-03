@@ -3,8 +3,8 @@ from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEG
 
 GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
     INTEGRATION_TYPE_DYNAMO_DB: 'dynamodb',
-    INTEGRATION_TYPE_ATHENA: 'default/athena',
-    INTEGRATION_TYPE_REDSHIFT: 'default/redshift'
+    INTEGRATION_TYPE_ATHENA: 'athena',
+    INTEGRATION_TYPE_REDSHIFT: 'redshift'
 }
 
 """
@@ -54,7 +54,7 @@ def create_column_request_payload(asset):
     }
 
 
-def create_entity_request_payload(asset):
+def create_table_request_payload(asset):
     return {
         "typeName": "Table",
         "attributes": {
@@ -66,7 +66,8 @@ def create_entity_request_payload(asset):
             "databaseName": asset.database_name,
             "databaseQualifiedName": get_attribute_qualified_name(asset, 2),
             "connectionQualifiedName": get_attribute_qualified_name(asset, 3),
-            "description": asset.description
+            "description": asset.description,
+            "columnCount": asset.column_count
         },
         "relationshipAttributes": {
             "atlanSchema": {
