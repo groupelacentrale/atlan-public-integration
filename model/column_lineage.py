@@ -5,8 +5,8 @@ from model import get_atlan_athena_unique_id, get_atlan_redshift_server_url
 
 from atlanapi.requests import create_column_lineage_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT, \
-    DYNAMO_DB_DATABASE_NAME, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_DATABASE_NAME, ATHENA_CONN_QN
+    INTEGRATION_TYPE_REDSHIFT, DYNAMO_DB_DATABASE_NAME, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_DATABASE_NAME, \
+    ATHENA_CONN_QN, REDSHIFT_DATABASE_NAME
 
 logger = logging.getLogger('main_logger')
 
@@ -23,8 +23,8 @@ class ColumnLineage:
         self.lineage_integration_type = lineage_integration_type.lower()
         if self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
             # Because lineage_schema_name is a concatenation of the database and schema name. Ex: dwhstats/dwh_stats
-            self.lineage_database_name = lineage_schema_name.split('/')[0]
-            self.lineage_schema_name = lineage_schema_name.split('/')[1]
+            self.lineage_database_name = REDSHIFT_DATABASE_NAME
+            self.lineage_schema_name = lineage_schema_name
         elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
             self.lineage_database_name = ATHENA_DATABASE_NAME
             self.lineage_schema_name = lineage_schema_name
@@ -48,7 +48,7 @@ class ColumnLineage:
         return qualified_name.format(self.lineage_database_name,
                                      self.lineage_schema_name,
                                      self.lineage_entity_name,
-                                     self.lineage_column_name).lower()
+                                     self.lineage_column_name)
 
     def get_asset_name(self):
         return self.lineage_column_name

@@ -38,7 +38,7 @@ class Table:
             qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}".format(self.integration_type))
-        return qualified_name.format(self.database_name, self.schema_name, self.entity_name).lower()
+        return qualified_name.format(self.database_name, self.schema_name, self.entity_name)
 
     def get_asset_name(self):
         return self.entity_name

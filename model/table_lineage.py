@@ -34,8 +34,7 @@ class TableLineage:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
-        return qualified_name.format(self.lineage_database_name, self.lineage_schema_name, self.lineage_table_name) \
-            .lower()
+        return qualified_name.format(self.lineage_database_name, self.lineage_schema_name, self.lineage_table_name)
 
     def get_asset_name(self):
         raise Exception("Not implemented !")
@@ -55,31 +54,31 @@ class TableLineage:
                 self.lineage_integration_type,
                 self.lineage_database_name,
                 self.lineage_schema_name,
-                self.lineage_entity_name,
-                self.entity
+                self.lineage_table_name,
+                self.table
             )
         else:
             return "{} ---> ({},{},{},{})".format(
-                self.entity,
+                self.table,
                 self.lineage_integration_type,
                 self.lineage_database_name,
                 self.lineage_schema_name,
-                self.lineage_entity_name,
+                self.lineage_table_name,
             )
 
     def __hash__(self):
-        return hash((self.entity.__hash__(),
+        return hash((self.table.__hash__(),
                      self.lineage_type,
                      self.lineage_integration_type,
                      self.lineage_database_name,
                      self.lineage_schema_name,
-                     self.lineage_entity_name))
+                     self.lineage_table_name))
 
     def __eq__(self, other):
         if not isinstance(other, type(self)): return NotImplemented
-        return self.entity == other.entity \
+        return self.table == other.table \
                and self.lineage_type == other.lineage_type \
                and self.lineage_integration_type == other.lineage_integration_type \
                and self.lineage_database_name == other.lineage_database_name \
                and self.lineage_schema_name == other.lineage_schema_name \
-               and self.lineage_entity_name == other.lineage_entity_name
+               and self.lineage_table_name == other.lineage_table_name

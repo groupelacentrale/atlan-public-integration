@@ -29,7 +29,7 @@ class Schema:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
-        return qualified_name.format(self.database_name, self.schema_name).lower()
+        return qualified_name.format(self.database_name, self.schema_name)
 
     def get_asset_name(self):
         return self.schema_name

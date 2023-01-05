@@ -47,7 +47,7 @@ class Column:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
-        return qualified_name.format(self.database_name, self.schema_name, self.entity_name, self.column_name).lower()
+        return qualified_name.format(self.database_name, self.schema_name, self.entity_name, self.column_name)
 
     def get_asset_name(self):
         return self.column_name

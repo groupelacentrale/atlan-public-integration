@@ -23,6 +23,7 @@ def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
         logger.debug("Cannot get search result for qualified_name: '{}'".format(qualified_name))
         return {}
 
+
 def get_schema_tables(qualified_name):
     search_url = "https://{}/api/meta/entity/uniqueAttribute/type/{}?attr%3AqualifiedName={}".format(api_conf.instance, "Schema", qualified_name)
     atlan_api_query_request_object = AtlanApiRequest("GET", search_url, search_headers, {})
@@ -33,8 +34,9 @@ def get_schema_tables(qualified_name):
         logger.debug("Cannot get search result for qualified_name: '{}'".format(qualified_name))
         return {}
 
+
 def get_asset_by_guid(guid):
-    search_url = "https://{}/api/meta/entity/guid/{}".format(guid)
+    search_url = "https://{}/api/meta/entity/guid/{}".format(api_conf.instance, guid)
     atlan_api_query_request_object = AtlanApiRequest("GET", search_url, search_headers, {})
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)

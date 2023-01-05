@@ -1,5 +1,4 @@
 import logging
-import sys
 
 import utils
 from create_atlan_column_lineage import create_atlan_column_lineage
