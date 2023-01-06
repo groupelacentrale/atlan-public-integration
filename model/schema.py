@@ -1,6 +1,6 @@
 import json
 from annotation import auto_str
-from model import get_atlan_athena_unique_id, get_atlan_redshift_server_url
+from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id
 
 from atlanapi.requests import create_schema_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
@@ -23,9 +23,9 @@ class Schema:
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_unique_id(self) + "/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))

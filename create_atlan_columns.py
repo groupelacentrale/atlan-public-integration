@@ -62,6 +62,10 @@ def create_atlan_columns(database_name,
                      glossary=row['Glossary'].strip())
         columns.append(col)
 
+    distinct_columns = set()
+
+    columns = [col for col in columns if col not in distinct_columns and (distinct_columns.add(col) or True)]
+
     logger.debug("Preparing API request to delete columns no longer mentioned in csv file")
     if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
         entities = {column.entity_name: [] for column in columns}

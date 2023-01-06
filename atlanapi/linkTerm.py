@@ -46,7 +46,7 @@ def link_term(asset):
         atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
 
         atlan_api_request_object.send_atlan_request()
-        logger.info("Glossary term '{}' linked successfully to {} '{}'".format(
+        logger.debug("Glossary term '{}' linked successfully to {} '{}'".format(
             asset.term, asset.get_atlan_type_name(), asset.get_asset_name())
         )
 

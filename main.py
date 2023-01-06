@@ -4,7 +4,7 @@ import utils
 from create_atlan_column_lineage import create_atlan_column_lineage
 from create_atlan_columns import create_atlan_columns
 from create_atlan_schema_and_entities import create_atlan_schema_and_entities
-from model import ATLAN_PROD_AWS_ACCOUNT_ID, ATLAN_REDSHIFT_SERVER_URL
+from model import ATLAN_ATHENA_CONNECTION_ID, ATLAN_REDSHIFT_CONNECTION_ID
 from validate_atlan_source_file import validate_atlan_source_file as validate
 
 
@@ -14,12 +14,12 @@ if __name__ == '__main__':
     logger = logging.getLogger('main_logger')
     logger.info("******* Starting the job ...")
 
-    if not ATLAN_PROD_AWS_ACCOUNT_ID:
-        logger.warning('ATLAN_PROD_AWS_ACCOUNT_ID is not defined in env variables, refer to '
+    if not ATLAN_ATHENA_CONNECTION_ID:
+        logger.warning('ATLAN_ATHENA_CONNECTION_ID is not defined in env variables, refer to '
                        'https://github.com/groupelacentrale/data-atlan-sample/blob/prod/.github/workflows/atlan'
                        '-integration-action.yml to complete your github action correctly')
-    if not ATLAN_REDSHIFT_SERVER_URL:
-        logger.warning('ATLAN_REDSHIFT_SERVER_URL is not defined in env variables, refer to '
+    if not ATLAN_REDSHIFT_CONNECTION_ID:
+        logger.warning('ATLAN_REDSHIFT_CONNECTION_ID is not defined in env variables, refer to '
                        'https://github.com/groupelacentrale/data-atlan-sample/blob/prod/.github/workflows/atlan'
                        '-integration-action.yml to complete your github action correctly')
 

@@ -101,9 +101,6 @@ def create_atlan_column_lineage(database_name, schema_name, table_or_entity_name
 
     logger.info("Creating entity lineage relationships for table: {}"
                 .format(get_csv_file_name(schema_name, table_or_entity_name, integration_type)))
-    logger.info("lineage tables: ")
-    for i in entities_lineage:
-        logger.info(i)
     logger.info("-----------------")
     create_assets(entities_lineage, "createProcesses")
 

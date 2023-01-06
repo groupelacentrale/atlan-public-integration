@@ -1,7 +1,7 @@
 import logging
 import os
 from annotation import auto_str
-from model import get_atlan_athena_unique_id, get_atlan_redshift_server_url
+from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id
 
 from atlanapi.requests import create_column_lineage_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
@@ -9,9 +9,6 @@ from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
     ATHENA_CONN_QN, REDSHIFT_DATABASE_NAME
 
 logger = logging.getLogger('main_logger')
-
-ATLAN_PROD_AWS_ACCOUNT_ID = os.environ.get('ATLAN_PROD_AWS_ACCOUNT_ID')
-ATLAN_REDSHIFT_SERVER_URL = os.environ.get('ATLAN_REDSHIFT_SERVER_URL')
 
 
 @auto_str
@@ -39,9 +36,9 @@ class ColumnLineage:
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_unique_id(self) + "/{}/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/{}/{}/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_server_url(self) + "/{}/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/{}/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
