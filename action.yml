@@ -20,5 +20,5 @@ runs:
   env:
     ATLAN_API_TOKEN: ${{ inputs.atlan_api_token }}
     ATLAN_INSTANCE: ${{ inputs.atlan_instance }}
-    ATLAN_ATHENA_CONNECTION_ID: ${{ inputs.atlan_athena_connection_d }}
+    ATLAN_ATHENA_CONNECTION_ID: ${{ inputs.atlan_athena_connection_id }}
     ATLAN_REDSHIFT_CONNECTION_ID: ${{ inputs.atlan_redshift_connection_id }}
