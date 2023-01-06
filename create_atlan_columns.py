@@ -19,7 +19,7 @@ from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
-from model.Asset import Column, Entity
+from model import Column, Table
 
 logger = logging.getLogger('main_logger')
 
@@ -29,7 +29,8 @@ def create_atlan_columns(database_name,
                          table_or_entity_name,
                          integration_type,
                          delimiter=",",
-                         includes_entity=False):
+                         includes_entity=False,
+                         table=None):
     logger.debug("Load table definition...")
     path_csv_table = utils.get_path(integration_type, schema_name, table_or_entity_name)
     source_data = AtlanSourceFile(path_csv_table, sep=delimiter)
@@ -61,13 +62,17 @@ def create_atlan_columns(database_name,
                      glossary=row['Glossary'].strip())
         columns.append(col)
 
+    distinct_columns = set()
+
+    columns = [col for col in columns if col not in distinct_columns and (distinct_columns.add(col) or True)]
+
     logger.debug("Preparing API request to delete columns no longer mentioned in csv file")
     if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
         entities = {column.entity_name: [] for column in columns}
         for column in columns:
             entities[column.entity_name].append(column.column_name)
         for entity in entities:
-            e = Entity(entity_name=entity, database_name=database_name, schema_name=schema_name)
+            e = Table(entity_name=entity, database_name=database_name, schema_name=schema_name)
             asset_info_guid = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
             existing_columns = get_entity_columns(asset_info_guid)
             for existing_column in existing_columns:
@@ -75,8 +80,10 @@ def create_atlan_columns(database_name,
                     logger.info("Deleting column no longer mentioned in csv file: '{}'...".format(existing_column))
                     # TODO check output from list columns because it's only guid column
                     delete_asset(existing_columns[existing_column])
-                    logger.info('{} Deleted successfully'.format(existing_column))
+                    logger.info("'{}' Deleted successfully".format(existing_column))
     create_assets(columns, "createColumns")
+    table.set_column_count(len(columns))
+    create_assets([table], "createTables")
 
 
 if __name__ == '__main__':

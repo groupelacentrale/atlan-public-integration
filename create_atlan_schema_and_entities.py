@@ -15,7 +15,7 @@ from optparse import OptionParser
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, create_asset_database
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from model.Asset import Schema, Entity
+from model import Schema, Table
 
 logger = logging.getLogger('main_logger')
 
@@ -31,7 +31,7 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
     assets_info = []
     for index, row in source_data.assets_def.iterrows():
         if row['Table/Entity']:
-            entity = Entity(entity_name=row['Table/Entity'],
+            table = Table(entity_name=row['Table/Entity'],
                             database_name=row['Database'],
                             schema_name=row['Schema'],
                             description=row['Summary (Description)'],
@@ -39,7 +39,7 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             term=row['Term'],
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
-            tables.append(entity)
+            tables.append(table)
             # Create schema from entity row in case schema row is missing
             schema = Schema(database_name=row['Database'],
                             schema_name=row['Schema'],
@@ -60,13 +60,13 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
             schemas.append(schema)
-    #Create asset's database if does not exist
+    # Create asset's database if does not exist
     for table in tables:
         create_asset_database(table)
     create_assets(schemas, "createSchemas")
     create_assets(tables, "createTables")
 
-    return assets_info
+    return assets_info, tables
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import json
 
 from constants import DYNAMODB_CONN_QN, INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, ATHENA_CONN_QN, \
     INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN
-from model.Asset import EntityLineage, ColumnLineage, Entity, Column
+from model import TableLineage, ColumnLineage, Table, Column
 
 COLUMN = "col_index"
 COLUMNOP = "col_index_output"
@@ -97,21 +97,21 @@ DATA_COLUMN_PROCESS = {
 
 
 def test_process_lineage_payload():
-    entity_src = Entity(integration_type=INTEGRATION_TYPE,
+    entity_src = Table(integration_type=INTEGRATION_TYPE,
                         entity_name=ENTITY,
                         description=DESCRIPTION,
                         database_name=DATABASE,
                         schema_name=SCHEMA
                         )
 
-    entity_target = Entity(integration_type=INTEGRATION_TYPE,
+    entity_target = Table(integration_type=INTEGRATION_TYPE,
                            entity_name=ENTITY_OUT,
                            description=DESCRIPTION,
                            database_name=DATABASE,
                            schema_name=SCHEMA
                            )
 
-    process = EntityLineage(entity=entity_src,
+    process = TableLineage(entity=entity_src,
                             lineage_type=TARGET,
                             lineage_integration_type=INTEGRATION_TYPE,
                             lineage_database_name=entity_target.database_name,

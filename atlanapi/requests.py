@@ -3,9 +3,10 @@ from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEG
 
 GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
     INTEGRATION_TYPE_DYNAMO_DB: 'dynamodb',
-    INTEGRATION_TYPE_ATHENA: 'default/athena',
-    INTEGRATION_TYPE_REDSHIFT: 'default/redshift'
+    INTEGRATION_TYPE_ATHENA: 'athena',
+    INTEGRATION_TYPE_REDSHIFT: 'redshift'
 }
+
 
 """
 Looking for asset attribute database qualified name
@@ -54,7 +55,7 @@ def create_column_request_payload(asset):
     }
 
 
-def create_entity_request_payload(asset):
+def create_table_request_payload(asset):
     return {
         "typeName": "Table",
         "attributes": {
@@ -66,7 +67,8 @@ def create_entity_request_payload(asset):
             "databaseName": asset.database_name,
             "databaseQualifiedName": get_attribute_qualified_name(asset, 2),
             "connectionQualifiedName": get_attribute_qualified_name(asset, 3),
-            "description": asset.description
+            "description": asset.description,
+            "columnCount": asset.column_count
         },
         "relationshipAttributes": {
             "atlanSchema": {
@@ -151,13 +153,13 @@ def create_column_lineage_request_payload(asset):
 
 def create_entity_lineage_request_payload(asset):
     if asset.lineage_type == "Target":
-        _lineage_qualified_name = "{}/{}".format(asset.entity.get_qualified_name(),
+        _lineage_qualified_name = "{}/{}".format(asset.table.get_qualified_name(),
                                                  asset.lineage_full_qualified_name)
-        _lineage_name = "{}-{} Transformation".format(asset.entity.integration_type, asset.lineage_integration_type)
+        _lineage_name = "{}-{} Transformation".format(asset.table.integration_type, asset.lineage_integration_type)
     else:
         _lineage_qualified_name = "{}/{}".format(asset.lineage_full_qualified_name,
-                                                 asset.entity.get_qualified_name())
-        _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.entity.integration_type)
+                                                 asset.table.get_qualified_name())
+        _lineage_name = "{}-{} Transformation".format(asset.lineage_integration_type, asset.table.integration_type)
 
     return {
         "typeName": "Process",
@@ -165,7 +167,7 @@ def create_entity_lineage_request_payload(asset):
             "name": _lineage_name,
             "qualifiedName": _lineage_qualified_name,
             "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.lineage_integration_type],
-            "connectionQualifiedName": get_attribute_qualified_name(asset.entity, 3),
+            "connectionQualifiedName": get_attribute_qualified_name(asset.table, 3),
 
         },
         "relationshipAttributes": {
@@ -173,7 +175,7 @@ def create_entity_lineage_request_payload(asset):
                 {
                     "typeName": "Table",
                     "uniqueAttributes": {
-                        "qualifiedName": asset.entity.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
+                        "qualifiedName": asset.table.get_qualified_name() if asset.lineage_type == "Target" else asset.lineage_full_qualified_name
                     }
                 }
             ],
@@ -181,7 +183,7 @@ def create_entity_lineage_request_payload(asset):
                 {
                     "typeName": "Table",
                     "uniqueAttributes": {
-                        "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.entity.get_qualified_name()
+                        "qualifiedName": asset.lineage_full_qualified_name if asset.lineage_type == "Target" else asset.table.get_qualified_name()
                     }
                 }
             ]

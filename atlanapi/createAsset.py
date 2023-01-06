@@ -10,7 +10,7 @@ from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
-from model import Asset
+from model.schema import Schema
 
 logger = logging.getLogger('main_logger')
 
@@ -38,7 +38,7 @@ def get_attribute_qualified_name(asset, level):
 
 def get_asset_attribute_qualified_name(asset, level):
     logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
-    if isinstance(asset, Asset.Schema):
+    if isinstance(asset, Schema):
         qualified_name = get_attribute_qualified_name(asset, level)
     else:
         qualified_name = get_attribute_qualified_name(asset, level + 1)
@@ -104,7 +104,8 @@ def create_asset_database(asset):
         }
         url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
         request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
-        request_object.send_atlan_request()
+        # TODO this feature should be disabled as database is created once and manually
+        # request_object.send_atlan_request()
         logger.debug("...created")
 
 
@@ -116,7 +117,6 @@ def create_assets(assets, tag):
         payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
         payload = json.dumps({"entities": list(payloads_for_bulk)})
-
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
         atlan_api_schema_request_object.send_atlan_request()

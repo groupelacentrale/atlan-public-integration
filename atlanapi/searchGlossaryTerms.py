@@ -7,37 +7,62 @@ from atlanapi.atlanutils import AtlanApiRequest
 logger = logging.getLogger('main_logger')
 
 api_conf = create_api_config()
-search_url = "https://{}/api/metadata/atlas/tenants/default/search/basic".format(api_conf.instance)
-search_headers = {
-    'Content-Type': 'application/json;charset=utf-8',
-    'Authorization': api_conf.api_token
+
+search_url = "https://{}/api/meta/search/indexsearch#findAssetByExactName".format(api_conf.instance)
+
+authorization = 'Bearer {}'.format(api_conf.api_token)
+headers = {
+    'Authorization': authorization,
+    'Content-Type': 'application/json'
 }
 
 
 def matching_term_predicate(entity, glossary_term_name, glossary):
     return (entity["displayText"] == glossary_term_name and
-            entity["attributes"]["anchor"]["uniqueAttributes"]["qualifiedName"] == "Glossary" and
-            entity["attributes"]["anchor"]["uniqueAttributes"]["name"] == glossary)
+            entity["attributes"]["anchor"]["typeName"] == "AtlasGlossary" and
+            entity["attributes"]["anchor"]["attributes"]["name"] == glossary)
 
 
 def get_glossary_term_guid_by_name(glossary_term_name, glossary):
-    query = json.dumps({
-        "excludeDeletedEntities": False,
-        "includeSubClassifications": False,
-        "includeSubTypes": True,
-        "includeClassificationAttributes": False,
-        "typeName": "AtlasGlossary,AtlasGlossaryTerm,AtlasGlossaryCategory",
-        "attributes": [
-            "anchor",
-            "categories",
-            "status"
-        ],
-        "limit": 20,
-        "offset": 0,
-        "query": glossary_term_name,
-        "minScore": 100
-    })
-    atlan_api_query_request_object = AtlanApiRequest("POST", search_url, search_headers, query)
+    query = json.dumps(
+        {
+            "dsl": {
+                "from": 0,
+                "size": 20,
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "__state": "ACTIVE"
+                                }
+                            },
+                            {
+                                "match": {
+                                    "__typeName.keyword": "AtlasGlossaryTerm"
+                                }
+                            },
+                            {
+                                "match": {
+                                    "name.keyword": glossary_term_name
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "attributes": [
+                "anchor"
+            ],
+            "relationAttributes": [
+                "certificateStatus",
+                "name",
+                "description",
+                "qualifiedName"
+            ]
+        })
+
+    atlan_api_query_request_object = AtlanApiRequest("POST", search_url, headers, query)
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
         result = next(
