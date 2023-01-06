@@ -64,15 +64,14 @@ class AtlanSourceFile:
         sep: character separator for the csv file (default=;)
         keep_default_na: set to false to avoid NAN errors
     """
-
-    def __init__(self, csv_filepath, sep=",", keep_default_na=False, escapechar='\\', encoding='utf-8',
-                 on_bad_lines='error'):
+    def __init__(self, csv_filepath, sep=",", keep_default_na=False, escapechar='\\', encoding='utf-8', warn_bad_lines=True, error_bad_lines=True):
         self.csv_filepath = csv_filepath
         self.sep = sep
         self.keep_default_na = keep_default_na
-        self.escapechar = escapechar
-        self.encoding = encoding
-        self.on_bad_lines = on_bad_lines
+        self.escapechar=escapechar
+        self.encoding=encoding
+        self.warn_bad_lines=warn_bad_lines
+        self.error_bad_lines=error_bad_lines
 
     def load_csv(self):
         """
@@ -81,14 +80,14 @@ class AtlanSourceFile:
         try:
             self.assets_def = pd.read_csv(self.csv_filepath, sep=self.sep, keep_default_na=self.keep_default_na,
                                           escapechar=self.escapechar, encoding=self.encoding,
-                                          on_bad_lines=self.on_bad_lines)
+                                          warn_bad_lines=self.warn_bad_lines, error_bad_lines=self.error_bad_lines)
         except ParserError as p_err:
             logger.error("{}: Problem parsing fields in source file {}. Verify the number of columns are consistent".format(p_err, self.csv_filepath))
             raise
         except Exception as e:
             logger.critical(sys.stderr, "Exception: {}\n".format(e))
             logger.critical("Problem loading source file {}. Verify that source file is present"
-                .format(self.csv_filepath))
+                            .format(self.csv_filepath))
             sys.exit(1)
         else:
             return self.assets_def
