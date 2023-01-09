@@ -1,4 +1,4 @@
-from .file import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, \
+from .file import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database, \
     ATLAN_ATHENA_CONNECTION_ID, ATLAN_REDSHIFT_CONNECTION_ID
 from .schema import Schema
 from .table import Table

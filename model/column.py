@@ -1,7 +1,7 @@
 import logging
 import os
 from annotation import auto_str
-from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id
+from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
 from atlanapi.requests import create_column_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
@@ -25,9 +25,9 @@ class Column:
                  glossary=None):
         self.integration_type = integration_type.lower()
         self.database_name = database_name
-        self.schema_name = schema_name
-        self.entity_name = entity_name
-        self.column_name = column_name
+        self.schema_name = schema_name.lower()
+        self.entity_name = entity_name.lower()
+        self.column_name = column_name.lower()
         self.data_type = data_type
         self.description = description
         self.readme = readme
@@ -36,15 +36,18 @@ class Column:
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}/{}"
+            qualified_name = DYNAMODB_CONN_QN  + "/" + \
+                             get_database(self.integration_type) + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/{}/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/" + \
+                             get_database(self.integration_type) + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/{}/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/" + \
+                             get_database(self.integration_type) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
-        return qualified_name.format(self.database_name, self.schema_name, self.entity_name, self.column_name)
+        return qualified_name.format(self.schema_name, self.entity_name, self.column_name)
 
     def get_asset_name(self):
         return self.column_name

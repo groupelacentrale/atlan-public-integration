@@ -1,5 +1,5 @@
 from annotation import auto_str
-from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id
+from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
 from atlanapi.requests import create_entity_lineage_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
@@ -20,21 +20,24 @@ class TableLineage:
         self.lineage_type = lineage_type
         self.lineage_integration_type = lineage_integration_type.lower()
         self.lineage_database_name = lineage_database_name
-        self.lineage_schema_name = lineage_schema_name
-        self.lineage_table_name = lineage_table_name
+        self.lineage_schema_name = lineage_schema_name.lower()
+        self.lineage_table_name = lineage_table_name.lower()
         self.lineage_full_qualified_name = lineage_full_qualified_name
 
     def get_qualified_name(self):
         if self.lineage_integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QN + "/{}/{}/{}"
+            qualified_name = DYNAMODB_CONN_QN + "/" + \
+                             get_database(self.lineage_integration_type) + "/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_ATHENA:
-            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/{}/{}/{}"
+            qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/" + \
+                             get_database(self.lineage_integration_type) + "/{}/{}"
         elif self.lineage_integration_type == INTEGRATION_TYPE_REDSHIFT:
-            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/{}/{}/{}"
+            qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/" + \
+                             get_database(self.lineage_integration_type) + "/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
-        return qualified_name.format(self.lineage_database_name, self.lineage_schema_name, self.lineage_table_name)
+        return qualified_name.format(self.lineage_schema_name, self.lineage_table_name)
 
     def get_asset_name(self):
         raise Exception("Not implemented !")
