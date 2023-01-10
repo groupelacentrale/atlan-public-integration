@@ -19,9 +19,9 @@ class Table:
                  glossary=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB,
                  column_count=None):
-        self.entity_name = entity_name.lower()
+        self.entity_name = entity_name
         self.database_name = database_name
-        self.schema_name = schema_name.lower()
+        self.schema_name = schema_name
         self.description = description
         self.readme = readme
         self.term = term
@@ -41,7 +41,7 @@ class Table:
                              get_database(self.integration_type) + "/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}".format(self.integration_type))
-        return qualified_name.format(self.schema_name, self.entity_name)
+        return qualified_name.format(self.schema_name.lower(), self.entity_name.lower())
 
     def get_asset_name(self):
         return self.entity_name

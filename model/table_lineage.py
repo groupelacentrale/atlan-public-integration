@@ -20,8 +20,8 @@ class TableLineage:
         self.lineage_type = lineage_type
         self.lineage_integration_type = lineage_integration_type.lower()
         self.lineage_database_name = lineage_database_name
-        self.lineage_schema_name = lineage_schema_name.lower()
-        self.lineage_table_name = lineage_table_name.lower()
+        self.lineage_schema_name = lineage_schema_name
+        self.lineage_table_name = lineage_table_name
         self.lineage_full_qualified_name = lineage_full_qualified_name
 
     def get_qualified_name(self):
@@ -37,7 +37,7 @@ class TableLineage:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
-        return qualified_name.format(self.lineage_schema_name, self.lineage_table_name)
+        return qualified_name.format(self.lineage_schema_name.lower(), self.lineage_table_name.lower())
 
     def get_asset_name(self):
         raise Exception("Not implemented !")

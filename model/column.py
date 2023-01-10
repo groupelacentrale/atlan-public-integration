@@ -25,9 +25,9 @@ class Column:
                  glossary=None):
         self.integration_type = integration_type.lower()
         self.database_name = database_name
-        self.schema_name = schema_name.lower()
-        self.entity_name = entity_name.lower()
-        self.column_name = column_name.lower()
+        self.schema_name = schema_name
+        self.entity_name = entity_name
+        self.column_name = column_name
         self.data_type = data_type
         self.description = description
         self.readme = readme
@@ -47,7 +47,7 @@ class Column:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
-        return qualified_name.format(self.schema_name, self.entity_name, self.column_name)
+        return qualified_name.format(self.schema_name.lower(), self.entity_name.lower(), self.column_name.lower())
 
     def get_asset_name(self):
         return self.column_name

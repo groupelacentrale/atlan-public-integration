@@ -12,7 +12,7 @@ class Schema:
     def __init__(self, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB):
         self.database_name = database_name
-        self.schema_name = schema_name.lower()
+        self.schema_name = schema_name
         self.description = description
         self.readme = readme
         self.term = term
@@ -32,7 +32,7 @@ class Schema:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.integration_type))
-        return qualified_name.format(self.schema_name)
+        return qualified_name.format(self.schema_name.lower())
 
     def get_asset_name(self):
         return self.schema_name

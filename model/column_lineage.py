@@ -19,9 +19,9 @@ class ColumnLineage:
         self.lineage_type = lineage_type
         self.lineage_integration_type = lineage_integration_type.lower()
         self.lineage_database_name = get_database(lineage_integration_type)
-        self.lineage_schema_name = lineage_schema_name.lower()
-        self.lineage_entity_name = lineage_entity_name.lower()
-        self.lineage_column_name = lineage_column_name.lower()
+        self.lineage_schema_name = lineage_schema_name
+        self.lineage_entity_name = lineage_entity_name
+        self.lineage_column_name = lineage_column_name
         self.lineage_full_qualified_name = lineage_full_qualified_name
 
     def get_qualified_name(self):
@@ -37,9 +37,9 @@ class ColumnLineage:
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
                             .format(self.lineage_integration_type))
-        return qualified_name.format(self.lineage_schema_name,
-                                     self.lineage_entity_name,
-                                     self.lineage_column_name)
+        return qualified_name.format(self.lineage_schema_name.lower(),
+                                     self.lineage_entity_name.lower(),
+                                     self.lineage_column_name.lower())
 
     def get_asset_name(self):
         return self.lineage_column_name
