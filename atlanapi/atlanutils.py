@@ -87,7 +87,7 @@ class AtlanSourceFile:
         except Exception as e:
             logger.critical(sys.stderr, "Exception: {}\n".format(e))
             logger.critical("Problem loading source file {}. Verify that source file is present"
-                .format(self.csv_filepath))
+                            .format(self.csv_filepath))
             sys.exit(1)
         else:
             return self.assets_def

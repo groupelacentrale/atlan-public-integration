@@ -1,0 +1,6 @@
+Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
+test_cible,autoviza_available,Boolean,test test,,,,,,,,,
+test_cible,autoviza_disabled,Boolean,test auto moto bang,,,,,,,,,
+test_cible,id,String,id test test,,,,,,,,,
+test_cible,id__2,String,,,,,,,,,,
+test_cible,field,Boolean,,,,,,,,,,

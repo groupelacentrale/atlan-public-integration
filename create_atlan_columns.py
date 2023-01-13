@@ -18,8 +18,8 @@ from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE
-from model.Asset import Column, Entity
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
+from model import Column, Table
 
 logger = logging.getLogger('main_logger')
 
@@ -29,7 +29,8 @@ def create_atlan_columns(database_name,
                          table_or_entity_name,
                          integration_type,
                          delimiter=",",
-                         includes_entity=False):
+                         includes_entity=False,
+                         table=None):
     logger.debug("Load table definition...")
     path_csv_table = utils.get_path(integration_type, schema_name, table_or_entity_name)
     source_data = AtlanSourceFile(path_csv_table, sep=delimiter)
@@ -45,7 +46,7 @@ def create_atlan_columns(database_name,
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
 
     logger.debug("Preparing API request to create columns for table: {}"
-                .format(schema_name if integration_type == INTEGRATION_TYPE_DYNAMO_DB else table_or_entity_name))
+                 .format(schema_name if integration_type == INTEGRATION_TYPE_DYNAMO_DB else table_or_entity_name))
     columns = []
 
     for index, row in source_data.assets_def.iterrows():
@@ -61,21 +62,28 @@ def create_atlan_columns(database_name,
                      glossary=row['Glossary'].strip())
         columns.append(col)
 
+    distinct_columns = set()
+
+    columns = [col for col in columns if col not in distinct_columns and (distinct_columns.add(col) or True)]
+
     logger.debug("Preparing API request to delete columns no longer mentioned in csv file")
     if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
         entities = {column.entity_name: [] for column in columns}
         for column in columns:
             entities[column.entity_name].append(column.column_name)
         for entity in entities:
-            e = Entity(entity_name=entity, database_name=database_name, schema_name=schema_name)
-            asset_info = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
-            existing_columns = get_entity_columns(asset_info['guid'])
+            e = Table(entity_name=entity, database_name=database_name, schema_name=schema_name)
+            asset_info_guid = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
+            existing_columns = get_entity_columns(asset_info_guid)
             for existing_column in existing_columns:
                 if existing_column not in entities[entity]:
                     logger.info("Deleting column no longer mentioned in csv file: '{}'...".format(existing_column))
+                    # TODO check output from list columns because it's only guid column
                     delete_asset(existing_columns[existing_column])
-                    logger.info('{} Deleted successfully'.format(existing_column))
-    create_assets(columns)
+                    logger.info("'{}' Deleted successfully".format(existing_column))
+    create_assets(columns, "createColumns")
+    table.set_column_count(len(columns))
+    create_assets([table], "createTables")
 
 
 if __name__ == '__main__':
@@ -85,7 +93,7 @@ if __name__ == '__main__':
     parser.add_option("-d", "--database", help="Name of the database")
     parser.add_option("-s", "--schema", help="Name of the DynamoDB table -> Atlan Schema")
     parser.add_option("-t", "--table", help="Name of the DynamoDB entity -> Atlan Table")
-    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_GLUE],
+    parser.add_option("-i", "--integration_type", choices=[INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA],
                       help="Atlan source integration type: ('DynamoDb', 'glue') à venir: 'Redshift', 'Tableau')"
                            "(default = '{}}')".format(INTEGRATION_TYPE_DYNAMO_DB))
     parser.add_option("-d", "--delimiter", help="Source file csv delimiter (default = ',')")

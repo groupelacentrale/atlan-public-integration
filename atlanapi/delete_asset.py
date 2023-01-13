@@ -1,24 +1,24 @@
 import logging
-import json
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 
-api_conf = create_api_config()
-search_headers = {
-    'Content-Type': 'application/json;charset=utf-8',
-    'APIKEY': api_conf.api_key
-}
-
 logger = logging.getLogger('main_logger')
+
+api_conf = create_api_config()
+authorization = 'Bearer {}'.format(api_conf.api_token)
+
+headers = {
+    'Authorization': authorization,
+    'Content-Type': 'application/json'
+}
 
 
 def delete_asset(asset_guid):
-    search_url = "https://{}/api/metadata/atlas/tenants/default/entity/guid/{}?deleteType=HARD".format(
-        api_conf.instance, asset_guid)
-    atlan_api_query_request_object = AtlanApiRequest("DELETE", search_url, search_headers, {})
+    delete_url = 'https://{}/api/meta/entity/bulk?guid={}&deleteType=HARD"'.format(api_conf.instance, asset_guid)
+    atlan_api_query_request_object = AtlanApiRequest("DELETE", delete_url, headers, {})
     try:
-        json.loads(atlan_api_query_request_object.send_atlan_request().text)
+        return atlan_api_query_request_object.send_atlan_request().status_code == 200
     except Exception as e:
         logger.warning("Error while deleting an asset with id '{}'".format(asset_guid), e)
         return {}
