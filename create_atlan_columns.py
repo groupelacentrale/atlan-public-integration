@@ -63,7 +63,7 @@ def create_atlan_columns(database_name,
         columns.append(col)
 
     distinct_columns = set()
-
+    count_columns_asset = 0
     columns = [col for col in columns if col not in distinct_columns and (distinct_columns.add(col) or True)]
 
     logger.debug("Preparing API request to delete columns no longer mentioned in csv file")
@@ -71,6 +71,8 @@ def create_atlan_columns(database_name,
         entities = {column.entity_name: [] for column in columns}
         for column in columns:
             entities[column.entity_name].append(column.column_name)
+            if column.entity_name == table.entity_name:
+                count_columns_asset += 1
         for entity in entities:
             e = Table(entity_name=entity, database_name=database_name, schema_name=schema_name)
             asset_info_guid = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
@@ -82,7 +84,7 @@ def create_atlan_columns(database_name,
                     delete_asset(existing_columns[existing_column])
                     logger.info("'{}' Deleted successfully".format(existing_column))
     create_assets(columns, "createColumns")
-    table.set_column_count(len(columns))
+    table.set_column_count(count_columns_asset)
     create_assets([table], "createTables")
 
 
