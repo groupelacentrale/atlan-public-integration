@@ -33,8 +33,6 @@ def create_column_request_payload(asset):
         #Next asset, we don't need to reset count_order to 0
         create_column_request_payload.count_order = 1
         create_column_request_payload.current_asset_name = asset.entity_name
-
-    print(create_column_request_payload.count_order)
     return {
         "typeName": "Column",
         "attributes": {
