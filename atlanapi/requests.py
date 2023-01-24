@@ -23,10 +23,16 @@ def get_attribute_qualified_name(asset, level):
 
 def create_column_request_payload(asset):
     # Faking static variable behaviour to preserve column's order
-    if not hasattr(create_column_request_payload, "count_order"):
+    if not hasattr(create_column_request_payload, "count_order") and not hasattr(create_column_request_payload, "current_asset_name"):
         create_column_request_payload.count_order = 0
-    create_column_request_payload.count_order += 1
+        create_column_request_payload.current_asset_name = asset.entity_name
 
+    if create_column_request_payload.current_asset_name == asset.entity_name:
+        create_column_request_payload.count_order += 1
+    else:
+        #Next asset, we don't need to reset count_order to 0
+        create_column_request_payload.count_order = 1
+        create_column_request_payload.current_asset_name = asset.entity_name
     return {
         "typeName": "Column",
         "attributes": {
