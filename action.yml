@@ -7,7 +7,7 @@ inputs:
   atlan_instance:
     description: 'Atlan instance'
     required: true
-  atlan_athena_connection_d:
+  atlan_athena_connection_id:
     description: 'Atlan athena connection id'
     required: true
   atlan_redshift_connection_id:
