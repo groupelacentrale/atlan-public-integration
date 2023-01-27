@@ -3,7 +3,7 @@ import os
 from annotation import auto_str
 from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
-from atlanapi.requests import create_column_request_payload
+from atlanapi.requests import create_column_request_payload, classification_column_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
     INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
 
@@ -22,7 +22,8 @@ class Column:
                  description=None,
                  readme=None,
                  term=None,
-                 glossary=None):
+                 glossary=None,
+                 classification=None):
         self.integration_type = integration_type.lower()
         self.database_name = database_name
         self.schema_name = schema_name
@@ -33,10 +34,11 @@ class Column:
         self.readme = readme
         self.term = term
         self.glossary = glossary
+        self.classification = classification
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            qualified_name = DYNAMODB_CONN_QN  + "/" + \
+            qualified_name = DYNAMODB_CONN_QN + "/" + \
                              get_database(self.integration_type) + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_ATHENA:
             qualified_name = ATHENA_CONN_QN + "/" + get_atlan_athena_connection_id(self) + "/" + \
@@ -60,6 +62,9 @@ class Column:
 
     def get_creation_payload(self):
         raise Exception("Column are creating in bulk mode only")
+
+    def get_classification_payload_for_bulk_mode(self):
+        return classification_column_request_payload(self)
 
     def __eq__(self, other):
         if isinstance(other, Column):

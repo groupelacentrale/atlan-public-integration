@@ -3,6 +3,7 @@ import json
 import os
 import time
 
+from atlanapi.attach_classification import attach_classification
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
@@ -122,7 +123,8 @@ def create_assets(assets, tag):
         atlan_api_schema_request_object.send_atlan_request()
         time.sleep(1)
 
-        logger.debug("Creating Readme and linking glossary terms...")
+        logger.debug("Creating Readme, linking glossary terms and linking classification...")
+        attach_classification(assets)
         for asset in assets:
             create_readme(asset)
             link_term(asset)

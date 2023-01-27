@@ -59,7 +59,8 @@ def create_atlan_columns(database_name,
                      description=row['Summary (Description)'],
                      readme=row['Readme'],
                      term=row['Term'].strip(),
-                     glossary=row['Glossary'].strip())
+                     glossary=row['Glossary'].strip(),
+                     classification=row['Classification'])
         columns.append(col)
 
     distinct_columns = set()

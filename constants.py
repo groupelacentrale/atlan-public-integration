@@ -1,6 +1,6 @@
-BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
-# BASE_PATH_ATLAN_DOCS = "./docs/datacatalog"
-# BASE_PATH_ATLAN_DOCS = "./docs/sample/datacatalog"
+#BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
+#BASE_PATH_ATLAN_DOCS = "./../atlan/data-dlh-fct-client-metrics-lc-loader/datacatalog"
+BASE_PATH_ATLAN_DOCS = "./docs/sample/datacatalog"
 MANIFEST_FILE_NAME = "manifest.csv"
 
 INTEGRATION_TYPE_DYNAMO_DB = 'dynamodb'
@@ -14,3 +14,5 @@ ATHENA_CONN_QN = "default/athena"
 ATHENA_DATABASE_NAME = 'AwsDataCatalog'
 DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
 REDSHIFT_DATABASE_NAME = 'dwhstats'
+
+CLASSIFICATION = ['PII', 'Protected', 'Private', 'Public']
