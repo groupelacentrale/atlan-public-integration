@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.10
 # Copies your code files from your action repository to the filesystem path `/opt/app` of the container
 COPY requirements.txt /opt/app/requirements.txt
 WORKDIR /opt/app
