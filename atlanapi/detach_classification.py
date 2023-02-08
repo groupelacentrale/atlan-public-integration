@@ -3,7 +3,7 @@ import logging
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from exception.EnvVariableNotFound import EnvVariableNotFound
 
 logger = logging.getLogger('main_logger')
 
@@ -15,21 +15,16 @@ headers = {
     'Content-Type': 'application/json'
 }
 
-def detach_classification(asset):
-    data = {
-        "guidHeaderMap": {
-            get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()): {
-                "guid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
-                "typeName": asset.get_atlan_type_name(),
-                "attributes": {
-                    "name": asset.get_asset_name(),
-                    "qualifiedName": asset.get_qualified_name(),
-                },
-                "classifications": []
-            }
-        }
-    }
-    payload = json.dumps(data)
-    url = 'https://{}/api/meta/entity/bulk/setClassifications'.format(api_conf.instance)
-    request_object = AtlanApiRequest("POST", url, headers, payload)
-    request_object.send_atlan_request()
+
+def detach_classification(assets):
+    try:
+        payload_for_bulk = map(lambda el: el.get_detach_classification_payload_for_bulk_mode(), assets)
+        payload = json.dumps(list(payload_for_bulk))
+        attach_classification_url = 'https://{}/api/meta/entity/bulk/setClassifications'.format(api_conf.instance)
+        atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
+
+        atlan_api_request_object.send_atlan_request()
+
+    except EnvVariableNotFound as e:
+        logger.warning(e.message)
+        raise e

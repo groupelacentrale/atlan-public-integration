@@ -203,7 +203,7 @@ def create_entity_lineage_request_payload(asset):
     }
 
 
-def classification_schema_request_payload(asset):
+def classification_request_payload(asset):
     return {
         "entityGuid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
         "displayName": asset.classification,
@@ -211,20 +211,18 @@ def classification_schema_request_payload(asset):
         "removePropagationsOnEntityDelete": True
     }
 
-
-def classification_table_request_payload(asset):
+def detach_classification_request_payload(asset):
+    asset_guid = get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())
     return {
-        "entityGuid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
-        "displayName": asset.classification,
-        "propagate": True,
-        "removePropagationsOnEntityDelete": True
-    }
-
-
-def classification_column_request_payload(asset):
-    return {
-        "entityGuid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
-        "displayName": asset.classification,
-        "propagate": True,
-        "removePropagationsOnEntityDelete": True
+        "guidHeaderMap": {
+            asset_guid: {
+                "guid": asset_guid,
+                "typeName": asset.get_atlan_type_name(),
+                "attributes": {
+                    "name": "date",
+                    "qualifiedName": asset.get_qualified_name(),
+                },
+                "classifications": []
+            }
+        }
     }

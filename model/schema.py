@@ -2,7 +2,8 @@ import json
 from annotation import auto_str
 from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
-from atlanapi.requests import create_schema_request_payload, classification_schema_request_payload
+from atlanapi.requests import create_schema_request_payload, classification_request_payload, \
+    detach_classification_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
     INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
 
@@ -54,4 +55,7 @@ class Schema:
         raise Exception("Not implemented !")
 
     def get_classification_payload_for_bulk_mode(self):
-        return classification_schema_request_payload(self)
+        return classification_request_payload(self)
+
+    def get_detach_classification_payload_for_bulk_mode(self):
+        return detach_classification_request_payload(self)
