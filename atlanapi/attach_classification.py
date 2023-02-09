@@ -20,12 +20,12 @@ headers = {
 
 def attach_classification(assets):
     assets_with_classification = [asset for asset in assets if asset.classification and asset.classification in CLASSIFICATION]
-    #Detach the classification from assets which have a valid classification to be updated
-    detach_classification(assets_with_classification)
     if not len(assets_with_classification):
         logger.info("No classification")
         return
     try:
+        # Detach the classification from assets which have a valid classification to be updated
+        detach_classification(assets_with_classification)
         payload_for_bulk = map(lambda el: el.get_classification_payload_for_bulk_mode(), assets_with_classification)
         payload = json.dumps(list(payload_for_bulk))
         attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(api_conf.instance)

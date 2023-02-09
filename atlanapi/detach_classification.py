@@ -1,9 +1,9 @@
 import json
 import logging
+import functools
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
-from exception.EnvVariableNotFound import EnvVariableNotFound
 
 logger = logging.getLogger('main_logger')
 
@@ -17,14 +17,10 @@ headers = {
 
 
 def detach_classification(assets):
-    try:
-        payload_for_bulk = map(lambda el: el.get_detach_classification_payload_for_bulk_mode(), assets)
-        payload = json.dumps(list(payload_for_bulk))
-        attach_classification_url = 'https://{}/api/meta/entity/bulk/setClassifications'.format(api_conf.instance)
-        atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
+    list_of_payloads = list(map(lambda el: el.get_detach_classification_payload_for_bulk_mode(), assets))
+    payload = json.dumps({"guidHeaderMap": functools.reduce(lambda d1, d2: {**d1, **d2}, list_of_payloads)})
+    attach_classification_url = 'https://{}/api/meta/entity/bulk/setClassifications'.format(api_conf.instance)
+    atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
 
-        atlan_api_request_object.send_atlan_request()
-
-    except EnvVariableNotFound as e:
-        logger.warning(e.message)
-        raise e
+    response = atlan_api_request_object.send_atlan_request()
+    response.content

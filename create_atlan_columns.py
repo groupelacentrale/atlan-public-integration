@@ -17,7 +17,7 @@ from atlanapi.delete_asset import delete_asset
 from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
-from atlanapi.createAsset import create_assets
+from atlanapi.createAsset import create_assets, update_assets
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
 from model import Column, Table
 
@@ -86,7 +86,7 @@ def create_atlan_columns(database_name,
                     logger.info("'{}' Deleted successfully".format(existing_column))
     create_assets(columns, "createColumns")
     table.set_column_count(count_columns_asset)
-    create_assets([table], "createTables")
+    update_assets([table], "createTables")
 
 
 if __name__ == '__main__':
