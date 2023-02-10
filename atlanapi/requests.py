@@ -211,18 +211,17 @@ def classification_request_payload(asset):
         "removePropagationsOnEntityDelete": True
     }
 
+
 def detach_classification_request_payload(asset):
     asset_guid = get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())
     return {
-        "guidHeaderMap": {
-            asset_guid: {
-                "guid": asset_guid,
-                "typeName": asset.get_atlan_type_name(),
-                "attributes": {
-                    "name": "date",
-                    "qualifiedName": asset.get_qualified_name(),
-                },
-                "classifications": []
-            }
+        asset_guid: {
+            "guid": asset_guid,
+            "typeName": asset.get_atlan_type_name(),
+            "attributes": {
+                "name": "date",
+                "qualifiedName": asset.get_qualified_name(),
+            },
+            "classifications": []
         }
     }
