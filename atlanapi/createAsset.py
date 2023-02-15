@@ -126,9 +126,9 @@ def create_assets(assets, tag):
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
         attach_classification(assets)
+        link_term(assets)
         for asset in assets:
             create_readme(asset)
-            link_term(asset)
     except EnvVariableNotFound as e:
         logger.warning(e.message)
         raise e

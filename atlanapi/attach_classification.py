@@ -25,6 +25,7 @@ def attach_classification(assets):
         logger.info("No classification")
         return
     try:
+        logger.info("attaching classification in bulk mode")
         # Detach the classification from assets which have a valid classification to be updated
         detach_classification(assets_with_classification)
         payload_for_bulk = map(lambda el: el.get_classification_payload_for_bulk_mode(), assets_with_classification)

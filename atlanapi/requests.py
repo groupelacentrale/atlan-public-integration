@@ -1,6 +1,7 @@
 import os
 
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 
 GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
@@ -223,5 +224,39 @@ def detach_classification_request_payload(asset):
                 "qualifiedName": asset.get_qualified_name(),
             },
             "classifications": []
+        }
+    }
+
+
+def link_term_request_payload(asset):
+    term_guid = get_glossary_term_guid_by_name(asset.term, asset.glossary)
+    return {
+        "typeName": asset.get_atlan_type_name(),
+        "attributes": {
+            "name": asset.get_asset_name(),
+            "qualifiedName": asset.get_qualified_name()
+        },
+        "relationshipAttributes": {
+            "meanings": [
+                {
+                    "typeName": "AtlasGlossaryTerm",
+                    "guid": term_guid
+                }
+            ]
+        }
+    }
+
+
+def unlink_term_request_payload(asset):
+    asset_guid = get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())
+    return {
+        "guid": asset_guid,
+        "typeName": asset.get_atlan_type_name(),
+        "attributes": {
+            "name": asset.get_asset_name(),
+            "qualifiedName": asset.get_qualified_name()
+        },
+        "relationshipAttributes": {
+            "meanings": []
         }
     }
