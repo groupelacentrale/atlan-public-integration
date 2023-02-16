@@ -15,9 +15,9 @@ COLUMNOP = "col_index_output"
 
 INTEGRATION_TYPE = INTEGRATION_TYPE_DYNAMO_DB
 DESCRIPTION = "Test integration schema test_schema"
-TERM = "test_term"
+TERM = "Starwars"
 README = "test_schema readme"
-GLOSSARY = "test_schema glossary"
+GLOSSARY = "Glossary (EN)"
 DATA_TYPE = "INT"
 
 # Default connection qualified name is dynamo
