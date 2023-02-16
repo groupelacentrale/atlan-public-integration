@@ -61,8 +61,8 @@ class Schema:
     def get_detach_classification_payload_for_bulk_mode(self):
         return detach_classification_request_payload(self)
 
-    def get_link_term_for_bulk_mode(self):
+    def get_link_term_payload_for_bulk_mode(self):
         return link_term_request_payload(self)
 
-    def get_unlink_term_for_bulk_mode(self):
+    def get_unlink_term_payload_for_bulk_mode(self):
         return unlink_term_request_payload(self)

@@ -15,7 +15,7 @@ headers = {
 }
 
 def unlink_term(assets):
-    payload_bulk_mode = map(lambda el: el.get_unlink_term_for_bulk_mode(), assets)
+    payload_bulk_mode = map(lambda el: el.get_unlink_term_payload_for_bulk_mode(), assets)
     payload = json.dumps({"entities": list(payload_bulk_mode)})
     unlink_term_url = 'https://{}/api/meta/entity/bulk'.format(api_conf.instance)
     atlan_api_request_object = AtlanApiRequest("POST", unlink_term_url, headers, payload)
