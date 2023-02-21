@@ -55,12 +55,6 @@ class Schema:
     def get_lineage_payload(self):
         raise Exception("Not implemented !")
 
-    def get_classification_payload_for_bulk_mode(self):
-        return classification_request_payload(self)
-
-    def get_detach_classification_payload_for_bulk_mode(self):
-        return detach_classification_request_payload(self)
-
     def get_link_term_payload_for_bulk_mode(self):
         return link_term_request_payload(self)
 
