@@ -11,7 +11,6 @@ from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
 @auto_str
 class Schema:
     def __init__(self, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
-                 classification=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB):
         self.database_name = database_name
         self.schema_name = schema_name
@@ -19,7 +18,6 @@ class Schema:
         self.readme = readme
         self.term = term
         self.glossary = glossary
-        self.classification = classification
         self.integration_type = integration_type.lower()
 
     def get_qualified_name(self):
@@ -54,12 +52,6 @@ class Schema:
 
     def get_lineage_payload(self):
         raise Exception("Not implemented !")
-
-    def get_classification_payload_for_bulk_mode(self):
-        return classification_request_payload(self)
-
-    def get_detach_classification_payload_for_bulk_mode(self):
-        return detach_classification_request_payload(self)
 
     def get_link_term_for_bulk_mode(self):
         return link_term_request_payload(self)

@@ -18,7 +18,6 @@ class Table:
                  readme=None,
                  term=None,
                  glossary=None,
-                 classification=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB,
                  column_count=None):
         self.entity_name = entity_name
@@ -28,7 +27,6 @@ class Table:
         self.readme = readme
         self.term = term
         self.glossary = glossary
-        self.classification = classification
         self.integration_type = integration_type.lower()
         self.column_count = column_count
 
@@ -66,12 +64,6 @@ class Table:
 
     def set_column_count(self, column_count):
         self.column_count = column_count
-
-    def get_classification_payload_for_bulk_mode(self):
-        return classification_request_payload(self)
-
-    def get_detach_classification_payload_for_bulk_mode(self):
-        return detach_classification_request_payload(self)
 
     def get_link_term_for_bulk_mode(self):
         return link_term_request_payload(self)
