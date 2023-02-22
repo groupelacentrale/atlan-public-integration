@@ -5,7 +5,7 @@ from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
 from atlanapi.unlink_term import unlink_term
-from model import TableLineage, ColumnLineage
+from model import TableLineage, ColumnLineage, Schema
 
 logger = logging.getLogger('main_logger')
 
@@ -19,11 +19,13 @@ headers = {
 
 
 def link_term(assets):
-    assets_with_terms = [asset for asset in assets if not isinstance(asset, ColumnLineage) or not isinstance(asset, TableLineage) or asset.term or asset.glossary]
+    assets_with_terms = [asset for asset in assets if not isinstance(asset, ColumnLineage)
+                         and not isinstance(asset, TableLineage)
+                         and not isinstance(asset, Schema) and asset.term and asset.glossary]
     if not assets_with_terms:
         return
     try:
-        #Update all changes for linked terms
+        # Update all changes for linked terms
         unlink_term(assets_with_terms)
         payload_for_bulk_mode = map(lambda el: el.get_link_term_payload_for_bulk_mode(), assets_with_terms)
         payload = json.dumps({"entities": list(payload_for_bulk_mode)})
@@ -33,4 +35,4 @@ def link_term(assets):
         atlan_api_request_object.send_atlan_request()
 
     except Exception as e:
-        logger.warning("Error while linking glossary terms")
+        logger.warning("Error while linking glossary terms. Error message: %s", e)

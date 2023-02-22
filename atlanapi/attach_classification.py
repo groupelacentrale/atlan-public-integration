@@ -6,7 +6,7 @@ from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.detach_classification import detach_classification
 from constants import CLASSIFICATION
 from exception.EnvVariableNotFound import EnvVariableNotFound
-from model import Column
+from model import Column, Table
 
 logger = logging.getLogger('main_logger')
 
@@ -20,7 +20,8 @@ headers = {
 
 
 def attach_classification(assets):
-    assets_with_classification = [asset for asset in assets if isinstance(Column, asset) and asset.classification and asset.classification in CLASSIFICATION]
+    assets_with_classification = [asset for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
+                                  and asset.classification and asset.classification in CLASSIFICATION]
     if not len(assets_with_classification):
         logger.info("No classification")
         return
@@ -35,6 +36,5 @@ def attach_classification(assets):
 
         atlan_api_request_object.send_atlan_request()
 
-    except EnvVariableNotFound as e:
-        logger.warning(e.message)
-        raise e
+    except Exception as e:
+        logger.warning("Error while attaching classification. Error message: %s", e)

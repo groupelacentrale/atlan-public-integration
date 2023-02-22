@@ -125,12 +125,14 @@ def create_assets(assets, tag):
         time.sleep(1)
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
-        attach_classification(assets)
-        link_term(assets)
+        if tag == 'createColumns':
+            attach_classification(assets)
+        if tag == 'createColumns' or tag == 'createTables':
+            link_term(assets)
         for asset in assets:
             create_readme(asset)
     except EnvVariableNotFound as e:
-        logger.warning(e.message)
+        logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
 
 
@@ -149,5 +151,5 @@ def update_assets(assets, tag):
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
     except EnvVariableNotFound as e:
-        logger.warning(e.message)
+        logger.warning("Error while updating asset for %s tag. Error message: %s", tag, e)
         raise e

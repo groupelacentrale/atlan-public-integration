@@ -23,18 +23,20 @@ if __name__ == '__main__':
                        'https://github.com/groupelacentrale/data-atlan-sample/blob/prod/.github/workflows/atlan'
                        '-integration-action.yml to complete your github action correctly')
 
-    logger.info("******* Creating Schemas and entities...")
+    logger.info("******* Starting create schemas and tables...")
     assets_info, tables = create_atlan_schema_and_entities(utils.get_manifest_path())
+    logger.info("******* End create schemas and tables...")
 
-    logger.info("******* Validating files")
+    logger.info("******* Starting validate files")
     for asset_info in assets_info:
         logger.info("--- Validating the csv file of the table: '{}' ---"
                     .format(utils.get_csv_file_name(asset_info['schema_name'],
                                                     asset_info['entity_name'],
                                                     asset_info['integration_type'])))
         validate(asset_info['schema_name'], asset_info['entity_name'], asset_info['integration_type'])
+    logger.info("******* End validate files")
 
-    logger.info("******* Creating columns")
+    logger.info("******* Starting create columns")
     for index, asset_info in enumerate(assets_info):
         logger.info("--- Creating columns for table: '{}' ---"
                     .format(utils.get_csv_file_name(asset_info['schema_name'],
@@ -45,8 +47,9 @@ if __name__ == '__main__':
                              asset_info['entity_name'],
                              asset_info['integration_type'],
                              table=tables[index])
+    logger.info("******* End of create columns")
 
-    logger.info("******* Creating lineage")
+    logger.info("******* Starting create lineage")
     for asset_info in assets_info:
         logger.info("--- Creating lineage for table: '{}' ---"
                     .format(utils.get_csv_file_name(asset_info['schema_name'],
@@ -56,5 +59,6 @@ if __name__ == '__main__':
                                     asset_info['schema_name'],
                                     asset_info['entity_name'],
                                     asset_info['integration_type'])
+    logger.info("******* End of create lineage")
 
     logger.info("******* The job finished with success")
