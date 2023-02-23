@@ -4,7 +4,8 @@ import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
-from model import TableLineage, ColumnLineage
+from atlanapi.unlink_term import unlink_term
+from model import TableLineage, ColumnLineage, Schema
 
 logger = logging.getLogger('main_logger')
 
@@ -17,39 +18,21 @@ headers = {
 }
 
 
-def link_term(asset):
-    if isinstance(asset, ColumnLineage) or isinstance(asset, TableLineage) or not asset.term or not asset.glossary:
+def link_term(assets):
+    assets_with_terms = [asset for asset in assets if not isinstance(asset, ColumnLineage)
+                         and not isinstance(asset, TableLineage)
+                         and not isinstance(asset, Schema) and asset.term and asset.glossary]
+    if not assets_with_terms:
         return
     try:
-        term_guid = get_glossary_term_guid_by_name(asset.term, asset.glossary)
-        payload = json.dumps({
-            "entities":
-                [
-                    {
-                        "typeName": asset.get_atlan_type_name(),
-                        "attributes": {
-                            "name": asset.get_asset_name(),
-                            "qualifiedName": asset.get_qualified_name()
-                        },
-                        "relationshipAttributes": {
-                            "meanings": [
-                                {
-                                    "typeName": "AtlasGlossaryTerm",
-                                    "guid": term_guid
-                                }
-                            ]
-                        }
-                    }
-                ]
-            })
+        # Update all changes for linked terms
+        unlink_term(assets_with_terms)
+        payload_for_bulk_mode = map(lambda el: el.get_link_term_payload_for_bulk_mode(), assets_with_terms)
+        payload = json.dumps({"entities": list(payload_for_bulk_mode)})
         link_to_term_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'attachGlossaryTerm')
         atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
 
         atlan_api_request_object.send_atlan_request()
-        logger.debug("Glossary term '{}' linked successfully to {} '{}'".format(
-            asset.term, asset.get_atlan_type_name(), asset.get_asset_name())
-        )
 
     except Exception as e:
-        logger.warning("Error while linking glossary term '{}' to {} '{}'. Glossary term must already exist in Atlan."
-                       .format(asset.term, asset.get_atlan_type_name(), asset.get_asset_name()))
+        logger.warning("Error while linking glossary terms. Error message: %s", e)

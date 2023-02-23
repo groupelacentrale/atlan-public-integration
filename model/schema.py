@@ -2,7 +2,8 @@ import json
 from annotation import auto_str
 from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
-from atlanapi.requests import create_schema_request_payload
+from atlanapi.requests import create_schema_request_payload, classification_request_payload, \
+    detach_classification_request_payload, link_term_request_payload, unlink_term_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
     INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
 
@@ -10,6 +11,7 @@ from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
 @auto_str
 class Schema:
     def __init__(self, database_name, schema_name, description=None, readme=None, term=None, glossary=None,
+                 classification=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB):
         self.database_name = database_name
         self.schema_name = schema_name
@@ -17,6 +19,7 @@ class Schema:
         self.readme = readme
         self.term = term
         self.glossary = glossary
+        self.classification = classification
         self.integration_type = integration_type.lower()
 
     def get_qualified_name(self):
@@ -51,3 +54,9 @@ class Schema:
 
     def get_lineage_payload(self):
         raise Exception("Not implemented !")
+
+    def get_link_term_payload_for_bulk_mode(self):
+        return link_term_request_payload(self)
+
+    def get_unlink_term_payload_for_bulk_mode(self):
+        return unlink_term_request_payload(self)

@@ -21,7 +21,6 @@ logger = logging.getLogger('main_logger')
 
 
 def create_atlan_schema_and_entities(path_to_manifest, sep=","):
-
     logger.info("Loading manifest...")
     source_data = AtlanSourceFile(path_to_manifest, sep)
     source_data.load_csv()
@@ -32,13 +31,13 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
     for index, row in source_data.assets_def.iterrows():
         if row['Table/Entity']:
             table = Table(entity_name=row['Table/Entity'],
-                            database_name=row['Database'],
-                            schema_name=row['Schema'],
-                            description=row['Summary (Description)'],
-                            readme=row['Readme'],
-                            term=row['Term'],
-                            glossary=row['Glossary'],
-                            integration_type=row['Integration Type'])
+                          database_name=row['Database'],
+                          schema_name=row['Schema'],
+                          description=row['Summary (Description)'],
+                          readme=row['Readme'],
+                          term=row['Term'],
+                          glossary=row['Glossary'],
+                          integration_type=row['Integration Type'])
             tables.append(table)
             # Create schema from entity row in case schema row is missing
             schema = Schema(database_name=row['Database'],

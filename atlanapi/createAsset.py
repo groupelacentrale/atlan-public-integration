@@ -3,12 +3,14 @@ import json
 import os
 import time
 
+from atlanapi.attach_classification import attach_classification
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, ATHENA_CONN_QN, REDSHIFT_CONN_QN
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
+    ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from model.schema import Schema
 
@@ -51,11 +53,11 @@ def create_asset_connection(asset):
         logger.info("Connection : {} already exists, does not need to be created".format(qualified_name))
     else:
         logger.info("Connection : {} does not exist, creating database...".format(qualified_name))
-        if asset.integration_type == INTEGRATION_TYPE_DYNAMO_DB :
+        if asset.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             connection = DYNAMODB_CONN_QN
-        elif asset.integration_type == INTEGRATION_TYPE_ATHENA :
+        elif asset.integration_type == INTEGRATION_TYPE_ATHENA:
             connection = ATHENA_CONN_QN
-        elif asset.integration_type == INTEGRATION_TYPE_REDSHIFT :
+        elif asset.integration_type == INTEGRATION_TYPE_REDSHIFT:
             connection = REDSHIFT_CONN_QN
         data = {
             "entities": [
@@ -122,10 +124,32 @@ def create_assets(assets, tag):
         atlan_api_schema_request_object.send_atlan_request()
         time.sleep(1)
 
-        logger.debug("Creating Readme and linking glossary terms...")
+        logger.debug("Creating Readme, linking glossary terms and linking classification...")
+        if tag == 'createColumns':
+            attach_classification(assets)
+        if tag == 'createColumns' or tag == 'createTables':
+            link_term(assets)
         for asset in assets:
             create_readme(asset)
-            link_term(asset)
     except EnvVariableNotFound as e:
-        logger.warning(e.message)
+        logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
+        raise e
+
+
+def update_assets(assets, tag):
+    try:
+        if not assets:
+            return
+        logger.debug("Generating API request to create assets in bulk mode so it is searchable")
+        payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+
+        payload = json.dumps({"entities": list(payloads_for_bulk)})
+        schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
+        atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
+        atlan_api_schema_request_object.send_atlan_request()
+        time.sleep(1)
+
+        logger.debug("Creating Readme, linking glossary terms and linking classification...")
+    except EnvVariableNotFound as e:
+        logger.warning("Error while updating asset for %s tag. Error message: %s", tag, e)
         raise e

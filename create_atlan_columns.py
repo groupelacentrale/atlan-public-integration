@@ -17,7 +17,7 @@ from atlanapi.delete_asset import delete_asset
 from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
-from atlanapi.createAsset import create_assets
+from atlanapi.createAsset import create_assets, update_assets
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
 from model import Column, Table
 
@@ -59,7 +59,8 @@ def create_atlan_columns(database_name,
                      description=row['Summary (Description)'],
                      readme=row['Readme'],
                      term=row['Term'].strip(),
-                     glossary=row['Glossary'].strip())
+                     glossary=row['Glossary'].strip(),
+                     classification=row['Classification'])
         columns.append(col)
 
     distinct_columns = set()
@@ -71,8 +72,6 @@ def create_atlan_columns(database_name,
         entities = {column.entity_name: [] for column in columns}
         for column in columns:
             entities[column.entity_name].append(column.column_name)
-            if column.entity_name == table.entity_name:
-                count_columns_asset += 1
         for entity in entities:
             e = Table(entity_name=entity, database_name=database_name, schema_name=schema_name)
             asset_info_guid = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
@@ -83,9 +82,14 @@ def create_atlan_columns(database_name,
                     # TODO check output from list columns because it's only guid column
                     delete_asset(existing_columns[existing_column])
                     logger.info("'{}' Deleted successfully".format(existing_column))
+
+    for column in columns:
+        if column.entity_name == table.entity_name:
+            count_columns_asset += 1
+
     create_assets(columns, "createColumns")
     table.set_column_count(count_columns_asset)
-    create_assets([table], "createTables")
+    update_assets([table], "createTables")
 
 
 if __name__ == '__main__':
