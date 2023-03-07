@@ -9,6 +9,7 @@ logger = logging.getLogger('main_logger')
 
 ATLAN_ATHENA_CONNECTION_ID = os.environ.get('ATLAN_ATHENA_CONNECTION_ID')
 ATLAN_REDSHIFT_CONNECTION_ID = os.environ.get('ATLAN_REDSHIFT_CONNECTION_ID')
+ATLAN_TEAM = os.environ.get('ATLAN_TEAM')
 
 
 def get_atlan_athena_connection_id(asset):
@@ -31,3 +32,8 @@ def get_database(integration_type):
     if integration_type == INTEGRATION_TYPE_REDSHIFT:
         return REDSHIFT_DATABASE_NAME
     return ATLAN_REDSHIFT_CONNECTION_ID
+
+def get_atlan_team():
+    if not ATLAN_TEAM:
+        raise EnvVariableNotFound('')
+    return ATLAN_TEAM
