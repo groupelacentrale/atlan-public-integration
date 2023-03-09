@@ -20,7 +20,7 @@ def update_aws_team_tag(asset):
     logger.info('Update AWS team tag for asset: {}'.format(asset.get_asset_name()))
     asset_qualified_name = asset.get_qualified_name()
     asset_guid = get_asset_guid_by_qualified_name(asset_qualified_name, asset.get_atlan_type_name())
-    if asset is None or  asset_guid or (isinstance(asset, ColumnLineage) or isinstance(asset, TableLineage)):
+    if asset is None or not asset_guid or isinstance(asset, ColumnLineage) or isinstance(asset, TableLineage):
         return
     try:
         payload = {
