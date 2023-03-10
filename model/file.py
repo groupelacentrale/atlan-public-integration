@@ -35,5 +35,5 @@ def get_database(integration_type):
 
 def get_atlan_team():
     if not ATLAN_TEAM:
-        raise EnvVariableNotFound('')
+        raise EnvVariableNotFound('Atlan team tag is not defined')
     return ATLAN_TEAM

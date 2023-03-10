@@ -17,12 +17,12 @@ headers = {
 
 
 def update_aws_team_tag(asset):
-    asset_qualified_name = asset.get_qualified_name()
-    asset_guid = get_asset_guid_by_qualified_name(asset_qualified_name, asset.get_atlan_type_name())
-    if asset is None or not asset_guid or isinstance(asset, ColumnLineage) or isinstance(asset, TableLineage):
+    if asset is None or isinstance(asset, ColumnLineage) or isinstance(asset, TableLineage):
         return
     try:
         logger.info('Update AWS team tag for asset: {}'.format(asset.get_asset_name()))
+        asset_qualified_name = asset.get_qualified_name()
+        asset_guid = get_asset_guid_by_qualified_name(asset_qualified_name, asset.get_atlan_type_name())
         payload = {
             "AWS TAG": {
                 "Team": [
@@ -30,7 +30,7 @@ def update_aws_team_tag(asset):
                 ]
             }
         }
-        update_tag_url = 'https://{}/api/meta/types/typedefs#customMetadata'.format(api_conf.instance)
+        update_tag_url = 'https://{}/api/meta/entity/guid/{}/businessmetadata/displayName'.format(api_conf.instance, asset_guid)
         request_object = AtlanApiRequest("POST", update_tag_url, headers, json.dumps(payload))
         request_object.send_atlan_request()
     except Exception as e:
