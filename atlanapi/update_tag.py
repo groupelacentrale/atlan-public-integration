@@ -26,7 +26,7 @@ def update_aws_team_tag(asset):
         payload = {
             "AWS TAG": {
                 "Team": [
-                    "data"
+                    get_atlan_team()
                 ]
             }
         }
