@@ -13,6 +13,7 @@ from atlanapi.update_tag import update_aws_team_tag
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
+from model.file import get_atlan_team
 from model.schema import Schema
 
 logger = logging.getLogger('main_logger')
@@ -132,7 +133,8 @@ def create_assets(assets, tag):
             link_term(assets)
         for asset in assets:
             create_readme(asset)
-            update_aws_team_tag(asset)
+            if get_atlan_team():
+                update_aws_team_tag(asset)
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
