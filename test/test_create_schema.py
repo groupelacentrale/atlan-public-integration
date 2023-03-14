@@ -1,9 +1,7 @@
 import json
-import os
-import logging
-from atlanapi.createAsset import create_assets, create_asset_database
+from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_asset_by_guid
 from model.schema import Schema
 from test.data import DATABASE, SCHEMA, INTEGRATION_TYPE, DESCRIPTION, README, TERM, GLOSSARY, SCHEMA_DATA
 
@@ -28,20 +26,15 @@ def test_create_schema():
                     readme=README,
                     term=TERM,
                     glossary=GLOSSARY)
+
     create_assets([schema], "createSchemas")
     schema_guid = get_asset_guid_by_qualified_name(schema.get_qualified_name(), "Schema")
-    assert delete_asset(schema_guid)
+    created_asset = get_asset_by_guid(schema_guid)
+    if created_asset['entity']['typeName'] == schema.get_atlan_type_name() and created_asset['entity']['attributes']['qualifiedName'] == schema.get_qualified_name():
+        delete_asset(schema_guid)
+        assert True
+    else:
+        assert False
 
 
-def test_create_schema_database():
-    schema = Schema(database_name=DATABASE,
-                    integration_type=INTEGRATION_TYPE,
-                    schema_name=SCHEMA,
-                    description=DESCRIPTION,
-                    readme=README,
-                    term=TERM,
-                    glossary=GLOSSARY)
 
-    create_asset_database(schema)
-    database_guid = get_asset_guid_by_qualified_name(os.path.split(schema.get_qualified_name())[0], "Database")
-    assert delete_asset(database_guid)

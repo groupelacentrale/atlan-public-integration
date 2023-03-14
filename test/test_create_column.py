@@ -2,7 +2,7 @@ import json
 
 from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_asset_by_guid
 from model import Column
 from test.data import DATABASE, SCHEMA, ENTITY, COLUMN, INTEGRATION_TYPE, DESCRIPTION, DATA_TYPE, COLUMN_DATA
 
@@ -29,4 +29,9 @@ def test_create_column():
                     data_type=DATA_TYPE)
     create_assets([column], "createColumns")
     column_guid = get_asset_guid_by_qualified_name(column.get_qualified_name(), "Column")
-    assert delete_asset(column_guid)
+    created_asset = get_asset_by_guid(column_guid)
+    if created_asset['entity']['typeName'] == column.get_atlan_type_name() and created_asset['entity']['attributes']['qualifiedName'] == column.get_qualified_name():
+        delete_asset(column_guid)
+        assert True
+    else:
+        assert False
