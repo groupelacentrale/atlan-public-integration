@@ -39,8 +39,8 @@ def get_asset_by_guid(guid):
     search_url = "https://{}/api/meta/entity/guid/{}".format(api_conf.instance, guid)
     atlan_api_query_request_object = AtlanApiRequest("GET", search_url, search_headers, {})
     try:
-        search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
-        return 1
+        search_response = atlan_api_query_request_object.send_atlan_request()
+        return search_response.json()
     except Exception as e:
         logger.debug("Cannot get search result for asset guid: '{}'".format(guid))
         return 0
