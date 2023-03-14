@@ -19,6 +19,7 @@ TERM = "Starwars"
 README = "test_schema readme"
 GLOSSARY = "Glossary (EN)"
 DATA_TYPE = "INT"
+CLASSIFICATION= "Public"
 
 # Default connection qualified name is dynamo
 CONN_QN = DYNAMODB_CONN_QN
