@@ -3,13 +3,13 @@ import json
 import os
 import time
 
+from atlanapi.add_owner_group import add_owner_group
 from atlanapi.attach_classification import attach_classification
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
-from atlanapi.update_tag import update_aws_team_tag
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
@@ -131,10 +131,10 @@ def create_assets(assets, tag):
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
+        if get_atlan_team():
+            add_owner_group(assets)
         for asset in assets:
             create_readme(asset)
-            if get_atlan_team():
-                update_aws_team_tag(asset)
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
