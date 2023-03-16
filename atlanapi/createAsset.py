@@ -9,7 +9,7 @@ from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
-from atlanapi.update_tag import update_aws_team_tag
+from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
@@ -135,6 +135,9 @@ def create_assets(assets, tag):
             create_readme(asset)
             if get_atlan_team():
                 update_aws_team_tag(asset)
+            if tag == 'createTables':
+                print("TAG IS CREATETABLES")
+                update_level_criticality(asset)
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e

@@ -19,6 +19,7 @@ class Table:
                  term=None,
                  glossary=None,
                  classification=None,
+                 criticality=None,
                  integration_type=INTEGRATION_TYPE_DYNAMO_DB,
                  column_count=None):
         self.entity_name = entity_name
@@ -29,6 +30,7 @@ class Table:
         self.term = term
         self.glossary = glossary
         self.classification = classification
+        self.criticality = criticality
         self.integration_type = integration_type.lower()
         self.column_count = column_count
 
@@ -51,6 +53,9 @@ class Table:
 
     def get_atlan_type_name(self):
         return 'Table'
+
+    def get_level_criticality(self):
+        return self.criticality
 
     def get_creation_payload(self):
         table_info = {"entities": [
