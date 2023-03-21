@@ -3,6 +3,7 @@ import logging
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+from atlanapi.update_tag import update_aws_team_tag
 from model import Column, Table, Schema
 
 logger = logging.getLogger('main_logger')
@@ -17,10 +18,13 @@ headers = {
 
 
 def add_owner_group(assets):
-    filtered_assets = [asset for asset in assets if isinstance(asset, Schema) or isinstance(asset, Table)]
+    filtered_assets = [asset for asset in assets if asset and isinstance(asset, Schema) or isinstance(asset, Table)]
     if not len(filtered_assets):
         return
     try:
+        # Update AWS Team tag
+        [update_aws_team_tag(asset) for asset in filtered_assets]
+
         logger.info("Adding owner group to assets in bulk mode")
         payloads_for_bulk = map(lambda el: el.get_add_owner_group_request_payload(), filtered_assets)
         payload = json.dumps({"entities": list(payloads_for_bulk)})

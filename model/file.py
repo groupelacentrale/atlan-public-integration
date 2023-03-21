@@ -3,7 +3,7 @@ import os
 
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT, DYNAMO_DB_DATABASE_NAME, ATHENA_DATABASE_NAME, REDSHIFT_DATABASE_NAME
+    INTEGRATION_TYPE_REDSHIFT, DYNAMO_DB_DATABASE_NAME, ATHENA_DATABASE_NAME, REDSHIFT_DATABASE_NAME, LIST_FT_TEAMS
 
 logger = logging.getLogger('main_logger')
 
@@ -38,4 +38,6 @@ def get_atlan_team():
     if not ATLAN_TEAM:
         logger.debug('Atlan team tag is not defined')
     else:
+        if ATLAN_TEAM not in LIST_FT_TEAMS:
+            logger.info('Team : {} does not exist in the list, please check the list'.format(ATLAN_TEAM))
         return ATLAN_TEAM
