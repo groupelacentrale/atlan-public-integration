@@ -41,22 +41,17 @@ def update_aws_team_tag(asset):
 
 def update_level_criticality(asset):
     if asset is None or not isinstance(asset, Table) or asset.get_level_criticality() is None:
-        print("LOL")
         return
     try:
-        print("UPDATE LEVEL CRITICALITY")
         logger.info('Update level Criticality: {} for asset {}'.format(asset.get_level_criticality(), asset.get_asset_name()))
         asset_qualified_name = asset.get_qualified_name()
         asset_guid = get_asset_guid_by_qualified_name(asset_qualified_name, asset.get_atlan_type_name())
         payload = {
             "Criticality": {
-                "Level": [
-                    asset.get_level_criticality()
-                ]
+                "Level": asset.get_level_criticality()
             }
         }
-        update_tag_url = 'https://{}/api/meta/entity/guid/{}/businessmetadata/displayName'.format(api_conf.instance,
-                                                                                                  asset_guid)
+        update_tag_url = 'https://{}/api/meta/entity/guid/{}/businessmetadata/displayName'.format(api_conf.instance, asset_guid)
         request_object = AtlanApiRequest("POST", update_tag_url, headers, json.dumps(payload))
         request_object.send_atlan_request()
     except Exception as e:

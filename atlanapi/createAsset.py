@@ -131,13 +131,10 @@ def create_assets(assets, tag):
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
+        if tag == 'createTables':
+            [update_level_criticality(asset) for asset in assets]
         for asset in assets:
             create_readme(asset)
-            if get_atlan_team():
-                update_aws_team_tag(asset)
-            if tag == 'createTables':
-                print("TAG IS CREATETABLES")
-                update_level_criticality(asset)
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
