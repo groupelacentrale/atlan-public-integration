@@ -41,7 +41,7 @@ def update_aws_team_tag(asset):
 
 
 def update_level_criticality(asset):
-    if asset is None or not isinstance(asset, Table) or asset.get_level_criticality() is None or asset.get_level_criticality not in CRITICALITY_LEVEL:
+    if asset is None or not isinstance(asset, Table) or asset.get_level_criticality() is None or asset.get_level_criticality() not in CRITICALITY_LEVEL:
         return
     try:
         logger.info('Update level Criticality: {} for asset {}'.format(asset.get_level_criticality(), asset.get_asset_name()))
