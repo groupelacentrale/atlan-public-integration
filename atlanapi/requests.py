@@ -207,7 +207,7 @@ def create_entity_lineage_request_payload(asset):
 def classification_request_payload(asset):
     return {
         "entityGuid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
-        "displayName": asset.classification,
+        "displayName": asset.classification.capitalize(),
         "propagate": False,
         "removePropagationsOnEntityDelete": True
     }

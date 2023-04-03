@@ -132,6 +132,7 @@ def create_assets(assets, tag):
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
         if tag == 'createTables':
+            attach_classification(assets)
             [update_level_criticality(asset) for asset in assets]
         for asset in assets:
             create_readme(asset)

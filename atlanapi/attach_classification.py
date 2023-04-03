@@ -1,5 +1,6 @@
 import json
 import logging
+import sys
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
@@ -21,9 +22,13 @@ headers = {
 
 def attach_classification(assets):
     assets_with_classification = [asset for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
-                                  and asset.classification and asset.classification in CLASSIFICATION]
+                                  and asset.classification and asset.classification.capitalize() in CLASSIFICATION]
+    assets_without_classification = [asset.get_asset_name() for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
+                                     and (not asset.classification or asset.classification.capitalize() not in CLASSIFICATION)]
+    if len(assets_without_classification) > 0:
+        logger.warning('Assets {} doesn\'t have a valid classification'.format(assets_without_classification))
     if not len(assets_with_classification):
-        logger.info("No classification")
+        logger.info("No classification to attach")
         return
     try:
         logger.info("attaching classification in bulk mode")

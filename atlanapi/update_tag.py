@@ -41,15 +41,20 @@ def update_aws_team_tag(asset):
 
 
 def update_level_criticality(asset):
-    if asset is None or not isinstance(asset, Table) or asset.get_level_criticality() is None or asset.get_level_criticality() not in CRITICALITY_LEVEL:
+    if asset is None or not isinstance(asset, Table):
         return
+    if asset.get_level_criticality() is None:
+        logger.warning('Criticality is not provided for asset {}'.format(asset.get_asset_name()))
+    criticality = asset.get_level_criticality().capitalize()
+    if asset.get_level_criticality().capitalize() not in CRITICALITY_LEVEL:
+        logger.warning('Criticality value "{}" is not support asset {}'.format(criticality, asset.get_asset_name()))
     try:
-        logger.info('Update level Criticality: {} for asset {}'.format(asset.get_level_criticality(), asset.get_asset_name()))
+        logger.info('Update level Criticality: {} for asset {}'.format(criticality, asset.get_asset_name()))
         asset_qualified_name = asset.get_qualified_name()
         asset_guid = get_asset_guid_by_qualified_name(asset_qualified_name, asset.get_atlan_type_name())
         payload = {
             "Criticality": {
-                "Level": asset.get_level_criticality()
+                "Level": criticality
             }
         }
         update_tag_url = 'https://{}/api/meta/entity/guid/{}/businessmetadata/displayName'.format(api_conf.instance, asset_guid)

@@ -72,6 +72,12 @@ class Table:
     def set_column_count(self, column_count):
         self.column_count = column_count
 
+    def get_classification_payload_for_bulk_mode(self):
+        return classification_request_payload(self)
+
+    def get_detach_classification_payload_for_bulk_mode(self):
+        return detach_classification_request_payload(self)
+
     def get_link_term_payload_for_bulk_mode(self):
         return link_term_request_payload(self)
 
