@@ -29,11 +29,11 @@ def get_list_owners_group():
 
 
 def check_if_group_exist(atlan_team):
-    if
+    if atlan_team:
         list_og = get_list_owners_group()
         result = [owner_group for owner_group in list_og if atlan_team.lower() == owner_group['name']]
         return len(result) > 0
-
+    return
 
 def add_owner_group(assets):
     filtered_assets = [asset for asset in assets if asset and isinstance(asset, Schema) or isinstance(asset, Table)]
