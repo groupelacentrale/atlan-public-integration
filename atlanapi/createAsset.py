@@ -3,7 +3,7 @@ import json
 import os
 import time
 
-from atlanapi.add_owner_group import add_owner_group
+from atlanapi.add_owner_group import add_owner_group, check_if_group_exist
 from atlanapi.attach_classification import attach_classification
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
@@ -131,7 +131,7 @@ def create_assets(assets, tag):
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
-        if get_atlan_team():
+        if get_atlan_team() and check_if_group_exist(get_atlan_team()):
             add_owner_group(assets)
         for asset in assets:
             create_readme(asset)
