@@ -131,7 +131,8 @@ def create_assets(assets, tag):
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
-        if get_atlan_team() and check_if_group_exist(get_atlan_team()):
+        #if get_atlan_team() and check_if_group_exist(get_atlan_team()):
+        if get_atlan_team():
             add_owner_group(assets)
         for asset in assets:
             create_readme(asset)
