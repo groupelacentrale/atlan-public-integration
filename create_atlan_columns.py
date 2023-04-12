@@ -18,7 +18,7 @@ from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, update_assets
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 from model import Column, Table
 
 logger = logging.getLogger('main_logger')
@@ -55,12 +55,14 @@ def create_atlan_columns(database_name,
                      entity_name=row["Table/Entity"],
                      schema_name=schema_name,
                      column_name=row['Name'],
-                     data_type=row['Type'],
                      description=row['Summary (Description)'],
                      readme=row['Readme'],
                      term=row['Term'].strip(),
                      glossary=row['Glossary'].strip(),
                      classification=row['Classification'])
+        if integration_type == INTEGRATION_TYPE_DYNAMO_DB:
+            col.data_type = row['Type']
+
         columns.append(col)
 
     distinct_columns = set()
