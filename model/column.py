@@ -37,6 +37,9 @@ class Column:
         self.glossary = glossary
         self.classification = classification
 
+    def set_column_data_type(self, data_type):
+        self.data_type = data_type
+
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/" + \
