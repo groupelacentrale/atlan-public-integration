@@ -36,6 +36,7 @@ def get_database(integration_type):
 
 def get_atlan_team():
     if not ATLAN_TEAM:
-        logger.debug('Atlan team tag is not defined')
+        logger.warning('Atlan team tag is not defined')
+        return
     else:
         return ATLAN_TEAM
