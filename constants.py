@@ -16,3 +16,4 @@ DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
 REDSHIFT_DATABASE_NAME = 'dwhstats'
 
 CLASSIFICATION = ['PII', 'Protected', 'Private', 'Public']
+CRITICALITY_LEVEL = ['Minor', 'Major', 'Critical']
