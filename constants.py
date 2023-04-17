@@ -16,5 +16,3 @@ DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
 REDSHIFT_DATABASE_NAME = 'dwhstats'
 
 CLASSIFICATION = ['PII', 'Protected', 'Private', 'Public']
-
-LIST_FT_TEAMS = ['team_vehicle', 'team_recherche', 'data_analyst_group', 'team_data_platform_bi']
