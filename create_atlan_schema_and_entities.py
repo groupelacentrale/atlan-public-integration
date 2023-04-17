@@ -37,6 +37,8 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                           readme=row['Readme'],
                           term=row['Term'],
                           glossary=row['Glossary'],
+                          classification=row['Classification'],
+                          criticality=row['Criticality'],
                           integration_type=row['Integration Type'])
             tables.append(table)
             # Create schema from entity row in case schema row is missing

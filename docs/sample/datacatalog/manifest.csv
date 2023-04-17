@@ -1,2 +1,2 @@
-Integration Type,Database,Schema,Table/Entity,Summary (Description),Readme,Term,Glossary,Status
-DynamoDb,dynamo_db2,test-table-cible6,test_cible6,Test table with lineage for defining a DynamoDB table/entity,,,,online
+Integration Type,Database,Schema,Table/Entity,Summary (Description),Readme,Term,Glossary,Status,Criticality
+DynamoDb,dynamo_db,test-table-cible6,test_cible6,Test table with lineage for defining a DynamoDB table/entity,,,,online,Minor
