@@ -4,7 +4,7 @@ import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
-from model import ColumnLineage, TableLineage, get_atlan_team, Table
+from model import get_atlan_team
 
 logger = logging.getLogger('main_logger')
 
