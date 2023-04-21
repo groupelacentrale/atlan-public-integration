@@ -1,7 +1,7 @@
-Integration Type,Database,Schema,Table/Entity,Summary (Description),Readme,Term,Glossary,Status
-DynamoDb,dynamo_db,test-cible-table,test,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),
-DynamoDb,dynamo_db,test-cible-table,test_table2,Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online
-athena,AwsDataCatalog,data_datalake_test,test_glue_integration,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),
-athena,AwsDataCatalog,data_datalake_test,,Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online
-redshift,redshift_database_test,redshift_schema_test,redshift_table_test,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),
-redshift,redshift_database_test,redshift_schema_test,,Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online
+Integration Type,Database,Schema,Table/Entity,Summary (Description),Readme,Term,Glossary,Status,Classification,Criticality
+DynamoDb,dynamo_db,test-cible-table,test,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),,,
+DynamoDb,dynamo_db,test-cible-table,test_table2,Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online,,
+athena,AwsDataCatalog,data_datalake_test,test_glue_integration,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),,,
+athena,AwsDataCatalog,data_datalake_test,,Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online,,
+redshift,redshift_database_test,redshift_schema_test,redshift_table_test,Description of the entity,<h1>Entity readme<h1>,C0,Glossaire (FR),,,
+redshift,redshift_database_test,redshift_schema_test,,Description of the schema,<h1>Schema readme<h1>,C0,Glossaire (FR),online,,

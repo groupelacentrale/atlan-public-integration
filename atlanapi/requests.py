@@ -3,6 +3,7 @@ import os
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
+from model import get_atlan_team
 
 GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
     INTEGRATION_TYPE_DYNAMO_DB: 'dynamodb',
@@ -207,7 +208,7 @@ def create_entity_lineage_request_payload(asset):
 def classification_request_payload(asset):
     return {
         "entityGuid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
-        "displayName": asset.classification,
+        "displayName": asset.classification.capitalize(),
         "propagate": False,
         "removePropagationsOnEntityDelete": True
     }
@@ -258,5 +259,18 @@ def unlink_term_request_payload(asset):
         },
         "relationshipAttributes": {
             "meanings": []
+        }
+    }
+
+
+def get_add_owner_group_request_payload(asset):
+    return {
+        "typeName": asset.get_atlan_type_name(),
+        "attributes": {
+            "name": asset.get_asset_name(),
+            "qualifiedName": asset.get_qualified_name(),
+            "ownerGroups": [
+                get_atlan_team()
+            ]
         }
     }

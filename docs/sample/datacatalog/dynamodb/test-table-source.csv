@@ -1,6 +1,0 @@
-Table/Entity,Column/Attribute,Type,Summary (Description),Readme,Lineage Type (Source / Target),Lineage Integration Type,Lineage Schema/Database,Lineage Table/Entity,Lineage Column/Attribute,Term,Glossary,Classification
-test_source,autoviza_available,Boolean,,,Source,DynamoDb,test-table-cible,test_cible,autoviza_available,,,
-test_source,autoviza_disabled,Boolean,test description,,Target,DynamoDb,test-table-cible,test_cible,autoviza_disabled,,,
-test_source,id_source,String,,,,,,,,,,
-test_source,id_source_2,String,,,,,,,,,,
-test_source,field_source,Boolean,,,,,,,,,,

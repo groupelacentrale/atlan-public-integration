@@ -3,15 +3,18 @@ import json
 import os
 import time
 
+from atlanapi.add_owner_group import add_owner_group, check_if_group_exist
 from atlanapi.attach_classification import attach_classification
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
+from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
+from model.file import get_atlan_team
 from model.schema import Schema
 
 logger = logging.getLogger('main_logger')
@@ -129,6 +132,11 @@ def create_assets(assets, tag):
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
+        if get_atlan_team() and check_if_group_exist(get_atlan_team()):
+            add_owner_group(assets)
+        if tag == 'createTables':
+            attach_classification(assets)
+            [update_level_criticality(asset) for asset in assets]
         for asset in assets:
             create_readme(asset)
     except EnvVariableNotFound as e:
