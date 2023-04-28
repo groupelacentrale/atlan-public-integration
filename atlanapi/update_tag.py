@@ -45,9 +45,11 @@ def update_level_criticality(asset):
         return
     if asset.get_level_criticality() is None:
         logger.warning('Criticality is not provided for asset {}'.format(asset.get_asset_name()))
+        return
     criticality = asset.get_level_criticality().capitalize()
     if asset.get_level_criticality().capitalize() not in CRITICALITY_LEVEL:
         logger.warning('Criticality value "{}" is not support asset {}'.format(criticality, asset.get_asset_name()))
+        return
     try:
         logger.info('Update level Criticality: {} for asset {}'.format(criticality, asset.get_asset_name()))
         asset_qualified_name = asset.get_qualified_name()
