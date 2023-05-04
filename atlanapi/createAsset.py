@@ -141,7 +141,10 @@ def update_assets(assets, tag):
         if not assets:
             return
         logger.debug("Generating API request to create assets in bulk mode so it is searchable")
-        payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+        if tag == "createTables":
+            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+        else :
+            payloads_for_bulk = map(lambda el: el.get_update_description_payload_for_bulk_mode(), assets)
 
         payload = json.dumps({"entities": list(payloads_for_bulk)})
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)

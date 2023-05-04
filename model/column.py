@@ -4,7 +4,8 @@ from annotation import auto_str
 from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
 from atlanapi.requests import create_column_request_payload, classification_request_payload, \
-    detach_classification_request_payload, link_term_request_payload, unlink_term_request_payload
+    detach_classification_request_payload, link_term_request_payload, unlink_term_request_payload, \
+    update_description_payload_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
     INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
 
@@ -61,6 +62,9 @@ class Column:
     def get_atlan_type_name(self):
         return 'Column'
 
+    def get_description(self):
+        return self.description
+
     def get_creation_payload_for_bulk_mode(self):
         return create_column_request_payload(self)
 
@@ -78,6 +82,9 @@ class Column:
 
     def get_unlink_term_payload_for_bulk_mode(self):
         return unlink_term_request_payload(self)
+
+    def get_update_description_payload_for_bulk_mode(self):
+        return update_description_payload_request_payload(self)
 
     def __eq__(self, other):
         if isinstance(other, Column):

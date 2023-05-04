@@ -84,14 +84,17 @@ def create_atlan_columns(database_name,
                     # TODO check output from list columns because it's only guid column
                     delete_asset(existing_columns[existing_column])
                     logger.info("'{}' Deleted successfully".format(existing_column))
+        for column in columns:
+            if column.entity_name == table.entity_name:
+                count_columns_asset += 1
 
-    for column in columns:
-        if column.entity_name == table.entity_name:
-            count_columns_asset += 1
-
-    create_assets(columns, "createColumns")
-    table.set_column_count(count_columns_asset)
-    update_assets([table], "createTables")
+        create_assets(columns, "createColumns")
+        table.set_column_count(count_columns_asset)
+        update_assets([table], "createTables")
+    else :
+        columns_exist_in_atlan = [column for column in columns if get_asset_guid_by_qualified_name(column.get_qualified_name(), column.get_atlan_type_name())]
+        logger.info("Update asset : {}, integration type : {}".format(table_or_entity_name, integration_type))
+        update_assets(columns_exist_in_atlan, "changeDescription")
 
 
 if __name__ == '__main__':
