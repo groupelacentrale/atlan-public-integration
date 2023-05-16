@@ -270,6 +270,6 @@ def update_description_payload_request_payload(asset):
       "attributes": {
         "name": asset.get_asset_name(),
         "qualifiedName": asset.get_qualified_name(),
-        "description": asset.get
+        "description": asset.get_description()
       }
     }

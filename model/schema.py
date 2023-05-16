@@ -43,6 +43,9 @@ class Schema:
     def get_atlan_type_name(self):
         return 'Schema'
 
+    def get_description(self):
+        return self.description
+
     def get_creation_payload(self):
         table_info = {"entities": [
             create_schema_request_payload(self)

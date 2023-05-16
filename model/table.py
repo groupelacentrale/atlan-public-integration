@@ -52,6 +52,9 @@ class Table:
     def get_atlan_type_name(self):
         return 'Table'
 
+    def get_description(self):
+        return self.description
+
     def get_creation_payload(self):
         table_info = {"entities": [
             create_table_request_payload(self)
