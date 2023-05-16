@@ -264,12 +264,13 @@ def unlink_term_request_payload(asset):
         }
     }
 
+
 def update_description_payload_request_payload(asset):
     return {
-      "typeName": "Column",
-      "attributes": {
-        "name": asset.get_asset_name(),
-        "qualifiedName": asset.get_qualified_name(),
-        "description": asset.get_description()
-      }
+        "typeName": "Column",
+        "attributes": {
+            "name": asset.get_asset_name(),
+            "qualifiedName": asset.get_qualified_name(),
+            "description": asset.get_description()
+        }
     }
