@@ -13,8 +13,10 @@ import logging
 import utils
 from optparse import OptionParser
 
+from atlanapi.attach_classification import attach_classification
 from atlanapi.delete_asset import delete_asset
 from atlanapi.get_entity_columns import get_entity_columns
+from atlanapi.linkTerm import link_term
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, update_assets
@@ -90,11 +92,15 @@ def create_atlan_columns(database_name,
 
         create_assets(columns, "createColumns")
         table.set_column_count(count_columns_asset)
-        update_assets([table], "createTables")
+        #update_assets([table], "createTables")
     else :
         columns_exist_in_atlan = [column for column in columns if get_asset_guid_by_qualified_name(column.get_qualified_name(), column.get_atlan_type_name())]
+        for c in columns_exist_in_atlan:
+            print(c)
         logger.info("Update asset : {}, integration type : {}".format(table_or_entity_name, integration_type))
         update_assets(columns_exist_in_atlan, "changeDescription")
+        #attach_classification(columns_exist_in_atlan)
+        #link_term(columns_exist_in_atlan)
 
 
 if __name__ == '__main__':
