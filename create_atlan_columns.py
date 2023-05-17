@@ -89,19 +89,19 @@ def create_atlan_columns(database_name,
         for column in columns:
             if column.entity_name == table.entity_name:
                 count_columns_asset += 1
-        for c in columns:
-            print('-----> {} - name: {} / {}'.format(c.integration_type, c.get_asset_name(), c.get_qualified_name()))
         create_assets(columns, "createColumns")
         table.set_column_count(count_columns_asset)
-        #update_assets([table], "createTables")
-    else :
-        columns_exist_in_atlan = [column for column in columns if get_asset_guid_by_qualified_name(column.get_qualified_name(), column.get_atlan_type_name())]
-        for c in columns_exist_in_atlan:
-            print('-----> {} - name: {} / {}'.format(c.integration_type, c.get_asset_name(), c.get_qualified_name()))
+        update_assets([table], "createTables")
+    else:
+        columns_exist_in_atlan = [column for column in columns if
+                                  get_asset_guid_by_qualified_name(column.get_qualified_name(),
+                                                                   column.get_atlan_type_name())]
+
         logger.info("Update asset : {}, integration type : {}".format(table_or_entity_name, integration_type))
-        #update_assets(columns_exist_in_atlan, "changeDescription")
-        #attach_classification(columns_exist_in_atlan)
-        #link_term(columns_exist_in_atlan)
+
+        update_assets(columns_exist_in_atlan, "changeDescription")
+        attach_classification(columns_exist_in_atlan)
+        link_term(columns_exist_in_atlan)
 
 
 if __name__ == '__main__':

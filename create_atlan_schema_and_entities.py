@@ -14,8 +14,8 @@ from optparse import OptionParser
 
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, create_asset_database
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model import Schema, Table
+from constants import INTEGRATION_TYPE_DYNAMO_DB
 
 logger = logging.getLogger('main_logger')
 
@@ -38,12 +38,10 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                           term=row['Term'],
                           glossary=row['Glossary'],
                           integration_type=row['Integration Type'])
-            tables.append(table)
             # Create schema from entity row in case schema row is missing
             schema = Schema(database_name=row['Database'],
                             schema_name=row['Schema'],
                             integration_type=row['Integration Type'])
-            schemas.append(schema)
             assets_info.append({
                 'database_name': row['Database'],
                 'schema_name': row['Schema'],
@@ -62,8 +60,12 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
     # Create asset's database if does not exist
     for table in tables:
         create_asset_database(table)
-    create_assets(schemas, "createSchemas")
-    create_assets(tables, "createTables")
+
+    #Create assets for DynamoDB integration only
+    dynamo_schemas = list(filter(lambda schema: schema.integration_type == INTEGRATION_TYPE_DYNAMO_DB, schemas))
+    dynamo_tables = list(filter(lambda table: table.integration_type == INTEGRATION_TYPE_DYNAMO_DB, tables))
+    create_assets(dynamo_schemas, "createSchemas")
+    create_assets(dynamo_tables, "createTables")
 
     return assets_info, tables
 
