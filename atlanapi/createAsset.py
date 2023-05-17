@@ -121,16 +121,16 @@ def create_assets(assets, tag):
         payload = json.dumps({"entities": list(payloads_for_bulk)})
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        #atlan_api_schema_request_object.send_atlan_request()
+        atlan_api_schema_request_object.send_atlan_request()
         time.sleep(1)
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
-        # if tag == 'createColumns':
-        #     attach_classification(assets)
-        # if tag == 'createColumns' or tag == 'createTables':
-        #     link_term(assets)
-        # for asset in assets:
-        #     create_readme(asset)
+        if tag == 'createColumns':
+            attach_classification(assets)
+        if tag == 'createColumns' or tag == 'createTables':
+            link_term(assets)
+        for asset in assets:
+            create_readme(asset)
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
