@@ -1,3 +1,5 @@
+import json
+import logging
 import time
 import requests
 
@@ -5,11 +7,11 @@ import utils
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest, AtlanSourceFile
 from atlanapi.createAsset import create_assets
-from model.Asset import *
 from constants import INTEGRATION_TYPE_DYNAMO_DB
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
 from exception.EnvVariableNotFound import EnvVariableNotFound
+from model import Schema, Table, Column
 
 api_conf = create_api_config()
 auth_token = 'Bearer {}'.format(api_conf.api_token)
@@ -131,6 +133,11 @@ def test_delete_asset(guid):
     response = requests.delete(url, headers=header_delete)
     print(response)
 
+def test_delete(list_guid):
+    for guid in list_guid:
+        test_delete_asset(guid)
+    print('end')
+
 
 def test_db_exists(db_name):
     url = 'https://{}/api/meta/search/indexsearch#findAssetByExactName'.format(api_conf.instance)
@@ -203,7 +210,7 @@ def test_integrate_sample():
         if test_db_exists(row['Database']) == 0:
             test_create_database("dynamodb", row['Database'])
         if row['Table/Entity']:
-            entity = Entity(entity_name=row['Table/Entity'],
+            entity = Table(entity_name=row['Table/Entity'],
                             database_name=row['Database'],
                             schema_name=row['Schema'],
                             description=row['Summary (Description)'],
@@ -340,7 +347,15 @@ if __name__ == '__main__':
     #test_create_table()
 
     # test_delete_asset("")
-    test_delete_asset("93283f73-c2a1-43b3-9a22-a8186a7efb70")
+    list = ['',
+            '',
+            '',
+            '',
+            '',
+            '',
+            ''
+            ]
+    test_delete("93283f73-c2a1-43b3-9a22-a8186a7efb70")
 
 
 
