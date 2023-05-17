@@ -38,10 +38,12 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                           term=row['Term'],
                           glossary=row['Glossary'],
                           integration_type=row['Integration Type'])
+            tables.append(table)
             # Create schema from entity row in case schema row is missing
             schema = Schema(database_name=row['Database'],
                             schema_name=row['Schema'],
                             integration_type=row['Integration Type'])
+            schemas.append(schema)
             assets_info.append({
                 'database_name': row['Database'],
                 'schema_name': row['Schema'],
@@ -57,13 +59,15 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
             schemas.append(schema)
+
+    dynamo_schemas = list(filter(lambda schema: schema.integration_type == INTEGRATION_TYPE_DYNAMO_DB, schemas))
+    dynamo_tables = list(filter(lambda table: table.integration_type == INTEGRATION_TYPE_DYNAMO_DB, tables))
+
     # Create asset's database if does not exist
-    for table in tables:
+    for table in dynamo_tables:
         create_asset_database(table)
 
     #Create assets for DynamoDB integration only
-    dynamo_schemas = list(filter(lambda schema: schema.integration_type == INTEGRATION_TYPE_DYNAMO_DB, schemas))
-    dynamo_tables = list(filter(lambda table: table.integration_type == INTEGRATION_TYPE_DYNAMO_DB, tables))
     create_assets(dynamo_schemas, "createSchemas")
     create_assets(dynamo_tables, "createTables")
 
