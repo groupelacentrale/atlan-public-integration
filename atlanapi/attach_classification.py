@@ -22,9 +22,9 @@ headers = {
 
 def attach_classification(assets):
     assets_with_classification = [asset for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
-                                  and asset.classification and asset.classification.capitalize() in CLASSIFICATION]
+                                  and asset.classification and asset.classification.capitalize() in [x.capitalize() for x in CLASSIFICATION]]
     assets_without_classification = [asset.get_asset_name() for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
-                                     and (not asset.classification or asset.classification.capitalize() not in CLASSIFICATION)]
+                                     and (not asset.classification or asset.classification.capitalize() not in [x.capitalize() for x in CLASSIFICATION])]
     if len(assets_without_classification) > 0:
         logger.warning('Assets {} doesn\'t have a valid classification'.format(assets_without_classification))
     if not len(assets_with_classification):
