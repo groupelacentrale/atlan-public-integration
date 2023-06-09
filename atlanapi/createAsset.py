@@ -111,18 +111,19 @@ def create_asset_database(asset):
         logger.debug("...created")
 
 
-def create_assets(assets, tag):
+def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
             return
-        logger.debug("Generating API request to create assets in bulk mode so it is searchable")
-        payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == tag == "createColumnProcesses":
+            logger.debug("Generating API request to create assets in bulk mode so it is searchable")
+            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
-        payload = json.dumps({"entities": list(payloads_for_bulk)})
-        schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
-        atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        atlan_api_schema_request_object.send_atlan_request()
-        time.sleep(1)
+            payload = json.dumps({"entities": list(payloads_for_bulk)})
+            schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
+            atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
+            atlan_api_schema_request_object.send_atlan_request()
+            time.sleep(1)
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
         if tag == 'createColumns':
@@ -143,7 +144,7 @@ def update_assets(assets, tag):
         logger.debug("Generating API request to create assets in bulk mode so it is searchable")
         if tag == "createTables":
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
-        else :
+        else:
             payloads_for_bulk = map(lambda el: el.get_update_description_payload_for_bulk_mode(), assets)
 
         payload = json.dumps({"entities": list(payloads_for_bulk)})
@@ -152,7 +153,6 @@ def update_assets(assets, tag):
         atlan_api_schema_request_object.send_atlan_request()
         time.sleep(1)
 
-        logger.debug("Creating Readme, linking glossary terms and linking classification...")
     except EnvVariableNotFound as e:
         logger.warning("Error while updating asset for %s tag. Error message: %s", tag, e)
         raise e
