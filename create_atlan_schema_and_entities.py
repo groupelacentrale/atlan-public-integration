@@ -13,6 +13,7 @@ import logging
 from optparse import OptionParser
 
 from atlanapi.atlanutils import AtlanSourceFile
+from atlanapi.createAsset import create_assets
 from model import Schema, Table
 
 logger = logging.getLogger('main_logger')
@@ -63,6 +64,9 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
             schemas.append(schema)
+
+    create_assets(schemas, "createSchemas")
+    create_assets(tables, "createTables")
 
     return assets_info, tables
 
