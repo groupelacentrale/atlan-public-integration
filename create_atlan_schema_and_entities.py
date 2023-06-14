@@ -13,8 +13,6 @@ import logging
 from optparse import OptionParser
 
 from atlanapi.atlanutils import AtlanSourceFile
-from atlanapi.createAsset import create_assets, create_asset_database
-from atlanapi.searchAssets import get_schema_tables
 from model import Schema, Table
 
 logger = logging.getLogger('main_logger')

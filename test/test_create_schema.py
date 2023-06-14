@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from atlanapi.createAsset import create_assets, create_asset_database
+from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model.schema import Schema
@@ -42,6 +42,5 @@ def test_create_schema_database():
                     term=TERM,
                     glossary=GLOSSARY)
 
-    create_asset_database(schema)
     database_guid = get_asset_guid_by_qualified_name(os.path.split(schema.get_qualified_name())[0], "Database")
     assert delete_asset(database_guid)
