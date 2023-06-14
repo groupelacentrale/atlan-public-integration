@@ -24,17 +24,6 @@ logger = logging.getLogger('main_logger')
 """
 
 
-def delete_table_entities(schemas, tables):
-    delete_tables = []
-    for schema in schemas:
-        schema_tables = get_schema_tables(schema.get_qualified_name())
-        for table in tables:
-            if table.get_asset_name() not in [e.get('displayText') for e in schema_tables]:
-                logger.info('----> Table {} does not exist in Atlan anymore'.format(table.get_asset_name()))
-                delete_tables.append(table)
-    return delete_tables
-
-
 def create_atlan_schema_and_entities(path_to_manifest, sep=","):
     logger.info("Loading manifest...")
     source_data = AtlanSourceFile(path_to_manifest, sep)
