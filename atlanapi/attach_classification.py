@@ -1,12 +1,9 @@
 import json
 import logging
-import sys
-
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.detach_classification import detach_classification
 from constants import CLASSIFICATION
-from exception.EnvVariableNotFound import EnvVariableNotFound
 from model import Column, Table
 
 logger = logging.getLogger('main_logger')

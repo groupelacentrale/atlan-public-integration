@@ -3,7 +3,6 @@ import logging
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
-from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
 from atlanapi.unlink_term import unlink_term
 from model import TableLineage, ColumnLineage, Schema
 

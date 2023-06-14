@@ -14,6 +14,7 @@ headers = {
     'Content-Type': 'application/json'
 }
 
+
 def unlink_term(assets):
     payload_bulk_mode = map(lambda el: el.get_unlink_term_payload_for_bulk_mode(), assets)
     payload = json.dumps({"entities": list(payload_bulk_mode)})
