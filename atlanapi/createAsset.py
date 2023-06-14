@@ -50,42 +50,6 @@ def get_asset_attribute_qualified_name(asset, level):
     return qualified_name
 
 
-def create_asset_connection(asset):
-    qualified_name = get_asset_attribute_qualified_name(asset, 2)
-    if get_asset_guid_by_qualified_name(qualified_name, "Connection"):
-        logger.info("Connection : {} already exists, does not need to be created".format(qualified_name))
-    else:
-        logger.info("Connection : {} does not exist, creating database...".format(qualified_name))
-        if asset.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
-            connection = DYNAMODB_CONN_QN
-        elif asset.integration_type == INTEGRATION_TYPE_ATHENA:
-            connection = ATHENA_CONN_QN
-        elif asset.integration_type == INTEGRATION_TYPE_REDSHIFT:
-            connection = REDSHIFT_CONN_QN
-        data = {
-            "entities": [
-                {
-                    "typeName": "Connection",
-                    "attributes": {
-                        "name": asset.integration_type + "-integration",
-                        "category": "warehouse",
-                        "connectorName": asset.integration_type,
-                        "qualifiedName": qualified_name,
-                        "adminUsers": [
-                            "mfelja"
-                        ]
-                    }
-                }
-            ]
-        }
-
-        url = "https://{}/api/meta/entity/bulk#createConnections".format(api_conf.instance)
-        request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
-        response = request_object.send_atlan_request()
-        logger.info(response.content)
-        logger.debug("...created")
-
-
 def create_asset_database(asset):
     qualified_name = get_asset_attribute_qualified_name(asset, 1)
     if get_asset_guid_by_qualified_name(qualified_name, "Database"):

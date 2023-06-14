@@ -14,15 +14,16 @@ from optparse import OptionParser
 
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, create_asset_database
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_schema_tables
+from atlanapi.searchAssets import get_schema_tables
 from model import Schema, Table
 
 logger = logging.getLogger('main_logger')
 
-
 """
     TODO: Voir si dans la suppression des colonnes, si l'asset Table dans le manifest est supprimé, les colonnes existantes sont-elles supprimées
 """
+
+
 def delete_table_entities(schemas, tables):
     delete_tables = []
     for schema in schemas:
@@ -75,11 +76,6 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             glossary=row['Glossary'],
                             integration_type=row['Integration Type'])
             schemas.append(schema)
-    # Create asset's database if does not exist
-    for table in tables:
-        create_asset_database(table)
-    create_assets(schemas, "createSchemas")
-    create_assets(tables, "createTables")
 
     return assets_info, tables
 

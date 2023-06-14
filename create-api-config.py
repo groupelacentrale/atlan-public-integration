@@ -15,8 +15,8 @@ from optparse import OptionParser
 
 DIR = "config"
 
-def main(args):
 
+def main(args):
     parser = OptionParser(usage='usage: %prog [options] arguments')
     parser.add_option("-a", "--api_key", help="API key needed to make and get requests using the Atlan API")
     parser.add_option("-i", "--instance_name", help="Server name of the Atlan instance")
