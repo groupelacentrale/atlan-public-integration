@@ -7,4 +7,3 @@ __pycache__
 atlanapi/__pycache__
 /test_integration.py
 /atlanapi/ApiConfig.py
-/constants.py
