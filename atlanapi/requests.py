@@ -101,17 +101,8 @@ def create_schema_request_payload(asset):
             "qualifiedName": asset.get_qualified_name(),
             "databaseName": asset.database_name,
             "description": asset.description,
-            "databaseQualifiedName": get_attribute_qualified_name(asset, 1),
             "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.integration_type],
             "connectionQualifiedName": get_attribute_qualified_name(asset, 2)
-        },
-        "relationshipAttributes": {
-            "database": {
-                "typeName": "Database",
-                "uniqueAttributes": {
-                    "qualifiedName": get_attribute_qualified_name(asset, 1)
-                }
-            }
         }
     }
 
