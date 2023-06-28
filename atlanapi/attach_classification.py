@@ -1,12 +1,9 @@
 import json
 import logging
-import sys
-
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.detach_classification import detach_classification
 from constants import CLASSIFICATION
-from exception.EnvVariableNotFound import EnvVariableNotFound
 from model import Column, Table
 
 logger = logging.getLogger('main_logger')
@@ -21,10 +18,16 @@ headers = {
 
 
 def attach_classification(assets):
+    # List of assets with classification
     assets_with_classification = [asset for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
-                                  and asset.classification and asset.classification.capitalize() in [x.capitalize() for x in CLASSIFICATION]]
-    assets_without_classification = [asset.get_asset_name() for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
-                                     and (not asset.classification or asset.classification.capitalize() not in [x.capitalize() for x in CLASSIFICATION])]
+                                  and asset.classification and asset.classification.capitalize() in [x.capitalize() for
+                                                                                                     x in
+                                                                                                     CLASSIFICATION]]
+    # List of assets without classification
+    assets_without_classification = [asset.get_asset_name() for asset in assets if
+                                     (isinstance(asset, Column) or isinstance(asset, Table))
+                                     and (not asset.classification or asset.classification.capitalize() not in [
+                                         x.capitalize() for x in CLASSIFICATION])]
     if len(assets_without_classification) > 0:
         logger.warning('Assets {} doesn\'t have a valid classification'.format(assets_without_classification))
     if not len(assets_with_classification):
@@ -36,7 +39,8 @@ def attach_classification(assets):
         detach_classification(assets_with_classification)
         payload_for_bulk = map(lambda el: el.get_classification_payload_for_bulk_mode(), assets_with_classification)
         payload = json.dumps(list(payload_for_bulk))
-        attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(api_conf.instance)
+        attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(
+            api_conf.instance)
         atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
 
         atlan_api_request_object.send_atlan_request()

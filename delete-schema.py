@@ -15,7 +15,7 @@ from optparse import OptionParser
 from atlanapi.delete_asset import delete_asset
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
-from model.Asset import Schema
+from model.schema import Schema
 
 
 def delete_schema(args):

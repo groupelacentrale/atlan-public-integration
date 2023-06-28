@@ -5,3 +5,5 @@ logs/*
 __pycache__
 .DS_Store
 atlanapi/__pycache__
+/test_integration.py
+/atlanapi/ApiConfig.py

@@ -1,7 +1,7 @@
 import json
 import os
 
-from atlanapi.createAsset import create_assets, create_asset_database
+from atlanapi.createAsset import create_assets
 from atlanapi.delete_asset import delete_asset
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from model import Table
@@ -44,7 +44,6 @@ def test_create_entity_database():
                    readme=README,
                    glossary=GLOSSARY,
                    term=TERM)
-    create_asset_database(entity)
     schema_qualified_name = os.path.split(entity.get_qualified_name())[0]
     database_qualified_name = os.path.split(schema_qualified_name)[0]
     database_guid = get_asset_guid_by_qualified_name(database_qualified_name, "Database")

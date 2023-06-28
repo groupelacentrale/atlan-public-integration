@@ -1,12 +1,10 @@
 import logging
-import os
 from annotation import auto_str
 from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 
 from atlanapi.requests import create_column_lineage_request_payload
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT, DYNAMO_DB_DATABASE_NAME, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_DATABASE_NAME, \
-    ATHENA_CONN_QN, REDSHIFT_DATABASE_NAME
+    INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
 
 logger = logging.getLogger('main_logger')
 
