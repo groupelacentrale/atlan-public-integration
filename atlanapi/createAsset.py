@@ -122,9 +122,11 @@ def create_assets(assets, tag):
         payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
         payload = json.dumps({"entities": list(payloads_for_bulk)})
+        print(payload)
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        atlan_api_schema_request_object.send_atlan_request()
+        response = atlan_api_schema_request_object.send_atlan_request()
+        print(response)
         time.sleep(1)
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
