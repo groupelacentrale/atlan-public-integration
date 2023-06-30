@@ -1,5 +1,4 @@
 import logging
-import os
 from annotation import auto_str
 from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_id, get_database
 

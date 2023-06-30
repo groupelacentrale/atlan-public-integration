@@ -13,6 +13,9 @@ inputs:
   atlan_redshift_connection_id:
     description: 'Atlan redshift connection id'
     required: true
+  atlan_team:
+    description: 'Atlan team tag'
+    required: false
 
 runs:
   using: 'docker'
@@ -22,3 +25,4 @@ runs:
     ATLAN_INSTANCE: ${{ inputs.atlan_instance }}
     ATLAN_ATHENA_CONNECTION_ID: ${{ inputs.atlan_athena_connection_id }}
     ATLAN_REDSHIFT_CONNECTION_ID: ${{ inputs.atlan_redshift_connection_id }}
+    ATLAN_TEAM: ${{ inputs.atlan_team }}

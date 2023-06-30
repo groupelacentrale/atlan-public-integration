@@ -29,7 +29,7 @@ def get_schema_tables(qualified_name):
     atlan_api_query_request_object = AtlanApiRequest("GET", search_url, search_headers, {})
     try:
         search_response = json.loads(atlan_api_query_request_object.send_atlan_request().text)
-        return search_response['entity']['tables']
+        return search_response['entity']['relationshipAttributes']['tables']
     except Exception as e:
         logger.debug("Cannot get search result for qualified_name: '{}'".format(qualified_name))
         return {}

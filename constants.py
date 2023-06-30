@@ -7,7 +7,7 @@ INTEGRATION_TYPE_DYNAMO_DB = 'dynamodb'
 INTEGRATION_TYPE_ATHENA = 'glue'
 INTEGRATION_TYPE_REDSHIFT = 'redshift'
 
-DYNAMODB_CONN_QN = "dynamodb/dynamodb.atlan.com"
+DYNAMODB_CONN_QN = "default/dynamodb/dynamodb-prod"
 REDSHIFT_CONN_QN = "default/redshift"
 ATHENA_CONN_QN = "default/athena"
 
@@ -16,3 +16,4 @@ DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
 REDSHIFT_DATABASE_NAME = 'dwhstats'
 
 CLASSIFICATION = ['PII', 'Protected', 'Private', 'Public']
+CRITICALITY_LEVEL = ['Minor', 'Major', 'Critical']

@@ -12,7 +12,6 @@ Usage Options:
 import logging
 
 import utils
-import os
 
 from atlanapi.atlanutils import AtlanConfig, AtlanSourceFile, SourceFileValidator
 from optparse import OptionParser
