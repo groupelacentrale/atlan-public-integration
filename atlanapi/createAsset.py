@@ -133,7 +133,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
-        if get_atlan_team() and check_if_group_exist(get_atlan_team()):
+        if get_atlan_team() and check_if_group_exist(get_atlan_team()) and integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             add_owner_group(assets)
         if tag == 'createTables':
             attach_classification(assets)
