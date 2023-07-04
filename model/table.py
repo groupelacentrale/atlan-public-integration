@@ -54,6 +54,9 @@ class Table:
     def get_atlan_type_name(self):
         return 'Table'
 
+    def get_description(self):
+        return self.description
+
     def get_level_criticality(self):
         return self.criticality
 

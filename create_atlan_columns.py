@@ -13,12 +13,14 @@ import logging
 import utils
 from optparse import OptionParser
 
+from atlanapi.attach_classification import attach_classification
 from atlanapi.delete_asset import delete_asset
 from atlanapi.get_entity_columns import get_entity_columns
+from atlanapi.linkTerm import link_term
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, update_assets
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 from model import Column, Table
 
 logger = logging.getLogger('main_logger')
@@ -55,12 +57,14 @@ def create_atlan_columns(database_name,
                      entity_name=row["Table/Entity"],
                      schema_name=schema_name,
                      column_name=row['Name'],
-                     data_type=row['Type'],
                      description=row['Summary (Description)'],
                      readme=row['Readme'],
                      term=row['Term'].strip(),
                      glossary=row['Glossary'].strip(),
                      classification=row['Classification'])
+        if integration_type == INTEGRATION_TYPE_DYNAMO_DB:
+            col.data_type = row['Type']
+
         columns.append(col)
 
     distinct_columns = set()
@@ -82,14 +86,22 @@ def create_atlan_columns(database_name,
                     # TODO check output from list columns because it's only guid column
                     delete_asset(existing_columns[existing_column])
                     logger.info("'{}' Deleted successfully".format(existing_column))
+        for column in columns:
+            if column.entity_name == table.entity_name:
+                count_columns_asset += 1
+        create_assets(columns, "createColumns")
+        table.set_column_count(count_columns_asset)
+        update_assets([table], "createTables")
+    else:
+        columns_exist_in_atlan = [column for column in columns if
+                                  get_asset_guid_by_qualified_name(column.get_qualified_name(),
+                                                                   column.get_atlan_type_name())]
 
-    for column in columns:
-        if column.entity_name == table.entity_name:
-            count_columns_asset += 1
+        logger.info("Update asset : {}, integration type : {}".format(table_or_entity_name, integration_type))
 
-    create_assets(columns, "createColumns")
-    table.set_column_count(count_columns_asset)
-    update_assets([table], "createTables")
+        update_assets(columns_exist_in_atlan, "changeDescription")
+        attach_classification(columns_exist_in_atlan)
+        link_term(columns_exist_in_atlan)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import os
-
+import logging
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
@@ -10,6 +10,8 @@ GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
     INTEGRATION_TYPE_ATHENA: 'athena',
     INTEGRATION_TYPE_REDSHIFT: 'redshift'
 }
+
+logger = logging.getLogger('main_logger')
 
 """
 Looking for asset attribute database qualified name
@@ -222,6 +224,7 @@ def detach_classification_request_payload(asset):
 
 def link_term_request_payload(asset):
     term_guid = get_glossary_term_guid_by_name(asset.term, asset.glossary)
+    logger.info('Link term: {} in glossary to asset {}'.format(asset.term, asset.glossary, asset.get_asset_name()))
     return {
         "typeName": asset.get_atlan_type_name(),
         "attributes": {
@@ -250,6 +253,17 @@ def unlink_term_request_payload(asset):
         },
         "relationshipAttributes": {
             "meanings": []
+        }
+    }
+
+
+def update_description_payload_request_payload(asset):
+    return {
+        "typeName": "Column",
+        "attributes": {
+            "name": asset.get_asset_name(),
+            "qualifiedName": asset.get_qualified_name(),
+            "description": asset.get_description()
         }
     }
 

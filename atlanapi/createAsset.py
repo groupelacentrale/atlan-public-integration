@@ -37,25 +37,104 @@ Looking for asset attribute database qualified name
 """
 
 
-def create_assets(assets, tag):
+def get_attribute_qualified_name(asset, level):
+    return '/'.join(asset.get_qualified_name().split('/')[:-level])
+
+
+def get_asset_attribute_qualified_name(asset, level):
+    logger.info("Asset qualified Name : {}".format(asset.get_qualified_name()))
+    if isinstance(asset, Schema):
+        qualified_name = get_attribute_qualified_name(asset, level)
+    else:
+        qualified_name = get_attribute_qualified_name(asset, level + 1)
+    return qualified_name
+
+
+def create_asset_connection(asset):
+    qualified_name = get_asset_attribute_qualified_name(asset, 2)
+    if get_asset_guid_by_qualified_name(qualified_name, "Connection"):
+        logger.info("Connection : {} already exists, does not need to be created".format(qualified_name))
+    else:
+        logger.info("Connection : {} does not exist, creating database...".format(qualified_name))
+        if asset.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
+            connection = DYNAMODB_CONN_QN
+        elif asset.integration_type == INTEGRATION_TYPE_ATHENA:
+            connection = ATHENA_CONN_QN
+        elif asset.integration_type == INTEGRATION_TYPE_REDSHIFT:
+            connection = REDSHIFT_CONN_QN
+        data = {
+            "entities": [
+                {
+                    "typeName": "Connection",
+                    "attributes": {
+                        "name": asset.integration_type + "-integration",
+                        "category": "warehouse",
+                        "connectorName": asset.integration_type,
+                        "qualifiedName": qualified_name,
+                        "adminUsers": [
+                            "mfelja"
+                        ]
+                    }
+                }
+            ]
+        }
+
+        url = "https://{}/api/meta/entity/bulk#createConnections".format(api_conf.instance)
+        request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
+        response = request_object.send_atlan_request()
+        logger.info(response.content)
+        logger.debug("...created")
+
+
+def create_asset_database(asset):
+    qualified_name = get_asset_attribute_qualified_name(asset, 1)
+    if get_asset_guid_by_qualified_name(qualified_name, "Database"):
+        logger.info("Database : {} already exists, does not need to be created".format(asset.database_name))
+    else:
+        logger.info("Database : {} does not exist, creating database...".format(asset.database_name))
+
+        data = {
+            "entities": [
+                {
+                    "typeName": "Database",
+                    "attributes": {
+                        "name": asset.database_name,
+                        "connectorName": asset.integration_type,
+                        "qualifiedName": qualified_name,
+                        "description": "Databse Integration : {}".format(asset.integration_type),
+                        "connectionQualifiedName": os.path.split(qualified_name)[0]
+                    }
+                }
+            ]
+        }
+        url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
+        request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
+        # TODO this feature should be disabled as database is created once and manually
+        # request_object.send_atlan_request()
+        logger.debug("...created")
+
+
+def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
             return
-        logger.debug("Generating API request to create assets in bulk mode so it is searchable")
-        payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == tag == "createColumnProcesses":
+            logger.debug("Generating API request to create assets in bulk mode so it is searchable")
+            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
-        payload = json.dumps({"entities": list(payloads_for_bulk)})
-        schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
-        atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        atlan_api_schema_request_object.send_atlan_request()
-        time.sleep(1)
+            payload = json.dumps({"entities": list(payloads_for_bulk)})
+            schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
+            atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
+            atlan_api_schema_request_object.send_atlan_request()
+            time.sleep(1)
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
         if tag == 'createColumns':
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
-        if get_atlan_team() and check_if_group_exist(get_atlan_team()):
+        if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
+                (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
             add_owner_group(assets)
         if tag == 'createTables':
             attach_classification(assets)
@@ -72,7 +151,10 @@ def update_assets(assets, tag):
         if not assets:
             return
         logger.debug("Generating API request to create assets in bulk mode so it is searchable")
-        payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+        if tag == "createTables":
+            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
+        else:
+            payloads_for_bulk = map(lambda el: el.get_update_description_payload_for_bulk_mode(), assets)
 
         payload = json.dumps({"entities": list(payloads_for_bulk)})
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
@@ -80,7 +162,6 @@ def update_assets(assets, tag):
         atlan_api_schema_request_object.send_atlan_request()
         time.sleep(1)
 
-        logger.debug("Creating Readme, linking glossary terms and linking classification...")
     except EnvVariableNotFound as e:
         logger.warning("Error while updating asset for %s tag. Error message: %s", tag, e)
         raise e
