@@ -15,5 +15,5 @@ ATHENA_DATABASE_NAME = 'AwsDataCatalog'
 DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
 REDSHIFT_DATABASE_NAME = 'dwhstats'
 
-CLASSIFICATION = ['PII', 'Protected', 'Private', 'Public']
+CLASSIFICATION = ['PII', 'Contractual', 'Open']
 CRITICALITY_LEVEL = ['Minor', 'Major', 'Critical']
