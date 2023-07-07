@@ -48,7 +48,7 @@ def create_atlan_columns(database_name,
         source_data.assets_def["Name"] = source_data.assets_def["Column/Attribute"]
 
     logger.debug("Preparing API request to create columns for table: {}"
-                 .format(schema_name if integration_type == INTEGRATION_TYPE_DYNAMO_DB else table_or_entity_name))
+                 .format(schema_name if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB else table_or_entity_name))
     columns = []
 
     for index, row in source_data.assets_def.iterrows():
@@ -62,7 +62,7 @@ def create_atlan_columns(database_name,
                      term=row['Term'].strip(),
                      glossary=row['Glossary'].strip(),
                      classification=row['Classification'])
-        if integration_type == INTEGRATION_TYPE_DYNAMO_DB:
+        if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
             col.data_type = row['Type']
 
         columns.append(col)
