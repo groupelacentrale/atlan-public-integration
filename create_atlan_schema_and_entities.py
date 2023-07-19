@@ -66,23 +66,23 @@ def create_atlan_schema_and_entities(path_to_manifest, sep=","):
                             integration_type=row['Integration Type'])
             schemas.append(schema)
 
-    dynamo_schemas = list(filter(lambda sch: sch.integration_type == INTEGRATION_TYPE_DYNAMO_DB, schemas))
-    dynamo_tables = list(filter(lambda tab: tab.integration_type == INTEGRATION_TYPE_DYNAMO_DB, tables))
+    manual_schemas = list(filter(lambda sch: sch.is_manual_integration, schemas))
+    manual_tables = list(filter(lambda tab: tab.is_manual_integration, tables))
 
-    rga_schemas = list(filter(lambda sch: sch.integration_type != INTEGRATION_TYPE_DYNAMO_DB, schemas))
-    rga_tables = list(filter(lambda tab: tab.integration_type != INTEGRATION_TYPE_DYNAMO_DB, tables))
+    crawl_schemas = list(filter(lambda sch: not sch.is_manual_integration, schemas))
+    crawl_tables = list(filter(lambda tab: not tab.is_manual_integration, tables))
 
     # Create asset's database if does not exist
-    for table in dynamo_tables:
+    for table in manual_tables:
         create_asset_database(table)
 
     # Create assets for DynamoDB integration only
-    create_assets(dynamo_schemas, "createSchemas")
-    create_assets(dynamo_tables, "createTables")
+    create_assets(manual_schemas, "createSchemas")
+    create_assets(manual_tables, "createTables")
 
     # Update assets for Redshift/Glue/Athena
-    create_assets(rga_schemas, "createSchemas", INTEGRATION_TYPE_REDSHIFT)
-    create_assets(rga_tables, "createTables", INTEGRATION_TYPE_REDSHIFT)
+    create_assets(crawl_schemas, "createSchemas", INTEGRATION_TYPE_REDSHIFT)
+    create_assets(crawl_tables, "createTables", INTEGRATION_TYPE_REDSHIFT)
 
     return assets_info, tables
 

@@ -5,8 +5,8 @@ from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_
 from atlanapi.requests import create_column_request_payload, classification_request_payload, \
     detach_classification_request_payload, link_term_request_payload, unlink_term_request_payload, \
     update_description_payload_request_payload
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_DICTIONARY, \
+    INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN, DICTIONARY_CONN_QN, MANUAL_INTEGRATION
 
 logger = logging.getLogger('main_logger')
 
@@ -36,6 +36,7 @@ class Column:
         self.term = term
         self.glossary = glossary
         self.classification = classification
+        self.is_manual_integration = integration_type.lower() in MANUAL_INTEGRATION
 
     def set_column_data_type(self, data_type):
         self.data_type = data_type
@@ -49,6 +50,9 @@ class Column:
                              get_database(self.integration_type) + "/{}/{}/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
             qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/" + \
+                             get_database(self.integration_type) + "/{}/{}/{}"
+        elif self.integration_type == INTEGRATION_TYPE_DICTIONARY:
+            qualified_name = DICTIONARY_CONN_QN + "/" + \
                              get_database(self.integration_type) + "/{}/{}/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
@@ -96,3 +100,12 @@ class Column:
     def __hash__(self):
         return hash((self.integration_type, self.database_name, self.schema_name,
                      self.entity_name, self.column_name, self.data_type))
+
+    def __repr__(self):
+        return "({},{},{},{},{})".format(
+            self.integration_type,
+            self.database_name,
+            self.schema_name,
+            self.entity_name,
+            self.column_name
+        )

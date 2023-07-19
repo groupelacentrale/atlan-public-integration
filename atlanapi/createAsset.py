@@ -12,7 +12,7 @@ from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
 from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
-    ATHENA_CONN_QN, REDSHIFT_CONN_QN
+    ATHENA_CONN_QN, REDSHIFT_CONN_QN, MANUAL_INTEGRATION
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from model.file import get_atlan_team
 from model.schema import Schema
@@ -118,7 +118,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
             return
-        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == tag == "createColumnProcesses":
+        if integration_type in MANUAL_INTEGRATION or tag == "createProcesses" or tag == tag == "createColumnProcesses":
             logger.debug("Generating API request to create assets in bulk mode so it is searchable")
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
@@ -134,7 +134,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
         if tag == 'createColumns' or tag == 'createTables':
             link_term(assets)
         if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
-                (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
+                (integration_type in MANUAL_INTEGRATION or (integration_type not in MANUAL_INTEGRATION and tag != 'createSchemas')):
             add_owner_group(assets)
         if tag == 'createTables':
             attach_classification(assets)

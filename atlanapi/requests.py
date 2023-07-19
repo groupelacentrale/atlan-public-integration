@@ -2,13 +2,15 @@ import os
 import logging
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, \
+    INTEGRATION_TYPE_DICTIONARY
 from model import get_atlan_team
 
 GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
     INTEGRATION_TYPE_DYNAMO_DB: 'dynamodb',
     INTEGRATION_TYPE_ATHENA: 'athena',
-    INTEGRATION_TYPE_REDSHIFT: 'redshift'
+    INTEGRATION_TYPE_REDSHIFT: 'redshift',
+    INTEGRATION_TYPE_DICTIONARY: 'dictionary'
 }
 
 logger = logging.getLogger('main_logger')
@@ -105,6 +107,14 @@ def create_schema_request_payload(asset):
             "description": asset.description,
             "connectorName": GET_CONNECTOR_NAME_INTEGRATION_TYPE[asset.integration_type],
             "connectionQualifiedName": get_attribute_qualified_name(asset, 2)
+        },
+        "relationshipAttributes": {
+            "database": {
+                "typeName": "Database",
+                "uniqueAttributes": {
+                    "qualifiedName": get_attribute_qualified_name(asset, 1)
+                }
+            }
         }
     }
 

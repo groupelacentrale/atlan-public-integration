@@ -2,8 +2,7 @@ import logging
 import sys
 import os
 
-from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT
+from constants import BASE_PATH_ATLAN_DOCS, MANIFEST_FILE_NAME, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_DYNAMO_DB
 
 
 def setup_logger(logger_name, level=logging.INFO):
@@ -21,9 +20,9 @@ def get_table_name(path):
 
 
 def get_csv_file_name(schema_name, entity_name, integration_type):
-    if integration_type.lower() == INTEGRATION_TYPE_ATHENA or integration_type.lower() == INTEGRATION_TYPE_REDSHIFT:
-        return entity_name
-    return schema_name
+    if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
+        return schema_name
+    return entity_name
 
 
 def get_path(integration_type, schema_name, table_or_entity_name):

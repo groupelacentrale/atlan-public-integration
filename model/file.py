@@ -2,8 +2,9 @@ import logging
 import os
 
 from exception.EnvVariableNotFound import EnvVariableNotFound
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT, DYNAMO_DB_DATABASE_NAME, ATHENA_DATABASE_NAME, REDSHIFT_DATABASE_NAME
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_DICTIONARY, \
+    INTEGRATION_TYPE_REDSHIFT, DYNAMO_DB_DATABASE_NAME, ATHENA_DATABASE_NAME, REDSHIFT_DATABASE_NAME, \
+    DICTIONARY_DATABASE_NAME
 
 logger = logging.getLogger('main_logger')
 
@@ -31,6 +32,8 @@ def get_database(integration_type):
         return ATHENA_DATABASE_NAME
     if integration_type == INTEGRATION_TYPE_REDSHIFT:
         return REDSHIFT_DATABASE_NAME
+    if integration_type == INTEGRATION_TYPE_DICTIONARY:
+        return DICTIONARY_DATABASE_NAME
     return ATLAN_REDSHIFT_CONNECTION_ID
 
 

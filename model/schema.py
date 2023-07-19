@@ -4,8 +4,9 @@ from model import get_atlan_athena_connection_id, get_atlan_redshift_connection_
 
 from atlanapi.requests import create_schema_request_payload, link_term_request_payload, unlink_term_request_payload, \
     get_add_owner_group_request_payload
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, \
-    INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_DICTIONARY, \
+    INTEGRATION_TYPE_REDSHIFT, REDSHIFT_CONN_QN, DYNAMODB_CONN_QN, ATHENA_CONN_QN, DICTIONARY_CONN_QN, \
+    MANUAL_INTEGRATION
 
 
 @auto_str
@@ -21,6 +22,7 @@ class Schema:
         self.glossary = glossary
         self.classification = classification
         self.integration_type = integration_type.lower()
+        self.is_manual_integration = integration_type.lower() in MANUAL_INTEGRATION
 
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
@@ -31,6 +33,9 @@ class Schema:
                              get_database(self.integration_type) + "/{}"
         elif self.integration_type == INTEGRATION_TYPE_REDSHIFT:
             qualified_name = REDSHIFT_CONN_QN + "/" + get_atlan_redshift_connection_id(self) + "/" + \
+                             get_database(self.integration_type) + "/{}"
+        elif self.integration_type == INTEGRATION_TYPE_DICTIONARY:
+            qualified_name = DICTIONARY_CONN_QN + "/" + \
                              get_database(self.integration_type) + "/{}"
         else:
             raise Exception("Qualified name not supported yet for integration type {}"
@@ -66,3 +71,11 @@ class Schema:
 
     def get_add_owner_group_request_payload(self):
         return get_add_owner_group_request_payload(self)
+
+    def __repr__(self):
+        return "({},{},{},{})".format(
+            self.integration_type,
+            self.database_name,
+            self.schema_name,
+            self.is_manual_integration
+        )

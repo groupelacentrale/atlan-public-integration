@@ -10,6 +10,7 @@ Usage Options:
 """
 
 import logging
+
 import utils
 from optparse import OptionParser
 
@@ -20,7 +21,7 @@ from atlanapi.linkTerm import link_term
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
 from atlanapi.createAsset import create_assets, update_assets
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, MANUAL_INTEGRATION
 from model import Column, Table
 
 logger = logging.getLogger('main_logger')
@@ -62,7 +63,7 @@ def create_atlan_columns(database_name,
                      term=row['Term'].strip(),
                      glossary=row['Glossary'].strip(),
                      classification=row['Classification'])
-        if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
+        if integration_type.lower() in MANUAL_INTEGRATION:
             col.data_type = row['Type']
 
         columns.append(col)
@@ -72,7 +73,7 @@ def create_atlan_columns(database_name,
     columns = [col for col in columns if col not in distinct_columns and (distinct_columns.add(col) or True)]
 
     logger.debug("Preparing API request to delete columns no longer mentioned in csv file")
-    if integration_type.lower() == INTEGRATION_TYPE_DYNAMO_DB:
+    if integration_type.lower() in MANUAL_INTEGRATION:
         entities = {column.entity_name: [] for column in columns}
         for column in columns:
             entities[column.entity_name].append(column.column_name)
