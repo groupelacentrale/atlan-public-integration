@@ -78,7 +78,10 @@ def create_atlan_columns(database_name,
         for column in columns:
             entities[column.entity_name].append(column.column_name)
         for entity in entities:
-            e = Table(entity_name=entity, database_name=database_name, schema_name=schema_name)
+            e = Table(entity_name=entity,
+                      database_name=database_name,
+                      schema_name=schema_name,
+                      integration_type=integration_type.lower())
             asset_info_guid = get_asset_guid_by_qualified_name(e.get_qualified_name(), e.get_atlan_type_name())
             existing_columns = get_entity_columns(asset_info_guid)
             for existing_column in existing_columns:
