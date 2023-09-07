@@ -31,7 +31,8 @@ def link_term(assets):
         link_to_term_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'attachGlossaryTerm')
         atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
         logger.info("LINKTERM PAYLOAD : {} ".format(payload))
-        atlan_api_request_object.send_atlan_request()
+        response = atlan_api_request_object.send_atlan_request()
+        logger.info("RESPONSE = {}".format(response))
 
     except Exception as e:
         logger.warning("Error while linking glossary terms. Error message: %s", e)
