@@ -130,8 +130,10 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
         if tag == 'createColumns':
+            logger.info("".format(assets))
             attach_classification(assets)
         if tag == 'createColumns' or tag == 'createTables':
+            logger.info("TERMS ASSETS ---- >".format(assets))
             link_term(assets)
         if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
                 (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
