@@ -46,6 +46,8 @@ def add_owner_group(assets):
         logger.info("Adding owner group to assets in bulk mode")
         payloads_for_bulk = map(lambda el: el.get_add_owner_group_request_payload(), filtered_assets)
         payload = json.dumps({"entities": list(payloads_for_bulk)})
+        logger.info('PAYLOAD ADD OWNER ----->')
+        logger.info(payload)
         add_owner_group_url = 'https://{}/api/meta/entity/bulk#changeOwners'.format(api_conf.instance)
         atlan_api_request_object = AtlanApiRequest("POST", add_owner_group_url, headers, payload)
 
