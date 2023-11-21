@@ -139,6 +139,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
         if tag == 'createTables':
             attach_classification(assets)
             [update_level_criticality(asset) for asset in assets]
+            update_assets(assets, 'changeDescription')
         for asset in assets:
             create_readme(asset)
     except EnvVariableNotFound as e:
