@@ -36,6 +36,7 @@ class Table:
         self.column_count = column_count
 
     def get_qualified_name(self):
+        print("Integration : {} |  ID : {} ".format(self.integration_type, get_atlan_athena_connection_id(self)))
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/" + \
                              get_database(self.integration_type) + "/{}/{}"
