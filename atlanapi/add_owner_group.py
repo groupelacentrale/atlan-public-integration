@@ -48,8 +48,10 @@ def add_owner_group(assets):
         payload = json.dumps({"entities": list(payloads_for_bulk)})
         add_owner_group_url = 'https://{}/api/meta/entity/bulk#changeOwners'.format(api_conf.instance)
         atlan_api_request_object = AtlanApiRequest("POST", add_owner_group_url, headers, payload)
-
+        logger.info("-------------------- ADD OWNER ---------------------------------------")
+        logger.info(payload)
         response = atlan_api_request_object.send_atlan_request()
         logger.info(response.status_code)
+        logger.info("-----------------------------------------------------------------------")
     except Exception as e:
         logger.warning("Error while adding owner group. Error message: %s", e)
