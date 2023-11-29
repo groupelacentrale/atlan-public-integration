@@ -3,6 +3,7 @@ import logging
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.update_tag import update_aws_team_tag
 from model import Column, Table, Schema
 
