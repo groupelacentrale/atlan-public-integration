@@ -39,7 +39,7 @@ def check_if_group_exist(atlan_team):
 def add_owner_group(assets):
     filtered_assets = [asset for asset in assets if
                        (isinstance(asset, Schema) or isinstance(asset, Table)) and get_asset_guid_by_qualified_name(
-                           asset.get_qualified_name(), asset.get_atlan_type_name())['entity'] is not None]
+                           asset.get_qualified_name(), asset.get_atlan_type_name())[0] is not None]
     if not len(filtered_assets):
         return
     try:
