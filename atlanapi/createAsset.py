@@ -118,7 +118,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
             return
-        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == tag == "createColumnProcesses":
+        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag ==  "createColumnProcesses":
             logger.debug("Generating API request to create assets in bulk mode so it is searchable")
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
