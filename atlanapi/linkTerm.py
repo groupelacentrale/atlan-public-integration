@@ -28,7 +28,7 @@ def link_term(assets):
         unlink_term(assets_with_terms)
         payload_for_bulk_mode = map(lambda el: el.get_link_term_payload_for_bulk_mode(), assets_with_terms)
         payload = json.dumps({"entities": list(payload_for_bulk_mode)})
-        link_to_term_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'attachGlossaryTerm')
+        link_to_term_url = 'https://{}/api/meta/entity/bulk'.format(api_conf.instance)
         atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
 
         req = atlan_api_request_object.send_atlan_request()
