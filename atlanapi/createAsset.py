@@ -14,6 +14,7 @@ from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
+from model import Table, Column
 from model.file import get_atlan_team
 from model.schema import Schema
 
@@ -127,20 +128,22 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
             atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
             atlan_api_schema_request_object.send_atlan_request()
             time.sleep(1)
-
+        filtered_assets = [asset for asset in assets if
+                           (isinstance(asset, Table) or isinstance(asset, Column)) and get_asset_guid_by_qualified_name(
+                               asset.get_qualified_name(), asset.get_atlan_type_name())]
+        link_term(assets)
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
         if tag == 'createColumns':
             attach_classification(assets)
-        if tag == 'createColumns' or tag == 'createTables':
-            link_term(assets)
         if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
                 (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
             add_owner_group(assets)
         if tag == 'createTables':
-            attach_classification(assets)
-            [update_level_criticality(asset) for asset in assets]
-            update_assets(assets, 'changeDescription')
-        for asset in assets:
+            attach_classification(filtered_assets)
+            [update_level_criticality(asset) for asset in filtered_assets]
+            update_assets(filtered_assets, 'changeDescription')
+
+        for asset in filtered_assets:
             create_readme(asset)
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
