@@ -229,9 +229,7 @@ def link_term_request_payload(asset):
         "typeName": asset.get_atlan_type_name(),
         "attributes": {
             "name": asset.get_asset_name(),
-            "qualifiedName": asset.get_qualified_name()
-        },
-        "relationshipAttributes": {
+            "qualifiedName": asset.get_qualified_name(),
             "meanings": [
                 {
                     "typeName": "AtlasGlossaryTerm",
@@ -249,9 +247,7 @@ def unlink_term_request_payload(asset):
         "typeName": asset.get_atlan_type_name(),
         "attributes": {
             "name": asset.get_asset_name(),
-            "qualifiedName": asset.get_qualified_name()
-        },
-        "relationshipAttributes": {
+            "qualifiedName": asset.get_qualified_name(),
             "meanings": []
         }
     }
