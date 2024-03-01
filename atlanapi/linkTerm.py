@@ -32,8 +32,7 @@ def link_term(assets):
         atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
 
         req = atlan_api_request_object.send_atlan_request()
-        logger.info('Payload : {}'.format(payload))
-        logger.info('Request status : {}'.format(req.status_code))
+        logger.info('Request status : {}'.format(req.content))
 
     except Exception as e:
         logger.warning("Error while linking glossary terms. Error message: %s", e)
