@@ -14,9 +14,8 @@ from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
-from model import Table, Column
 from model.file import get_atlan_team
-from model.schema import Schema
+from model import Schema, Table, Column
 
 logger = logging.getLogger('main_logger')
 
@@ -87,39 +86,11 @@ def create_asset_connection(asset):
         logger.debug("...created")
 
 
-def create_asset_database(asset):
-    qualified_name = get_asset_attribute_qualified_name(asset, 1)
-    if get_asset_guid_by_qualified_name(qualified_name, "Database"):
-        logger.info("Database : {} already exists, does not need to be created".format(asset.database_name))
-    else:
-        logger.info("Database : {} does not exist, creating database...".format(asset.database_name))
-
-        data = {
-            "entities": [
-                {
-                    "typeName": "Database",
-                    "attributes": {
-                        "name": asset.database_name,
-                        "connectorName": asset.integration_type,
-                        "qualifiedName": qualified_name,
-                        "description": "Databse Integration : {}".format(asset.integration_type),
-                        "connectionQualifiedName": os.path.split(qualified_name)[0]
-                    }
-                }
-            ]
-        }
-        url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
-        request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
-        # TODO this feature should be disabled as database is created once and manually
-        # request_object.send_atlan_request()
-        logger.debug("...created")
-
-
 def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
             return
-        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == tag == "createColumnProcesses":
+        if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == "createColumnProcesses":
             logger.debug("Generating API request to create assets in bulk mode so it is searchable")
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
 
@@ -128,16 +99,22 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
             atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
             atlan_api_schema_request_object.send_atlan_request()
             time.sleep(1)
+
+        logger.debug("Creating Readme, linking glossary terms and linking classification...")
         filtered_assets = [asset for asset in assets if
                            (isinstance(asset, Table) or isinstance(asset, Column)) and get_asset_guid_by_qualified_name(
                                asset.get_qualified_name(), asset.get_atlan_type_name())]
-        link_term(assets)
-        logger.debug("Creating Readme, linking glossary terms and linking classification...")
+
+        link_term(filtered_assets)
+
         if tag == 'createColumns':
-            attach_classification(assets)
+            attach_classification(filtered_assets)
+
         if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
-                (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
-            add_owner_group(assets)
+                (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (
+                        integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
+            add_owner_group(filtered_assets)
+
         if tag == 'createTables':
             attach_classification(filtered_assets)
             [update_level_criticality(asset) for asset in filtered_assets]
@@ -145,6 +122,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
 
         for asset in filtered_assets:
             create_readme(asset)
+
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
