@@ -33,6 +33,7 @@ def test_get_by_guid(guid):
         logger.error("Unable to find asset %s", guid)
         logger.error("%s", err)
 
+# https://developer.atlan.com/snippets/advanced-examples/delete/
 def test_delete_by_guid(guid):
     try:
         response = client.asset.delete_by_guid(guid)
