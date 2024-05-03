@@ -25,10 +25,11 @@ def link_term(assets):
         return
     try:
         # Update all changes for linked terms
-        unlink_term(assets_with_terms)
-        for el in assets_with_terms :
+        # TODO DATACAT-297
+        unlink_term(assets_with_terms) #Remove all
+        for el in assets_with_terms : #Set term one by one
             payload = json.dumps({"entities": [el.get_link_term_payload_for_bulk_mode()]})
-            print(payload)
+            # print(payload)
             link_to_term_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'attachGlossaryTerm')
             atlan_api_request_object = AtlanApiRequest("POST", link_to_term_url, headers, payload)
             req = atlan_api_request_object.send_atlan_request()

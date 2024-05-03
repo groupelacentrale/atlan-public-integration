@@ -54,10 +54,10 @@ def test_create_database(connector_name, db_name):
     }
 
     url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, 'createDatabases')
-    print(url)
+    # print(url)
     request_object = AtlanApiRequest("POST", url, headers, json.dumps(data))
     rep = request_object.send_atlan_request()
-    print(rep.content)
+    # print(rep.content)
 
 
 def test_create_schema():
