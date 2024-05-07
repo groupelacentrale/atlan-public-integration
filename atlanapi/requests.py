@@ -224,7 +224,7 @@ def detach_classification_request_payload(asset):
 
 def link_term_request_payload(asset):
     term_guid = get_glossary_term_guid_by_name(asset.term, asset.glossary)
-    logger.info('Link term: {} in glossary to asset {}'.format(asset.term, asset.glossary, asset.get_asset_name()))
+    logger.debug('Link term: {} in glossary to asset {}'.format(asset.term, asset.glossary, asset.get_asset_name()))
     return {
         "typeName": asset.get_atlan_type_name(),
         "attributes": {

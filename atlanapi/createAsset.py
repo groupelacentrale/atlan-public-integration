@@ -19,7 +19,7 @@ from model import Schema, Table, Column
 
 logger = logging.getLogger('main_logger')
 
-api_conf = create_api_config()
+api_conf = create_api_config() #TODO Move to singleton or Env
 authorization = 'Bearer {}'.format(api_conf.api_token)
 headers = {
     'Authorization': authorization,
