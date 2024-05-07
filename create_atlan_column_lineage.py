@@ -31,7 +31,7 @@ logger = logging.getLogger('main_logger')
 
 def get_columns_lineage(database_name, schema_name, table_or_entity_name, integration_type, delimiter):
     # Filter dataframe to include only lineage target columns that already exist in Atlan.
-    logger.debug("Searching to make sure lineage columns exist")
+    logger.info("Searching to make sure lineage columns exist")
 
     path_csv_table = utils.get_path(integration_type, schema_name, table_or_entity_name)
     source_data = AtlanSourceFile(path_csv_table, sep=delimiter)

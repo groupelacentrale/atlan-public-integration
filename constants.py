@@ -1,6 +1,6 @@
-# Convention compatible avec GitHub action ; le checkout du projet cible se fait dans /github/workspace.
 BASE_PATH_ATLAN_DOCS = "/github/workspace/docs/datacatalog"
-
+#BASE_PATH_ATLAN_DOCS = "./../atlan/data-dlh-fct-client-metrics-lc-loader/datacatalog"
+#BASE_PATH_ATLAN_DOCS = "./docs/sample/datacatalog"
 MANIFEST_FILE_NAME = "manifest.csv"
 
 INTEGRATION_TYPE_DYNAMO_DB = 'dynamodb'
