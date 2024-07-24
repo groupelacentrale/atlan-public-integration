@@ -5,14 +5,14 @@ import time
 
 from atlanapi.add_owner_group import add_owner_group, check_if_group_exist
 from atlanapi.attach_classification import attach_classification
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_asset_infos
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
 from atlanapi.linkTerm import link_term
-from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
+from atlanapi.update_tag import update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
-    ATHENA_CONN_QN, REDSHIFT_CONN_QN
+    ATHENA_CONN_QN, REDSHIFT_CONN_QN, SERVICE_ACC_API_NAME
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from model.file import get_atlan_team
 from model import Schema, Table, Column
@@ -85,15 +85,36 @@ def create_asset_connection(asset):
         logger.info(response.content)
         logger.debug("...created")
 
+def get_asset_updated_by(asset):
+    try:
+        asset_info = get_asset_infos(asset)
+        print(asset_info)
+        updated_by = asset_info['entity']['updatedBy']
+        print(f"updated by ------{updated_by}")
+        return updated_by
+    except KeyError as e:
+        return f"Clé manquante dans le JSON: {e}"
+    except Exception as e:
+        return f"Erreur lors de la récupération des informations: {e}"
+
 
 def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
             return
+        updated_by_api_assets = []
+        updated_by_user_assets = []
+        for asset in assets:
+            asset_guid = get_asset_guid_by_qualified_name(asset.get_qualified_name, asset.get_atlan_type_name)
+            if not asset_guid:
+                updated_by_api_assets.append(asset)
+            else:
+                updated_by = get_asset_updated_by(asset)
+                if updated_by in SERVICE_ACC_API_NAME:
+                    updated_by_api_assets.append(asset)
         if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == "createColumnProcesses":
             logger.debug("Generating API request to create assets in bulk mode so it is searchable")
-            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
-
+            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), updated_by_api_assets)
             payload = json.dumps({"entities": list(payloads_for_bulk)})
             schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
             atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
@@ -101,7 +122,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
             time.sleep(1)
 
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
-        filtered_assets = [asset for asset in assets if
+        filtered_assets = [asset for asset in updated_by_api_assets if
                            (isinstance(asset, Table) or isinstance(asset, Column)) and get_asset_guid_by_qualified_name(
                                asset.get_qualified_name(), asset.get_atlan_type_name())]
 

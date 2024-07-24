@@ -17,3 +17,5 @@ REDSHIFT_DATABASE_NAME = 'dwhstats'
 
 CLASSIFICATION = ['PII', 'Contractual', 'Open']
 CRITICALITY_LEVEL = ['Minor', 'Major', 'Critical']
+
+SERVICE_ACC_API_NAME = "service-account-apikey-e3df9f7b-42ba-4562-98ba-8bc1222221f8"
