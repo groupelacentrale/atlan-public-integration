@@ -19,7 +19,7 @@ from atlanapi.get_entity_columns import get_entity_columns
 from atlanapi.linkTerm import link_term
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.atlanutils import AtlanSourceFile
-from atlanapi.createAsset import create_assets, update_assets
+from atlanapi.createAsset import create_assets, update_assets_description
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
 from model import Column, Table
 
@@ -91,7 +91,6 @@ def create_atlan_columns(database_name,
                 count_columns_asset += 1
         create_assets(columns, "createColumns")
         table.set_column_count(count_columns_asset)
-        update_assets([table], "createTables")
     else:
         columns_exist_in_atlan = [column for column in columns if
                                   get_asset_guid_by_qualified_name(column.get_qualified_name(),
@@ -99,7 +98,7 @@ def create_atlan_columns(database_name,
 
         logger.info("Update asset : {}, integration type : {}".format(table_or_entity_name, integration_type))
 
-        update_assets(columns_exist_in_atlan, "changeDescription")
+        update_assets_description(columns_exist_in_atlan, "changeDescription")
         attach_classification(columns_exist_in_atlan)
         link_term(columns_exist_in_atlan)
 

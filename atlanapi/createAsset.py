@@ -86,16 +86,12 @@ def create_asset_connection(asset):
         logger.debug("...created")
 
 
-def get_asset_updated_by(asset):
+def is_asset_updated_by_service_acc_api(asset):
     asset_infos = get_asset_infos(asset)
     updated_by = asset_infos.get('entity', {}).get('updatedBy', None)
-    return updated_by
-
-
-def get_asset_description(asset):
-    asset_infos = get_asset_infos(asset)
-    asset_description = asset_infos.get('entity', {}).get('attributes', {}).get('userDescription', None)
-    return asset_description
+    if updated_by in SERVICE_ACC_API_NAME:
+        return True
+    return False
 
 
 '''
@@ -121,9 +117,12 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
             logger.debug("Creating assets payload {} - {}", payload, response)
             time.sleep(1)
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
+
+        #Get assets that exist in Atlan and is not modify by user
         filtered_assets = [asset for asset in assets if
-                           (isinstance(asset, Table) or isinstance(asset, Column)) and get_asset_guid_by_qualified_name(
-                               asset.get_qualified_name(), asset.get_atlan_type_name())]
+                           (isinstance(asset, Table) or isinstance(asset, Column))
+                           and get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())
+                           and is_asset_updated_by_service_acc_api(asset)]
 
         if tag == 'createColumns':
             attach_classification(filtered_assets)
