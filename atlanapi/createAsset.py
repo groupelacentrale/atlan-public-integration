@@ -19,7 +19,7 @@ from model import Schema, Table, Column
 
 logger = logging.getLogger('main_logger')
 
-api_conf = create_api_config() #TODO Move to singleton or Env
+api_conf = create_api_config()  # TODO Move to singleton or Env
 authorization = 'Bearer {}'.format(api_conf.api_token)
 headers = {
     'Authorization': authorization,
@@ -85,75 +85,69 @@ def create_asset_connection(asset):
         logger.info(response.content)
         logger.debug("...created")
 
+
 def get_asset_updated_by(asset):
-    try:
-        asset_info = get_asset_infos(asset)
-        print(asset_info)
-        updated_by = asset_info['entity']['updatedBy']
-        print(f"updated by ------{updated_by}")
-        return updated_by
-    except KeyError as e:
-        return f"Clé manquante dans le JSON: {e}"
-    except Exception as e:
-        return f"Erreur lors de la récupération des informations: {e}"
+    asset_infos = get_asset_infos(asset)
+    updated_by = asset_infos.get('entity', {}).get('updatedBy', None)
+    return updated_by
+
+
+def get_asset_description(asset):
+    asset_infos = get_asset_infos(asset)
+    asset_description = asset_infos.get('entity', {}).get('attributes', {}).get('userDescription', None)
+    return asset_description
+
+
+'''
+Create assets only for DynamoDB Integration. For Athena/Glue or Redshift, we are using workflows from Atlan to create assets
+We are only updating metadata for Athena/Glue, Redshift integration
+'''
 
 
 def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
+            logger.info("Cannot create assets, the list of assets is empty")
             return
-        updated_by_api_assets = []
-        updated_by_user_assets = []
-        for asset in assets:
-            asset_guid = get_asset_guid_by_qualified_name(asset.get_qualified_name, asset.get_atlan_type_name)
-            if not asset_guid:
-                updated_by_api_assets.append(asset)
-            else:
-                updated_by = get_asset_updated_by(asset)
-                if updated_by in SERVICE_ACC_API_NAME:
-                    updated_by_api_assets.append(asset)
         if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == "createColumnProcesses":
-            logger.debug("Generating API request to create assets in bulk mode so it is searchable")
-            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), updated_by_api_assets)
+            logger.debug(
+                "Generating API request to create assets in bulk mode so it is searchable for integration : %s",
+                integration_type)
+            payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
             payload = json.dumps({"entities": list(payloads_for_bulk)})
             schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
             atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-            atlan_api_schema_request_object.send_atlan_request()
+            response = atlan_api_schema_request_object.send_atlan_request()
+            logger.debug("Creating assets payload {} - {}", payload, response)
             time.sleep(1)
-
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
-        filtered_assets = [asset for asset in updated_by_api_assets if
+        filtered_assets = [asset for asset in assets if
                            (isinstance(asset, Table) or isinstance(asset, Column)) and get_asset_guid_by_qualified_name(
                                asset.get_qualified_name(), asset.get_atlan_type_name())]
 
-        link_term(filtered_assets)
-
         if tag == 'createColumns':
             attach_classification(filtered_assets)
-
+            update_assets_description(filtered_assets, 'changeDescription')
         if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
                 (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (
                         integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
             add_owner_group(filtered_assets)
-
         if tag == 'createTables':
             attach_classification(filtered_assets)
             [update_level_criticality(asset) for asset in filtered_assets]
-            update_assets(filtered_assets, 'changeDescription')
-
+            update_assets_description(filtered_assets, 'changeDescription')
         for asset in filtered_assets:
             create_readme(asset)
-
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
 
 
-def update_assets(assets, tag):
+def update_assets_description(assets, tag):
     try:
         if not assets:
             return
-        logger.debug("Generating API request to create assets in bulk mode so it is searchable")
+        logger.info("Generating API request to create assets in bulk mode so it is searchable")
         if tag == "createTables":
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
         else:
