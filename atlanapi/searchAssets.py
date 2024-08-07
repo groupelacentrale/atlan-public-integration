@@ -2,6 +2,7 @@ import json
 import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+from constants import SERVICE_ACC_API_NAME
 
 logger = logging.getLogger('main_logger')
 
@@ -11,6 +12,15 @@ search_headers = {
     'Authorization': authorization,
     'Content-Type': 'application/json'
 }
+
+
+def is_asset_updated_by_service_acc_api(asset):
+    asset_infos = get_asset_infos(asset)
+    updated_by = asset_infos.get('entity', {}).get('updatedBy', None)
+    if updated_by in SERVICE_ACC_API_NAME:
+        logger.info('Asset {} has been updated by service account API'.format(asset))
+        return True
+    return False
 
 
 def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):
@@ -60,7 +70,7 @@ def get_asset_infos(asset):
                                                              asset.get_atlan_type_name(),
                                                              asset_guid))
         asset_infos = get_asset_by_guid(asset_guid)
-        logger.debug('')
+
         return asset_infos
     except Exception as e:
         logger.debug('Cannot get asset infos for asset guid: {}, error {}'.format(asset_guid, e))

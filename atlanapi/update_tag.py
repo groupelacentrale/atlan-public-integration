@@ -3,7 +3,7 @@ import logging
 
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_asset_infos
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_asset_infos, is_asset_updated_by_service_acc_api
 from constants import CRITICALITY_LEVEL
 from model import ColumnLineage, TableLineage, get_atlan_team, Table
 
@@ -48,10 +48,11 @@ def has_criticality(asset):
         for key, value in business_attributes.items():
             for inner_key, inner_value in value.items():
                 if inner_value in CRITICALITY_LEVEL:
+                    logger.info('Asset {} has criticality tag'.format(asset))
                     return True
         return False
     except Exception as e:
-        logger.warning('Error while search for cricality attribute in asset {} - {}'.format(asset.get_asset_name, e))
+        logger.warning('Error while search for criticality attribute in asset {} - {}'.format(asset.get_asset_name, e))
 
 
 def update_level_criticality(asset):
@@ -64,7 +65,7 @@ def update_level_criticality(asset):
     if asset.get_level_criticality().capitalize() not in CRITICALITY_LEVEL:
         logger.warning('Criticality value "{}" is not support asset {}'.format(criticality, asset.get_asset_name()))
         return
-    if has_criticality(asset):
+    if has_criticality(asset) or is_asset_updated_by_service_acc_api(asset):
         logger.info('Asset {} already has criticality tag'.format(asset.get_asset_name()))
         return
     try:

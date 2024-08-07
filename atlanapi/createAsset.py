@@ -1,18 +1,16 @@
 import logging
 import json
-import os
 import time
 
 from atlanapi.add_owner_group import add_owner_group, check_if_group_exist
 from atlanapi.attach_classification import attach_classification
-from atlanapi.searchAssets import get_asset_guid_by_qualified_name, get_asset_infos
+from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
-from atlanapi.linkTerm import link_term
 from atlanapi.update_tag import update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
-    ATHENA_CONN_QN, REDSHIFT_CONN_QN, SERVICE_ACC_API_NAME
+    ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
 from model.file import get_atlan_team
 from model import Schema, Table, Column
@@ -86,13 +84,6 @@ def create_asset_connection(asset):
         logger.debug("...created")
 
 
-def is_asset_updated_by_service_acc_api(asset):
-    asset_infos = get_asset_infos(asset)
-    updated_by = asset_infos.get('entity', {}).get('updatedBy', None)
-    if updated_by in SERVICE_ACC_API_NAME:
-        return True
-    return False
-
 
 '''
 Create assets only for DynamoDB Integration. For Athena/Glue or Redshift, we are using workflows from Atlan to create assets
@@ -121,8 +112,7 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
         #Get assets that exist in Atlan and is not modify by user
         filtered_assets = [asset for asset in assets if
                            (isinstance(asset, Table) or isinstance(asset, Column))
-                           and get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())
-                           and is_asset_updated_by_service_acc_api(asset)]
+                           and get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())]
 
         if tag == 'createColumns':
             attach_classification(filtered_assets)

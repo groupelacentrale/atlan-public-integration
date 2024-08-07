@@ -2,7 +2,7 @@ import json
 import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
-from atlanapi.searchAssets import get_asset_infos
+from atlanapi.searchAssets import get_asset_infos, is_asset_updated_by_service_acc_api
 from constants import CLASSIFICATION
 from model import Column, Table
 
@@ -29,7 +29,8 @@ def attach_classification(assets):
     assets_with_classification = [asset for asset in assets if
                                   (isinstance(asset, Column) or isinstance(asset, Table))
                                   and asset.classification
-                                  and has_classification_in_atlan(asset) is False
+                                  and (not has_classification_in_atlan(asset)
+                                       or is_asset_updated_by_service_acc_api(asset))
                                   and asset.classification.capitalize() in [x.capitalize() for
                                                                             x in
                                                                             CLASSIFICATION]]
