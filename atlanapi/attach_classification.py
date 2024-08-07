@@ -2,6 +2,7 @@ import json
 import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
+from atlanapi.detach_classification import detach_classification
 from atlanapi.searchAssets import get_asset_infos, is_asset_updated_by_service_acc_api
 from constants import CLASSIFICATION
 from model import Column, Table
@@ -50,6 +51,7 @@ def attach_classification(assets):
         return
 
     try:
+        detach_classification(assets_with_classification)
         for asset in assets_with_classification:
             payload = json.dumps(list(asset.get_classification_payload()))
             attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(
