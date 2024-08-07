@@ -50,14 +50,12 @@ def attach_classification(assets):
         return
 
     try:
-        payload_for_bulk = map(lambda el: el.get_classification_payload_for_bulk_mode(), assets_with_classification)
-        payload = json.dumps(list(payload_for_bulk))
         for asset in assets_with_classification:
-            payload = json.dumps(list(asset.get_classification_payload_for_bulk_mode()))
+            payload = json.dumps(list(asset.get_classification_payload()))
             attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(
                 api_conf.instance)
             atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
             response = atlan_api_request_object.send_atlan_request()
-            logger.info("Attach classification for assets : {} - {}".format(assets_with_classification, response))
+            logger.info("Attach classification for assets : {} - {}".format(asset.get_asset_name(), response))
     except Exception as e:
         logger.warning("Error while attaching classification. Error message: %s", e)
