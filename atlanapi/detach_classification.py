@@ -21,5 +21,5 @@ def detach_classification(assets):
     payload = json.dumps({"guidHeaderMap": functools.reduce(lambda d1, d2: {**d1, **d2}, list_of_payloads)})
     attach_classification_url = 'https://{}/api/meta/entity/bulk/setClassifications'.format(api_conf.instance)
     atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
-
-    atlan_api_request_object.send_atlan_request()
+    response = atlan_api_request_object.send_atlan_request()
+    logger.info('Detach classification tag - {}'.format(response.status_code))
