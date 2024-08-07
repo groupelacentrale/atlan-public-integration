@@ -64,13 +64,13 @@ class Column:
     def get_description(self):
         return self.description
 
-    def get_creation_payload(self):
+    def get_creation_payload_for_bulk_mode(self):
         return create_column_request_payload(self)
 
     def get_creation_payload(self):
         raise Exception("Column are creating in bulk mode only")
 
-    def get_classification_payload_for_bulk_mode(self):
+    def get_classification_payload(self):
         return classification_request_payload(self)
 
     def get_detach_classification_payload_for_bulk_mode(self):
