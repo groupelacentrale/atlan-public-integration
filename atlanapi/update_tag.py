@@ -81,7 +81,7 @@ def update_level_criticality(asset):
                                                                                                   asset_guid)
         request_object = AtlanApiRequest("POST", update_tag_url, headers, json.dumps(payload))
         response = request_object.send_atlan_request()
-        logger.debug('Asset {} criticality {} - {}'.format(asset.get_asset_name(), criticality, response))
+        logger.debug('Asset {} criticality {} - {}'.format(asset.get_asset_name(), criticality, response.status_code))
     except Exception as e:
         logger.warning(
             'Error while updating level criticality to the asset {}\nReasons: {}'.format(asset.get_asset_name(), e))
