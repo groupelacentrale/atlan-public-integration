@@ -58,6 +58,6 @@ def attach_classification(assets):
                 api_conf.instance)
             atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
             response = atlan_api_request_object.send_atlan_request()
-            logger.info("Attach classification for assets : {} - {}".format(asset.get_asset_name(), response))
+            logger.info("Attach classification for assets : {} - {}".format(asset.get_asset_name(), response.status_code))
     except Exception as e:
         logger.warning("Error while attaching classification. Error message: %s", e)
