@@ -52,8 +52,9 @@ def attach_classification(assets):
         detach_classification(assets_with_classification)
         for asset in assets_with_classification:
             payload = json.dumps(list(asset.get_classification_payload()))
-            attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(
-                api_conf.instance)
+            attach_classification_url = ('https://{}/api/meta/entity/uniqueAttribute/'
+                                         'type/{}/classifications?attr:qualifiedName={}').format(
+                api_conf.instance, asset.get_atlan_type_name(), asset.get_qualified_name())
             atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
             response = atlan_api_request_object.send_atlan_request()
             logger.info("Attach classification for assets : {} {} - tag {}, response {}".format(asset.get_atlan_type_name(), asset.get_asset_name(), asset.classification, response.status_code))
