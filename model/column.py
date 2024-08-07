@@ -64,7 +64,7 @@ class Column:
     def get_description(self):
         return self.description
 
-    def get_creation_payload_for_bulk_mode(self):
+    def get_creation_payload(self):
         return create_column_request_payload(self)
 
     def get_creation_payload(self):

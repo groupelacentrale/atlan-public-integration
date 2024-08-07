@@ -79,7 +79,7 @@ class Table:
     def get_update_description_payload_for_bulk_mode(self):
         return update_description_payload_request_payload(self)
 
-    def get_classification_payload_for_bulk_mode(self):
+    def get_classification_payload(self):
         return classification_request_payload(self)
 
     def get_detach_classification_payload_for_bulk_mode(self):
