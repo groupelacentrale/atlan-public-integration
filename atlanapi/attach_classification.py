@@ -44,10 +44,8 @@ def attach_classification(assets):
 
     if len(assets_without_classification) > 0:
         logger.warning('Assets {} doesn\'t have a valid classification'.format(assets_without_classification))
-    if len(assets_with_classification):
-        logger.info("Asset with classification : {}".format(assets_with_classification))
-    else:
-        logger.info("No classification to attach")
+    if len(assets_with_classification) < 1:
+        logger.debug("No classification to attach")
         return
 
     try:
@@ -58,6 +56,6 @@ def attach_classification(assets):
                 api_conf.instance)
             atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
             response = atlan_api_request_object.send_atlan_request()
-            logger.info("Attach classification for assets : {}-{} - {}".format(asset.get_asset_name(), asset.classification, response.status_code))
+            logger.info("Attach classification for assets : {} {} - tag {}, response {}".format(asset.get_atlan_type_name(), asset.get_asset_name(), asset.classification, response.status_code))
     except Exception as e:
         logger.warning("Error while attaching classification. Error message: %s", e)
