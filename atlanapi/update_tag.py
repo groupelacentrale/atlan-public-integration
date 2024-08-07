@@ -66,7 +66,7 @@ def update_level_criticality(asset):
         logger.warning('Criticality value "{}" is not support asset {}'.format(criticality, asset.get_asset_name()))
         return
     if has_criticality(asset) or is_asset_updated_by_service_acc_api(asset):
-        logger.info('Asset {} already has criticality tag'.format(asset.get_asset_name()))
+        logger.debug('Asset {} already has criticality tag'.format(asset.get_asset_name()))
         return
     try:
         logger.info('Update level Criticality: {} for asset {}'.format(criticality, asset.get_asset_name()))
