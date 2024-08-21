@@ -14,13 +14,13 @@ search_headers = {
 }
 
 
-def is_asset_updated_by_service_acc_api(asset):
+def is_asset_updated_by_user(asset):
     asset_infos = get_asset_infos(asset)
     updated_by = asset_infos.get('entity', {}).get('updatedBy', None)
     if updated_by in SERVICE_ACC_API_NAME:
-        logger.info('Asset {} has been updated by service account API'.format(asset))
-        return True
-    return False
+        logger.debug('Asset {} has been updated by service account API'.format(asset))
+        return False
+    return True
 
 
 def get_asset_guid_by_qualified_name(qualified_name, asset_atlan_type):

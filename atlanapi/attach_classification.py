@@ -3,7 +3,7 @@ import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.detach_classification import detach_classification
-from atlanapi.searchAssets import get_asset_infos, is_asset_updated_by_service_acc_api
+from atlanapi.searchAssets import get_asset_infos, is_asset_updated_by_user
 from constants import CLASSIFICATION_TAGS_DICT
 from model import Column, Table
 
@@ -31,7 +31,7 @@ def attach_classification(assets):
                                   (isinstance(asset, Column) or isinstance(asset, Table))
                                   and asset.classification
                                   and (not has_classification_in_atlan(asset)
-                                       or is_asset_updated_by_service_acc_api(asset))
+                                       and is_asset_updated_by_user(asset) is False)
                                   and asset.classification.capitalize() in [x.capitalize() for
                                                                             x in
                                                                             CLASSIFICATION_TAGS_DICT]]
@@ -57,6 +57,6 @@ def attach_classification(assets):
                 api_conf.instance, asset.get_atlan_type_name(), asset.get_qualified_name())
             atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
             response = atlan_api_request_object.send_atlan_request()
-            logger.info("Attach classification for assets : {} {} - tag {}, response {}".format(asset.get_atlan_type_name(), asset.get_asset_name(), asset.classification, response.status_code))
+            logger.debug("Attach classification for assets : {} {} - tag {}, response {}".format(asset.get_atlan_type_name(), asset.get_asset_name(), asset.classification, response.status_code))
     except Exception as e:
         logger.warning("Error while attaching classification. Error message: %s", e)

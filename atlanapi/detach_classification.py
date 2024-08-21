@@ -22,4 +22,4 @@ def detach_classification(assets):
     attach_classification_url = 'https://{}/api/meta/entity/bulk/setClassifications'.format(api_conf.instance)
     atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
     response = atlan_api_request_object.send_atlan_request()
-    logger.info('Detach classification tag - {}'.format(response.status_code))
+    logger.debug('Detach classification tag - {}'.format(response.status_code))
