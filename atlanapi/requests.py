@@ -2,7 +2,8 @@ import os
 import logging
 from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.searchGlossaryTerms import get_glossary_term_guid_by_name
-from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT
+from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, \
+    CLASSIFICATION_TAGS_DICT
 from model import get_atlan_team
 
 GET_CONNECTOR_NAME_INTEGRATION_TYPE = {
@@ -199,12 +200,13 @@ def create_entity_lineage_request_payload(asset):
 
 
 def classification_request_payload(asset):
-    return {
-        "entityGuid": get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name()),
-        "displayName": asset.classification.upper() if(asset.classification.lower() == 'pii') else asset.classification.capitalize(),
+    return [{
+        "typeName": CLASSIFICATION_TAGS_DICT[asset.get_classification_tag()],
         "propagate": False,
-        "removePropagationsOnEntityDelete": True
-    }
+        "removePropagationsOnEntityDelete": True,
+        "restrictPropagationThroughLineage": False,
+        "restrictPropagationThroughHierarchy": False
+    }]
 
 
 def detach_classification_request_payload(asset):

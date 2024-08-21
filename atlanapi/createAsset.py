@@ -84,7 +84,6 @@ def create_asset_connection(asset):
         logger.debug("...created")
 
 
-
 '''
 Create assets only for DynamoDB Integration. For Athena/Glue or Redshift, we are using workflows from Atlan to create assets
 We are only updating metadata for Athena/Glue, Redshift integration
@@ -109,10 +108,11 @@ def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
             time.sleep(1)
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
 
-        #Get assets that exist in Atlan and is not modify by user
+        # Get assets that exist in Atlan and is not modify by user
         filtered_assets = [asset for asset in assets if
                            (isinstance(asset, Table) or isinstance(asset, Column))
-                           and get_asset_guid_by_qualified_name(asset.get_qualified_name(), asset.get_atlan_type_name())]
+                           and get_asset_guid_by_qualified_name(asset.get_qualified_name(),
+                                                                asset.get_atlan_type_name())]
 
         if tag == 'createColumns':
             attach_classification(filtered_assets)
@@ -145,7 +145,8 @@ def update_assets_description(assets, tag):
         payload = json.dumps({"entities": list(payloads_for_bulk)})
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        atlan_api_schema_request_object.send_atlan_request()
+        response = atlan_api_schema_request_object.send_atlan_request()
+        logger.debug('Update assets description : {}'.format(payload))
         time.sleep(1)
 
     except EnvVariableNotFound as e:
