@@ -30,8 +30,8 @@ def attach_classification(assets):
     assets_with_classification = [asset for asset in assets if
                                   (isinstance(asset, Column) or isinstance(asset, Table))
                                   and asset.classification
-                                  and (not has_classification_in_atlan(asset)
-                                       and is_asset_updated_by_user(asset) is False)
+                                  and (has_classification_in_atlan(asset) is False
+                                       or is_asset_updated_by_user(asset) is False)
                                   and asset.classification.capitalize() in [x.capitalize() for
                                                                             x in
                                                                             CLASSIFICATION_TAGS_DICT]]
