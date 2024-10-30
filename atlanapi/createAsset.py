@@ -1,6 +1,5 @@
 import logging
 import json
-import os
 import time
 
 from atlanapi.add_owner_group import add_owner_group, check_if_group_exist
@@ -9,8 +8,7 @@ from atlanapi.searchAssets import get_asset_guid_by_qualified_name
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.createReadme import create_readme
-from atlanapi.linkTerm import link_term
-from atlanapi.update_tag import update_aws_team_tag, update_level_criticality
+from atlanapi.update_tag import update_level_criticality
 from constants import INTEGRATION_TYPE_DYNAMO_DB, INTEGRATION_TYPE_ATHENA, INTEGRATION_TYPE_REDSHIFT, DYNAMODB_CONN_QN, \
     ATHENA_CONN_QN, REDSHIFT_CONN_QN
 from exception.EnvVariableNotFound import EnvVariableNotFound
@@ -19,7 +17,7 @@ from model import Schema, Table, Column
 
 logger = logging.getLogger('main_logger')
 
-api_conf = create_api_config() #TODO Move to singleton or Env
+api_conf = create_api_config()  # TODO Move to singleton or Env
 authorization = 'Bearer {}'.format(api_conf.api_token)
 headers = {
     'Authorization': authorization,
@@ -86,53 +84,59 @@ def create_asset_connection(asset):
         logger.debug("...created")
 
 
+'''
+Create assets only for DynamoDB Integration. For Athena/Glue or Redshift, we are using workflows from Atlan to create assets
+We are only updating metadata for Athena/Glue, Redshift integration
+'''
+
+
 def create_assets(assets, tag, integration_type=INTEGRATION_TYPE_DYNAMO_DB):
     try:
         if not assets:
+            logger.info("Cannot create assets, the list of assets is empty")
             return
         if integration_type == INTEGRATION_TYPE_DYNAMO_DB or tag == "createProcesses" or tag == "createColumnProcesses":
-            logger.debug("Generating API request to create assets in bulk mode so it is searchable")
+            logger.debug(
+                "Generating API request to create assets in bulk mode so it is searchable for integration : %s",
+                integration_type)
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
-
             payload = json.dumps({"entities": list(payloads_for_bulk)})
             schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
             atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-            atlan_api_schema_request_object.send_atlan_request()
+            response = atlan_api_schema_request_object.send_atlan_request()
+            logger.debug("Creating assets payload {} - {}", payload, response)
             time.sleep(1)
-
         logger.debug("Creating Readme, linking glossary terms and linking classification...")
-        filtered_assets = [asset for asset in assets if
-                           (isinstance(asset, Table) or isinstance(asset, Column)) and get_asset_guid_by_qualified_name(
-                               asset.get_qualified_name(), asset.get_atlan_type_name())]
 
-        link_term(filtered_assets)
+        # Get assets that exist in Atlan and is not modify by user
+        filtered_assets = [asset for asset in assets if
+                           (isinstance(asset, Table) or isinstance(asset, Column))
+                           and get_asset_guid_by_qualified_name(asset.get_qualified_name(),
+                                                                asset.get_atlan_type_name())]
 
         if tag == 'createColumns':
             attach_classification(filtered_assets)
-
+            update_assets_description(filtered_assets, 'changeDescription')
         if get_atlan_team() and check_if_group_exist(get_atlan_team()) and \
                 (integration_type == INTEGRATION_TYPE_DYNAMO_DB or (
                         integration_type != INTEGRATION_TYPE_DYNAMO_DB and tag != 'createSchemas')):
             add_owner_group(filtered_assets)
-
         if tag == 'createTables':
             attach_classification(filtered_assets)
             [update_level_criticality(asset) for asset in filtered_assets]
-            update_assets(filtered_assets, 'changeDescription')
-
+            update_assets_description(filtered_assets, 'changeDescription')
         for asset in filtered_assets:
             create_readme(asset)
-
     except EnvVariableNotFound as e:
         logger.warning("Error while creation asset for %s tag. Error message: %s", tag, e)
         raise e
 
 
-def update_assets(assets, tag):
+def update_assets_description(assets, tag):
     try:
         if not assets:
             return
-        logger.debug("Generating API request to create assets in bulk mode so it is searchable")
+        logger.info("Generating API request to create assets in bulk mode so it is searchable")
         if tag == "createTables":
             payloads_for_bulk = map(lambda el: el.get_creation_payload_for_bulk_mode(), assets)
         else:
@@ -141,7 +145,8 @@ def update_assets(assets, tag):
         payload = json.dumps({"entities": list(payloads_for_bulk)})
         schema_post_url = 'https://{}/api/meta/entity/bulk#{}'.format(api_conf.instance, tag)
         atlan_api_schema_request_object = AtlanApiRequest("POST", schema_post_url, headers, payload)
-        atlan_api_schema_request_object.send_atlan_request()
+        response = atlan_api_schema_request_object.send_atlan_request()
+        logger.debug('Update assets description : {}'.format(payload))
         time.sleep(1)
 
     except EnvVariableNotFound as e:

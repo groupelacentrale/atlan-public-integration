@@ -3,7 +3,8 @@ import logging
 from atlanapi.ApiConfig import create_api_config
 from atlanapi.atlanutils import AtlanApiRequest
 from atlanapi.detach_classification import detach_classification
-from constants import CLASSIFICATION
+from atlanapi.searchAssets import get_asset_infos, is_asset_updated_by_user
+from constants import CLASSIFICATION_TAGS_DICT
 from model import Column, Table
 
 logger = logging.getLogger('main_logger')
@@ -17,33 +18,45 @@ headers = {
 }
 
 
+def has_classification_in_atlan(asset):
+    asset_infos = get_asset_infos(asset)
+    if asset_infos.get('entity', {}).get('classifications', None):
+        return True
+    return False
+
+
 def attach_classification(assets):
-    # List of assets with classification
-    assets_with_classification = [asset for asset in assets if (isinstance(asset, Column) or isinstance(asset, Table))
-                                  and asset.classification and asset.classification.capitalize() in [x.capitalize() for
-                                                                                                     x in
-                                                                                                     CLASSIFICATION]]
-    # List of assets without classification
+    # List of assets with the classification specified in csv files
+    assets_with_classification = [asset for asset in assets if
+                                  (isinstance(asset, Column) or isinstance(asset, Table))
+                                  and asset.classification
+                                  and (has_classification_in_atlan(asset) is False
+                                       or is_asset_updated_by_user(asset) is False)
+                                  and asset.classification.capitalize() in [x.capitalize() for
+                                                                            x in
+                                                                            CLASSIFICATION_TAGS_DICT]]
+
+    # List of assets without classification specified in csv files
     assets_without_classification = [asset.get_asset_name() for asset in assets if
                                      (isinstance(asset, Column) or isinstance(asset, Table))
                                      and (not asset.classification or asset.classification.capitalize() not in [
-                                         x.capitalize() for x in CLASSIFICATION])]
+                                         x.capitalize() for x in CLASSIFICATION_TAGS_DICT])]
+
     if len(assets_without_classification) > 0:
         logger.warning('Assets {} doesn\'t have a valid classification'.format(assets_without_classification))
-    if not len(assets_with_classification):
-        logger.info("No classification to attach")
+    if len(assets_with_classification) < 1:
+        logger.debug("No classification to attach")
         return
+
     try:
-        logger.info("attaching classification in bulk mode")
-        # Detach the classification from assets which have a valid classification to be updated
         detach_classification(assets_with_classification)
-        payload_for_bulk = map(lambda el: el.get_classification_payload_for_bulk_mode(), assets_with_classification)
-        payload = json.dumps(list(payload_for_bulk))
-        attach_classification_url = 'https://{}/api/meta/entity/bulk/classification/displayName'.format(
-            api_conf.instance)
-        atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
-
-        atlan_api_request_object.send_atlan_request()
-
+        for asset in assets_with_classification:
+            payload = json.dumps(asset.get_classification_payload())
+            attach_classification_url = ('https://{}/api/meta/entity/uniqueAttribute/type/{}/classifications?attr'
+                                         ':qualifiedName={}').format(
+                api_conf.instance, asset.get_atlan_type_name(), asset.get_qualified_name())
+            atlan_api_request_object = AtlanApiRequest("POST", attach_classification_url, headers, payload)
+            response = atlan_api_request_object.send_atlan_request()
+            logger.debug("Attach classification for assets : {} {} - tag {}, response {}".format(asset.get_atlan_type_name(), asset.get_asset_name(), asset.classification, response.status_code))
     except Exception as e:
         logger.warning("Error while attaching classification. Error message: %s", e)

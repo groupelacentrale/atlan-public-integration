@@ -61,6 +61,9 @@ class Table:
     def get_level_criticality(self):
         return self.criticality
 
+    def get_classification_tag(self):
+        return self.classification
+
     def get_creation_payload(self):
         table_info = {"entities": [
             create_table_request_payload(self)
@@ -79,7 +82,7 @@ class Table:
     def get_update_description_payload_for_bulk_mode(self):
         return update_description_payload_request_payload(self)
 
-    def get_classification_payload_for_bulk_mode(self):
+    def get_classification_payload(self):
         return classification_request_payload(self)
 
     def get_detach_classification_payload_for_bulk_mode(self):

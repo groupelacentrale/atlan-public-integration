@@ -40,6 +40,9 @@ class Column:
     def set_column_data_type(self, data_type):
         self.data_type = data_type
 
+    def get_classification_tag(self):
+        return self.classification
+
     def get_qualified_name(self):
         if self.integration_type == INTEGRATION_TYPE_DYNAMO_DB:
             qualified_name = DYNAMODB_CONN_QN + "/" + \
@@ -70,7 +73,7 @@ class Column:
     def get_creation_payload(self):
         raise Exception("Column are creating in bulk mode only")
 
-    def get_classification_payload_for_bulk_mode(self):
+    def get_classification_payload(self):
         return classification_request_payload(self)
 
     def get_detach_classification_payload_for_bulk_mode(self):

@@ -15,5 +15,10 @@ ATHENA_DATABASE_NAME = 'AwsDataCatalog'
 DYNAMO_DB_DATABASE_NAME = 'dynamo_db'
 REDSHIFT_DATABASE_NAME = 'dwhstats'
 
-CLASSIFICATION = ['PII', 'Contractual', 'Open']
+CLASSIFICATION_TAGS_DICT = {'PII':'GeJIlnTnPXuwGNAcH5f02x',
+                            'Contractual': 'P2pyJIw6xIOuo73dHkP5gB',
+                            'Open':'bm9LZV3AaKgAgldAq4FI4T'}
+
 CRITICALITY_LEVEL = ['Minor', 'Major', 'Critical']
+
+SERVICE_ACC_API_NAME = "service-account-apikey-e3df9f7b-42ba-4562-98ba-8bc1222221f8"
